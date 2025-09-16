@@ -161,10 +161,11 @@ class DatabaseSeeder extends Seeder
         // Create Clients for Company 1
         $client1 = Client::create([
             'company_id' => $company1->id,
-            'name' => 'Robert Anderson',
-            'email' => 'robert.anderson@email.com',
-            'phone' => '+1-555-4001',
-            'company' => 'Anderson Enterprises',
+            'company_name' => 'Anderson Enterprises',
+            'contact_person_name' => 'Robert Anderson',
+            'contact_person_email' => 'robert.anderson@email.com',
+            'contact_person_phone' => '+1-555-4001',
+            'legal_name' => 'Anderson Enterprises LLC',
             'address' => '321 Business Blvd',
             'city' => 'New York',
             'state' => 'NY',
@@ -175,10 +176,11 @@ class DatabaseSeeder extends Seeder
 
         $client2 = Client::create([
             'company_id' => $company1->id,
-            'name' => 'Jennifer Martinez',
-            'email' => 'jennifer.martinez@email.com',
-            'phone' => '+1-555-4002',
-            'company' => 'Martinez Holdings',
+            'company_name' => 'Martinez Holdings',
+            'contact_person_name' => 'Jennifer Martinez',
+            'contact_person_email' => 'jennifer.martinez@email.com',
+            'contact_person_phone' => '+1-555-4002',
+            'legal_name' => 'Martinez Holdings Corp',
             'address' => '654 Corporate Ave',
             'city' => 'New York',
             'state' => 'NY',
@@ -190,10 +192,11 @@ class DatabaseSeeder extends Seeder
         // Create Clients for Company 2
         $client3 = Client::create([
             'company_id' => $company2->id,
-            'name' => 'Michael Thompson',
-            'email' => 'michael.thompson@email.com',
-            'phone' => '+1-555-5001',
-            'company' => 'Thompson Real Estate',
+            'company_name' => 'Thompson Real Estate',
+            'contact_person_name' => 'Michael Thompson',
+            'contact_person_email' => 'michael.thompson@email.com',
+            'contact_person_phone' => '+1-555-5001',
+            'legal_name' => 'Thompson Real Estate Inc',
             'address' => '987 Sunset Blvd',
             'city' => 'Los Angeles',
             'state' => 'CA',
@@ -217,7 +220,6 @@ class DatabaseSeeder extends Seeder
             'state' => 'NY',
             'zip_code' => '10004',
             'priority' => 'high',
-            'progress' => 35,
         ]);
 
         $project2 = Project::create([
@@ -235,7 +237,6 @@ class DatabaseSeeder extends Seeder
             'state' => 'NY',
             'zip_code' => '10005',
             'priority' => 'medium',
-            'progress' => 10,
         ]);
 
         // Create Projects for Company 2
@@ -254,7 +255,6 @@ class DatabaseSeeder extends Seeder
             'state' => 'CA',
             'zip_code' => '90003',
             'priority' => 'urgent',
-            'progress' => 60,
         ]);
 
         // Assign users to projects
@@ -284,9 +284,8 @@ class DatabaseSeeder extends Seeder
             'status' => 'completed',
             'priority' => 'high',
             'due_date' => Carbon::now()->subDays(5),
-            'estimated_hours' => 8.0,
-            'actual_hours' => 6.5,
-            'progress' => 100,
+            'estimated_time' => 8.0,
+            'actual_time' => 6.5,
         ]);
 
         Task::create([
@@ -299,9 +298,8 @@ class DatabaseSeeder extends Seeder
             'status' => 'in_progress',
             'priority' => 'high',
             'due_date' => Carbon::now()->addDays(14),
-            'estimated_hours' => 120.0,
-            'actual_hours' => 45.0,
-            'progress' => 40,
+            'estimated_time' => 120.0,
+            'actual_time' => 45.0,
         ]);
 
         Task::create([
@@ -314,8 +312,7 @@ class DatabaseSeeder extends Seeder
             'status' => 'pending',
             'priority' => 'medium',
             'due_date' => Carbon::now()->addDays(30),
-            'estimated_hours' => 16.0,
-            'progress' => 0,
+            'estimated_time' => 16.0,
         ]);
 
         // Create Tasks for Company 2 Projects
@@ -329,9 +326,8 @@ class DatabaseSeeder extends Seeder
             'status' => 'completed',
             'priority' => 'urgent',
             'due_date' => Carbon::now()->subDays(20),
-            'estimated_hours' => 40.0,
-            'actual_hours' => 38.0,
-            'progress' => 100,
+            'estimated_time' => 40.0,
+            'actual_time' => 38.0,
         ]);
 
         Task::create([
@@ -344,9 +340,8 @@ class DatabaseSeeder extends Seeder
             'status' => 'in_progress',
             'priority' => 'high',
             'due_date' => Carbon::now()->addDays(21),
-            'estimated_hours' => 80.0,
-            'actual_hours' => 32.0,
-            'progress' => 65,
+            'estimated_time' => 80.0,
+            'actual_time' => 32.0,
         ]);
 
         // Seed modules and task categories
