@@ -401,10 +401,10 @@
             <div class="row align-items-center" style="min-height: 80vh; padding: 2rem 0;">
                 <div class="col-lg-6 hero-content">
                     <h1 class="hero-title fade-in">
-                        {{ \App\Models\SiteContent::get('get_started_hero_title', 'Transform Your Construction Business') }}
+                        Transform Your Construction Business
                     </h1>
                     <p class="hero-subtitle fade-in fade-in-delay-1">
-                        {{ \App\Models\SiteContent::get('get_started_hero_subtitle', 'Join thousands of construction companies using GoBillo to streamline operations, manage projects, and grow their business.') }}
+                        Join thousands of construction companies using GoBillo to streamline operations, manage projects, and grow their business.
                     </p>
                     
                     <ul class="hero-features fade-in fade-in-delay-2">
@@ -424,8 +424,8 @@
                 
                 <div class="col-lg-6">
                     <div class="registration-form floating fade-in fade-in-delay-2" style="margin-top: 2rem; border: 2px solid #007bff; background: white !important;">
-                        <h2 class="form-title">{{ \App\Models\SiteContent::get('get_started_form_title', 'Get Started Today') }}</h2>
-                        <p class="form-subtitle">{{ \App\Models\SiteContent::get('get_started_form_subtitle', 'Create your company account and start your free trial') }}</p>
+                        <h2 class="form-title">Get Started Today</h2>
+                        <p class="form-subtitle">Create your company account and start your free trial</p>
 
                         @if(session('success'))
                             <div class="alert alert-success">
@@ -683,7 +683,7 @@
                         <i class="bi bi-building me-2"></i>GoBillo
                     </h5>
                     <p class="text-light opacity-75 mb-3">
-                        {{ \App\Models\SiteContent::get('footer_company_description', 'The complete construction management platform trusted by thousands of construction professionals worldwide.') }}
+                        The complete construction management platform trusted by thousands of construction professionals worldwide.
                     </p>
                     <div class="d-flex gap-3">
                         <a href="#" class="text-light opacity-75 hover-opacity-100">
@@ -738,12 +738,12 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <p class="text-light opacity-75 mb-0">
-                        © {{ date('Y') }} {{ \App\Models\SiteContent::get('footer_copyright', 'GoBillo. All rights reserved.') }}
+                        © {{ date('Y') }} GoBillo. All rights reserved.
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="text-light opacity-75 mb-0">
-                        {{ \App\Models\SiteContent::get('footer_tagline', 'Made with ❤️ for construction professionals') }}
+                        Made with ❤️ for construction professionals
                     </p>
                 </div>
             </div>

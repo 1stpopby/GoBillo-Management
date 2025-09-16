@@ -381,9 +381,9 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content fade-in">
-                        <h1>{{ \App\Models\SiteContent::get('landing_hero_title', 'Professional Construction Management Made Simple') }}</h1>
+                        <h1>Professional Construction Management Made Simple</h1>
                         <p class="lead">
-                            {{ \App\Models\SiteContent::get('landing_hero_subtitle', 'Streamline your construction projects with our comprehensive management platform. From project planning to team collaboration, we\'ve got you covered.') }}
+                            Streamline your construction projects with our comprehensive management platform. From project planning to team collaboration, we've got you covered.
                         </p>
                         <div class="hero-buttons">
                             @auth
@@ -392,7 +392,7 @@
                                 </a>
                             @else
                                 <a href="{{ route('get-started') }}" class="btn btn-white btn-lg">
-                                    <i class="bi bi-rocket-takeoff me-2"></i>{{ \App\Models\SiteContent::get('landing_hero_cta_text', 'Start Free Trial') }}
+                                    <i class="bi bi-rocket-takeoff me-2"></i>Start Free Trial
                                 </a>
                                 <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg">
                                     <i class="bi bi-box-arrow-in-right me-2"></i>Login
