@@ -354,6 +354,7 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             TaskCategorySeeder::class,
             EmployeeSeeder::class,
+            ForgeDeploymentSeeder::class,
         ]);
     }
 }
