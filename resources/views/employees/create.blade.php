@@ -33,12 +33,11 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="employee_id" class="form-label">Employee ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('employee_id') is-invalid @enderror" 
-                                       id="employee_id" name="employee_id" value="{{ old('employee_id') }}" required>
-                                @error('employee_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <label class="form-label">Employee ID</label>
+                                <div class="form-control-plaintext bg-light rounded p-2">
+                                    <i class="fas fa-magic text-primary me-2"></i>
+                                    <small class="text-muted">Auto-generated on save</small>
+                                </div>
                             </div>
 
                             <div class="col-md-6">

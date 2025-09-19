@@ -239,12 +239,6 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'employee_id' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('employees')->where('company_id', auth()->user()->company_id)
-            ],
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => [
@@ -297,9 +291,13 @@ class EmployeeController extends Controller
         $certifications = $request->certifications ? array_map('trim', explode(',', $request->certifications)) : null;
         $qualifications = $request->qualifications ? array_map('trim', explode(',', $request->qualifications)) : null;
 
-        $employee = Employee::create([
+        // Generate auto-incremented employee ID with transaction safety
+        $employee = \DB::transaction(function () use ($request, $avatarPath, $skills, $certifications, $qualifications) {
+            $employeeId = $this->generateEmployeeId(auth()->user()->company_id);
+            
+            return Employee::create([
             'company_id' => auth()->user()->company_id,
-            'employee_id' => $request->employee_id,
+            'employee_id' => $employeeId,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -327,7 +325,8 @@ class EmployeeController extends Controller
             'emergency_contact_relationship' => $request->emergency_contact_relationship,
             'notes' => $request->notes,
             'avatar' => $avatarPath,
-        ]);
+            ]);
+        });
 
         // Handle site allocations
         if ($request->has('site_allocations')) {
@@ -724,5 +723,30 @@ class EmployeeController extends Controller
 
         return redirect()->route('employees.show', $employee)
                         ->with('success', 'CIS information updated successfully.');
+    }
+
+    /**
+     * Generate auto-incremented employee ID for the company
+     * Format: EMP-[CompanyID]-[SequentialNumber] (e.g., EMP-01-001, EMP-01-002)
+     */
+    private function generateEmployeeId($companyId)
+    {
+        // Use PostgreSQL UPSERT to atomically get next sequence number
+        $result = \DB::select("
+            INSERT INTO employee_counters (company_id, last_sequence, created_at, updated_at) 
+            VALUES (?, 1, NOW(), NOW()) 
+            ON CONFLICT (company_id) 
+            DO UPDATE SET 
+                last_sequence = employee_counters.last_sequence + 1,
+                updated_at = NOW()
+            RETURNING last_sequence
+        ", [$companyId]);
+        
+        $nextNumber = $result[0]->last_sequence;
+        
+        // Format: EMP-[CompanyID]-[SequentialNumber] (e.g., EMP-1-001, EMP-15-002)
+        $sequentialNumber = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        
+        return "EMP-{$companyId}-{$sequentialNumber}";
     }
 }
