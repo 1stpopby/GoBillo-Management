@@ -316,7 +316,7 @@ class SiteController extends Controller
             // This would include payments to subcontractors, operatives, managers, etc.
             $project_invoices = \App\Models\Invoice::where('project_id', $project->id)
                 ->where('status', 'paid')
-                ->sum('total') ?? 0;
+                ->sum('total_amount') ?? 0;
             $total_invoices_paid += $project_invoices;
         }
         

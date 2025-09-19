@@ -71,7 +71,7 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('status', 'paid')
-            ->sum('total');
+            ->sum('total_amount');
 
         // Total Expenses from regular expenses
         $regularExpenses = Expense::whereHas('project', function($q) use ($companyId) {

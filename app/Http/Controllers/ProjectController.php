@@ -549,7 +549,7 @@ class ProjectController extends Controller
             
         $total_invoices_paid = \App\Models\Invoice::where('project_id', $project->id)
             ->where('status', 'paid')
-            ->sum('total') ?? 0;
+            ->sum('total_amount') ?? 0;
             
         $actual_costs = $total_project_expenses + $total_invoices_paid + $total_actual_task_costs;
         
