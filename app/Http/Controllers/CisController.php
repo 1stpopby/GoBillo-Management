@@ -97,7 +97,7 @@ class CisController extends Controller
         }
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
             $paymentsQuery->whereHas('employee', function($q) use ($search) {
                 $q->where('first_name', 'LIKE', "%{$search}%")
                   ->orWhere('last_name', 'LIKE', "%{$search}%")
@@ -174,7 +174,7 @@ class CisController extends Controller
             $query->where('gross_amount', '<=', $request->amount_max);
         }
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
             $query->whereHas('employee', function($q) use ($search) {
                 $q->where('first_name', 'LIKE', "%{$search}%")
                   ->orWhere('last_name', 'LIKE', "%{$search}%")
@@ -188,17 +188,22 @@ class CisController extends Controller
         $csvContent = "Date,Operative,Project,Gross Amount,CIS Rate,CIS Deduction,Materials,Net Payment,Status\n";
         
         foreach ($payments as $payment) {
+            // Prevent CSV formula injection by prefixing dangerous characters
+            $operativeName = $this->sanitizeCsvField($payment->employee->full_name ?? 'Unknown');
+            $projectName = $this->sanitizeCsvField($payment->project->name ?? 'No Project');
+            $status = $this->sanitizeCsvField(ucfirst($payment->status));
+            
             $csvContent .= sprintf(
                 "%s,\"%s\",\"%s\",%s,%s%%,%s,%s,%s,\"%s\"\n",
                 $payment->payment_date->format('Y-m-d'),
-                $payment->employee->full_name ?? 'Unknown',
-                $payment->project->name ?? 'No Project',
+                $operativeName,
+                $projectName,
                 number_format($payment->gross_amount, 2),
                 number_format($payment->cis_rate, 1),
                 number_format($payment->cis_deduction, 2),
                 number_format($payment->materials_cost, 2),
                 number_format($payment->net_payment, 2),
-                ucfirst($payment->status)
+                $status
             );
         }
 
@@ -914,5 +919,24 @@ class CisController extends Controller
             ]);
             
         return $pdf->download($filename);
+    }
+
+    /**
+     * Sanitize CSV field to prevent formula injection
+     */
+    private function sanitizeCsvField($value)
+    {
+        $value = (string) $value;
+        
+        // Escape quotes by doubling them for proper CSV format
+        $value = str_replace('"', '""', $value);
+        
+        // Prevent CSV formula injection by prefixing dangerous characters with single quote
+        // Check first non-whitespace character to prevent bypass with leading spaces
+        if (preg_match('/^\\s*[=+\\-@]/', $value)) {
+            $value = "'" . $value;
+        }
+        
+        return $value;
     }
 }

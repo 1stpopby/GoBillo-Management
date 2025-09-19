@@ -256,7 +256,7 @@ class OperativeDataFormController extends Controller
             'utr_number' => 'nullable|string|max:20',
             'cscs_card_type' => 'nullable|string|max:255',
             'cscs_card_number' => 'nullable|string|max:255',
-            'cscs_card_expiry' => 'nullable|date|after:today',
+            'cscs_card_expiry' => 'nullable|date|after_or_equal:today',
             'cscs_card_front_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
             'cscs_card_back_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
             'right_to_work_uk' => 'required|boolean',

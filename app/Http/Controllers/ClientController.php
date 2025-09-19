@@ -18,7 +18,7 @@ class ClientController extends Controller
 
         // Apply search filter
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('company_name', 'like', "%{$search}%")
                   ->orWhere('legal_name', 'like', "%{$search}%")

@@ -7,6 +7,7 @@ use App\Models\Site;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ToolHireController extends Controller
 {
@@ -32,7 +33,7 @@ class ToolHireController extends Controller
         }
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                   ->orWhere('tool_name', 'like', "%{$search}%");
@@ -60,6 +61,8 @@ class ToolHireController extends Controller
     {
         $user = auth()->user();
 
+        $companyId = $user->company_id;
+        
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'tool_category' => 'required|string',
@@ -68,8 +71,14 @@ class ToolHireController extends Controller
             'hire_start_date' => 'required|date|after_or_equal:today',
             'hire_end_date' => 'required|date|after:hire_start_date',
             'delivery_method' => 'required|string',
-            'site_id' => 'nullable|exists:sites,id',
-            'project_id' => 'nullable|exists:projects,id',
+            'site_id' => [
+                'nullable',
+                Rule::exists('sites', 'id')->where('company_id', $companyId)
+            ],
+            'project_id' => [
+                'nullable', 
+                Rule::exists('projects', 'id')->where('company_id', $companyId)
+            ],
             'estimated_daily_rate' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
