@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Drop the existing assets table
+        // Drop related tables first to avoid constraint issues
+        Schema::dropIfExists('asset_asset_tag');
         Schema::dropIfExists('assets');
 
         // Recreate the assets table with correct nullable columns
@@ -54,6 +55,13 @@ return new class extends Migration
             $table->index('purchase_date');
             $table->index('warranty_expiry');
             $table->index(['status', 'category_id']);
+        });
+
+        // Recreate the asset_asset_tag pivot table
+        Schema::create('asset_asset_tag', function (Blueprint $table) {
+            $table->foreignId('asset_id')->constrained('assets')->onDelete('cascade');
+            $table->foreignId('asset_tag_id')->constrained('asset_tags')->onDelete('cascade');
+            $table->primary(['asset_id', 'asset_tag_id']);
         });
     }
 

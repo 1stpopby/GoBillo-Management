@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('category_id')->constrained('asset_categories')->onDelete('restrict');
             $table->foreignId('location_id')->constrained('locations')->onDelete('restrict');
-            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('restrict');
+            $table->unsignedBigInteger('vendor_id');
             $table->date('purchase_date');
             $table->decimal('purchase_cost', 12, 2);
             $table->enum('depreciation_method', ['NONE', 'STRAIGHT_LINE'])->default('NONE');

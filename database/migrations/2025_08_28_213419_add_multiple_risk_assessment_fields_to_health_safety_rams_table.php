@@ -26,8 +26,12 @@ return new class extends Migration
             $table->renameColumn('valid_to', 'valid_until');
             $table->renameColumn('document_path', 'file_path');
             
-            // Update status enum to match form options
-            $table->enum('status', ['draft', 'pending_approval', 'approved', 'rejected', 'expired'])->default('draft')->change();
+            // Update status enum to match form options - PostgreSQL compatible
+            $table->dropColumn('status');
+        });
+        
+        Schema::table('health_safety_rams', function (Blueprint $table) {
+            $table->enum('status', ['draft', 'pending_approval', 'approved', 'rejected', 'expired'])->default('draft')->after('id');
         });
     }
 

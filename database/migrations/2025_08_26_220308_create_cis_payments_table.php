@@ -42,7 +42,7 @@ return new class extends Migration
             $table->foreignId('verified_by')->nullable()->constrained('users')->onDelete('set null');
             
             // Return filing
-            $table->foreignId('cis_return_id')->nullable()->constrained()->onDelete('set null');
+            $table->unsignedBigInteger('cis_return_id')->nullable();
             $table->boolean('included_in_return')->default(false);
             
             // Additional info

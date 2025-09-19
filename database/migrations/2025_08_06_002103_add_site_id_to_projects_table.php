@@ -16,8 +16,7 @@ return new class extends Migration
             $table->foreignId('site_id')->nullable()->after('company_id')->constrained()->onDelete('cascade');
             
             // Make client_id nullable since now projects belong to sites, and sites belong to clients
-            $table->dropForeign(['client_id']);
-            $table->foreignId('client_id')->nullable()->change();
+            $table->unsignedBigInteger('client_id')->nullable()->change();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('set null');
             
             $table->index(['company_id', 'site_id']);
