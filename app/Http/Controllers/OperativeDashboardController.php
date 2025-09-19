@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
 use App\Models\OperativeInvoice;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Site;
-use App\Models\Client;
 use App\Models\TimeEntry;
 use App\Services\GeolocationService;
 use Illuminate\Http\Request;
@@ -102,21 +100,21 @@ class OperativeDashboardController extends Controller
     {
         $companyId = $user->company_id;
         
-        // Invoice statistics
+        // Invoice statistics - using OperativeInvoice model with correct column names
         $invoiceStats = [
-            'total_invoices' => Invoice::where('company_id', $companyId)->count(),
-            'pending_invoices' => Invoice::where('company_id', $companyId)->where('status', 'pending')->count(),
-            'paid_invoices' => Invoice::where('company_id', $companyId)->where('status', 'paid')->count(),
-            'overdue_invoices' => Invoice::where('company_id', $companyId)
-                ->where('status', 'pending')
-                ->where('due_date', '<', now())
+            'total_invoices' => OperativeInvoice::where('company_id', $companyId)->count(),
+            'pending_invoices' => OperativeInvoice::where('company_id', $companyId)->where('status', 'submitted')->count(),
+            'paid_invoices' => OperativeInvoice::where('company_id', $companyId)->where('status', 'paid')->count(),
+            'overdue_invoices' => OperativeInvoice::where('company_id', $companyId)
+                ->where('status', 'submitted')
+                ->where('created_at', '<', now()->subDays(30))
                 ->count(),
-            'total_revenue' => Invoice::where('company_id', $companyId)
+            'total_revenue' => OperativeInvoice::where('company_id', $companyId)
                 ->where('status', 'paid')
-                ->sum('total_amount'),
-            'pending_revenue' => Invoice::where('company_id', $companyId)
-                ->where('status', 'pending')
-                ->sum('total_amount'),
+                ->sum('gross_amount'),
+            'pending_revenue' => OperativeInvoice::where('company_id', $companyId)
+                ->where('status', 'approved')
+                ->sum('gross_amount'),
         ];
 
         // Task statistics
@@ -148,11 +146,11 @@ class OperativeDashboardController extends Controller
             'active_sites' => Site::where('company_id', $companyId)->where('status', 'active')->count(),
         ];
 
-        // Recent activity
+        // Recent activity - using OperativeInvoice with correct relationships
         $recentActivity = collect()
             ->merge(
-                Invoice::where('company_id', $companyId)
-                    ->with('client')
+                OperativeInvoice::where('company_id', $companyId)
+                    ->with(['operative', 'project'])
                     ->latest()
                     ->limit(5)
                     ->get()
@@ -162,9 +160,9 @@ class OperativeDashboardController extends Controller
                             'icon' => 'bi-receipt',
                             'color' => 'success',
                             'title' => 'Invoice #' . $invoice->invoice_number,
-                            'description' => 'Created for ' . $invoice->client->name,
+                            'description' => 'Created for ' . ($invoice->operative->name ?? 'Unknown'),
                             'date' => $invoice->created_at,
-                            'amount' => $invoice->total_amount,
+                            'amount' => $invoice->gross_amount,
                         ];
                     })
             )
