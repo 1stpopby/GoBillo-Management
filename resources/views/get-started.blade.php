@@ -702,8 +702,13 @@
                 </div>
                 
                 @php
-                    $footerLinks = \App\Models\FooterLink::getGroupedLinks();
-                    $sections = \App\Models\FooterLink::getSections();
+                    try {
+                        $footerLinks = \App\Models\FooterLink::getGroupedLinks();
+                        $sections = \App\Models\FooterLink::getSections();
+                    } catch (\Exception $e) {
+                        $footerLinks = [];
+                        $sections = [];
+                    }
                 @endphp
                 
                 @foreach($sections as $sectionKey => $sectionName)

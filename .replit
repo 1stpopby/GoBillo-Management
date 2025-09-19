@@ -1,4 +1,4 @@
-modules = ["php-8.2", "bash", "web", "nodejs-20"]
+modules = ["php-8.2", "bash", "web", "nodejs-20", "postgresql-16"]
 
 [nix]
 channel = "stable-25_05"
@@ -35,7 +35,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 37445
+localPort = 40531
 externalPort = 3000
 
 [deployment]
