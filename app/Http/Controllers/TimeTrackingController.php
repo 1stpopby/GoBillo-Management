@@ -198,6 +198,7 @@ class TimeTrackingController extends Controller
         $entries = collect();
         
         for ($i = 0; $i < 15; $i++) {
+            if ($users->isEmpty() || $projects->isEmpty()) break;
             $user = $users->random();
             $project = $projects->random();
             $clockIn = now()->subDays(rand(0, 7))->setHour(rand(7, 9))->setMinute(rand(0, 59));
@@ -232,6 +233,10 @@ class TimeTrackingController extends Controller
             ->get();
         
         $projects = Project::forCompany($companyId)->get();
+        
+        if ($projects->isEmpty()) {
+            return collect();
+        }
         
         return $users->map(function($user) use ($projects) {
             $clockIn = now()->subHours(rand(1, 8))->subMinutes(rand(0, 59));
@@ -309,7 +314,7 @@ class TimeTrackingController extends Controller
                 $days[] = (object)[
                     'date' => $date->copy(),
                     'hours' => $dayHours,
-                    'project' => $dayHours > 0 ? $projects->random() : null,
+                    'project' => $dayHours > 0 && $projects->isNotEmpty() ? $projects->random() : null,
                     'notes' => $dayHours > 0 ? collect(['Regular work', 'Overtime', 'Site visit', 'Meeting'])->random() : null,
                 ];
             }
