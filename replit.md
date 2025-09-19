@@ -1,0 +1,55 @@
+# Laravel Business Management System - Replit Setup
+
+## Project Overview
+This is a comprehensive Laravel 12 business management application designed for construction and project management companies. The system includes modules for:
+
+- **Project Management**: Projects, tasks, client management
+- **Asset Management**: Equipment, locations, vendors, QR codes
+- **Employee Management**: Staff, site allocations, roles
+- **Financial Management**: Invoices, estimates, expenses, CIS payments
+- **Health & Safety**: RAMS, incidents, observations, toolbox talks
+- **Document Management**: File uploads, attachments, versioning
+- **Time Tracking**: Clock in/out, timesheet management
+- **Operative Management**: Invoicing, data forms, hire requests
+
+## Recent Changes (Sep 19, 2025)
+- Successfully imported from GitHub and configured for Replit environment
+- Set up PHP 8.2 and Node.js 20 development environment
+- Configured PostgreSQL database with 90+ migration files
+- Fixed migration dependency issues with foreign key constraints
+- Built frontend assets with Vite and Bootstrap/Tailwind CSS
+- Configured Laravel development server on port 5000
+- Set up production deployment configuration
+
+## Project Architecture
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: Blade templates with Vite, Bootstrap 5, Tailwind CSS
+- **Database**: PostgreSQL (configured with Neon)
+- **Build System**: Vite for asset compilation
+- **Package Management**: Composer (PHP), npm (JavaScript)
+
+## Environment Setup
+- Database: PostgreSQL with environment variables
+- Sessions: File-based (for Replit compatibility)
+- Cache: Database-backed
+- Mail: Log driver (development)
+- App URL: Configured for 0.0.0.0:5000 (Replit proxy compatible)
+
+## Key Features
+The application includes comprehensive modules for:
+1. Multi-tenant company management
+2. Role-based access control (Admin, Manager, Operative, etc.)
+3. Project lifecycle management
+4. Asset tracking with QR codes
+5. CIS (Construction Industry Scheme) compliance
+6. Financial reporting and expense management
+7. Health & Safety documentation
+8. Employee time tracking and payroll
+9. Document version control
+10. Email notifications and reporting
+
+## Technical Notes
+- Fixed PostgreSQL migration dependencies by removing foreign key constraints from initial table creation
+- Configured Vite to allow all hosts for Replit proxy compatibility
+- Set up workflow to run Laravel development server with database environment variables
+- Production deployment configured for autoscale deployment target
