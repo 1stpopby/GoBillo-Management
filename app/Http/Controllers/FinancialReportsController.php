@@ -151,12 +151,12 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->where('status', 'approved')
-            ->selectRaw('
+            ->selectRaw("
                 SUM(net_amount) as total_net,
                 SUM(vat_amount) as total_vat,
                 AVG(vat_rate) as average_vat_rate,
                 COUNT(*) as expense_count
-            ')
+            ")
             ->first();
 
         // Monthly VAT breakdown
@@ -165,12 +165,12 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->where('status', 'approved')
-            ->selectRaw('
-                strftime("%Y-%m", expense_date) as month,
+            ->selectRaw("
+                to_char(expense_date, 'YYYY-MM') as month,
                 SUM(net_amount) as net_amount,
                 SUM(vat_amount) as vat_amount,
                 COUNT(*) as expense_count
-            ')
+            ")
             ->groupBy('month')
             ->orderBy('month')
             ->get();
@@ -181,12 +181,12 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->where('status', 'approved')
-            ->selectRaw('
+            ->selectRaw("
                 category,
                 SUM(net_amount) as net_amount,
                 SUM(vat_amount) as vat_amount,
                 COUNT(*) as expense_count
-            ')
+            ")
             ->groupBy('category')
             ->orderBy('vat_amount', 'desc')
             ->get();
@@ -231,13 +231,13 @@ class FinancialReportsController extends Controller
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('cis_applicable', true)
             ->whereIn('status', ['approved', 'paid'])
-            ->selectRaw('
-                strftime("%Y-%m", created_at) as month,
+            ->selectRaw("
+                to_char(created_at, 'YYYY-MM') as month,
                 SUM(gross_amount) as gross_pay,
                 SUM(cis_deduction) as cis_deduction,
                 SUM(net_amount) as net_pay,
                 COUNT(*) as payment_count
-            ')
+            ")
             ->groupBy('month')
             ->orderBy('month')
             ->get();
@@ -248,14 +248,14 @@ class FinancialReportsController extends Controller
             ->where('operative_invoices.cis_applicable', true)
             ->whereIn('operative_invoices.status', ['approved', 'paid'])
             ->join('users', 'operative_invoices.operative_id', '=', 'users.id')
-            ->selectRaw('
+            ->selectRaw("
                 users.name as payee_name,
-                "operative" as payee_type,
+                'operative' as payee_type,
                 SUM(operative_invoices.gross_amount) as total_gross_pay,
                 SUM(operative_invoices.cis_deduction) as total_cis_deduction,
                 SUM(operative_invoices.net_amount) as total_net_pay,
                 COUNT(operative_invoices.id) as payment_count
-            ')
+            ")
             ->groupBy('operative_invoices.operative_id', 'users.name')
             ->orderBy('total_cis_deduction', 'desc')
             ->limit(10)
@@ -307,13 +307,13 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->where('status', 'approved')
-            ->selectRaw('
+            ->selectRaw("
                 category,
                 SUM(net_amount) as net_amount,
                 SUM(vat_amount) as vat_amount,
                 SUM(amount) as total_amount,
                 COUNT(*) as expense_count
-            ')
+            ")
             ->groupBy('category')
             ->orderBy('total_amount', 'desc')
             ->get();
@@ -324,13 +324,13 @@ class FinancialReportsController extends Controller
             })
             ->whereBetween('expense_date', [$startDate, $endDate])
             ->where('status', 'approved')
-            ->selectRaw('
-                strftime("%Y-%m", expense_date) as month,
+            ->selectRaw("
+                to_char(expense_date, 'YYYY-MM') as month,
                 SUM(net_amount) as net_amount,
                 SUM(vat_amount) as vat_amount,
                 SUM(amount) as total_amount,
                 COUNT(*) as expense_count
-            ')
+            ")
             ->groupBy('month')
             ->orderBy('month')
             ->get();
