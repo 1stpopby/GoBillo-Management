@@ -174,6 +174,14 @@ class DashboardController extends Controller
             'inactive' => 0,
         ];
         
+        // Companies by subscription plan
+        $companiesByPlan = [
+            'trial' => 0,
+            'starter' => 0,
+            'professional' => 0,
+            'enterprise' => 0,
+        ];
+        
         // Try to get stats safely
         try {
             $stats['total_companies'] = Company::count();
@@ -186,6 +194,16 @@ class DashboardController extends Controller
             $companiesByStatus['active'] = Company::where('status', 'active')->count();
             $companiesByStatus['suspended'] = Company::where('status', 'suspended')->count();
             $companiesByStatus['inactive'] = Company::where('status', 'inactive')->count();
+            
+            // Get companies by plan (if subscription_plan column exists)
+            try {
+                $companiesByPlan['trial'] = Company::where('subscription_plan', 'trial')->count();
+                $companiesByPlan['starter'] = Company::where('subscription_plan', 'starter')->count();
+                $companiesByPlan['professional'] = Company::where('subscription_plan', 'professional')->count();
+                $companiesByPlan['enterprise'] = Company::where('subscription_plan', 'enterprise')->count();
+            } catch (\Exception $e) {
+                // Column might not exist, use defaults
+            }
         } catch (\Exception $e) {
             // If there's any error, just use default stats
         }
@@ -198,6 +216,18 @@ class DashboardController extends Controller
             // If there's any error, just use empty array
         }
         
-        return view('superadmin.dashboard', compact('stats', 'recentCompanies', 'companiesByStatus'));
+        // Get recent activity - create empty collection for now
+        $recentActivity = collect([]);
+        
+        // Get top companies - create empty array for now
+        $topCompanies = [];
+        try {
+            // You could implement actual top companies logic here based on metrics
+            $topCompanies = Company::orderBy('created_at', 'desc')->limit(10)->get();
+        } catch (\Exception $e) {
+            // If there's any error, just use empty array
+        }
+        
+        return view('superadmin.dashboard', compact('stats', 'recentCompanies', 'companiesByStatus', 'companiesByPlan', 'recentActivity', 'topCompanies'));
     }
 }
