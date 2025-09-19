@@ -109,7 +109,7 @@ class TeamController extends Controller
             })
             ->where('status', 'approved')
             ->where('created_at', '>=', now()->startOfMonth())
-            ->sum('total_amount');
+            ->sum('gross_amount');
 
         // Document/Certification metrics
         $expiringCertifications = \App\Models\DocumentAttachment::where('attachable_type', 'App\Models\Employee')
