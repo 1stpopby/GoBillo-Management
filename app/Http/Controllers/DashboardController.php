@@ -157,12 +157,21 @@ class DashboardController extends Controller
     
     private function superAdminDashboard()
     {
-        // Simple SuperAdmin stats
+        // Complete SuperAdmin stats with all required keys
         $stats = [
             'total_companies' => 0,
             'active_companies' => 0,
             'total_users' => 0,
             'total_projects' => 0,
+            'active_projects' => 0,  // Added missing key
+            'total_revenue' => 0,    // Added missing key
+        ];
+        
+        // Additional stats that might be used in superadmin dashboard
+        $companiesByStatus = [
+            'active' => 0,
+            'suspended' => 0,
+            'inactive' => 0,
         ];
         
         // Try to get stats safely
@@ -171,6 +180,12 @@ class DashboardController extends Controller
             $stats['active_companies'] = Company::where('status', 'active')->count();
             $stats['total_users'] = User::count();
             $stats['total_projects'] = Project::count();
+            $stats['active_projects'] = Project::whereIn('status', ['in_progress', 'pending'])->count();
+            
+            // Get companies by status
+            $companiesByStatus['active'] = Company::where('status', 'active')->count();
+            $companiesByStatus['suspended'] = Company::where('status', 'suspended')->count();
+            $companiesByStatus['inactive'] = Company::where('status', 'inactive')->count();
         } catch (\Exception $e) {
             // If there's any error, just use default stats
         }
@@ -183,6 +198,6 @@ class DashboardController extends Controller
             // If there's any error, just use empty array
         }
         
-        return view('superadmin.dashboard', compact('stats', 'recentCompanies'));
+        return view('superadmin.dashboard', compact('stats', 'recentCompanies', 'companiesByStatus'));
     }
 }
