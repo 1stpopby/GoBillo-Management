@@ -151,8 +151,32 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             \Log::error('Budget stats error: ' . $e->getMessage());
         }
+        
+        // Get recent projects for the company
+        $recentProjects = collect([]);
+        try {
+            $recentProjects = Project::where('company_id', $companyId)
+                ->latest()
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            \Log::error('Recent projects error: ' . $e->getMessage());
+        }
+        
+        // Get recent tasks for the company
+        $recentTasks = collect([]);
+        try {
+            $recentTasks = Task::whereHas('project', function($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })
+                ->latest()
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            \Log::error('Recent tasks error: ' . $e->getMessage());
+        }
 
-        return view('dashboard', compact('stats'));
+        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks'));
     }
     
     private function superAdminDashboard()
