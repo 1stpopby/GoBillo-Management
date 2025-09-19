@@ -42,7 +42,7 @@ class SiteController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('address', 'like', "%{$search}%")
                   ->orWhereHas('client', function ($clientQuery) use ($search) {
-                      $clientQuery->where('name', 'like', "%{$search}%");
+                      $clientQuery->where('company_name', 'like', "%{$search}%");
                   });
             });
         }

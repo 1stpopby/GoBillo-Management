@@ -26,7 +26,7 @@ class EstimateController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('estimate_number', 'like', "%{$search}%")
                   ->orWhereHas('client', function ($clientQuery) use ($search) {
-                      $clientQuery->where('name', 'like', "%{$search}%");
+                      $clientQuery->where('company_name', 'like', "%{$search}%");
                   });
             });
         }
@@ -55,7 +55,7 @@ class EstimateController extends Controller
         }
 
         // Get filter options
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
 
         return view('estimates.index', compact('estimates', 'clients', 'projects'));
@@ -66,7 +66,7 @@ class EstimateController extends Controller
      */
     public function create(Request $request)
     {
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
         $templates = EstimateTemplate::forCompany()->active()->orderBy('name')->get();
 
@@ -162,7 +162,7 @@ class EstimateController extends Controller
         }
 
         $estimate->load('items');
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
 
         return view('estimates.edit', compact('estimate', 'clients', 'projects'));

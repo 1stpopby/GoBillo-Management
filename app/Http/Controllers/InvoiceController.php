@@ -37,7 +37,7 @@ class InvoiceController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('invoice_number', 'like', "%{$search}%")
                   ->orWhereHas('client', function ($clientQuery) use ($search) {
-                      $clientQuery->where('name', 'like', "%{$search}%");
+                      $clientQuery->where('company_name', 'like', "%{$search}%");
                   });
             });
         }
@@ -65,7 +65,7 @@ class InvoiceController extends Controller
         $invoices = $query->latest()->paginate(15);
 
         // Get filter options
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
 
         return view('invoices.index', compact('invoices', 'clients', 'projects', 'invoiceType'));
@@ -146,7 +146,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
 
         return view('invoices.create', compact('clients', 'projects'));
@@ -230,7 +230,7 @@ class InvoiceController extends Controller
         }
 
         $invoice->load('items');
-        $clients = Client::forCompany()->orderBy('name')->get();
+        $clients = Client::forCompany()->orderBy('company_name')->get();
         $projects = Project::forCompany()->orderBy('name')->get();
 
         return view('invoices.edit', compact('invoice', 'clients', 'projects'));

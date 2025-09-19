@@ -31,7 +31,7 @@ class HealthSafetyController extends Controller
         $stats = [
             'active_rams' => HealthSafetyRams::where('company_id', $companyId)
                 ->where('status', 'approved')
-                ->where('valid_to', '>=', now())
+                ->where('valid_until', '>=', now())
                 ->count(),
             
             'toolbox_talks_month' => HealthSafetyToolboxTalk::where('company_id', $companyId)
@@ -138,7 +138,7 @@ class HealthSafetyController extends Controller
         // RAMS expiring soon
         $expiringRams = HealthSafetyRams::where('company_id', $companyId)
             ->where('status', 'approved')
-            ->whereBetween('valid_to', [now(), now()->addDays(30)])
+            ->whereBetween('valid_until', [now(), now()->addDays(30)])
             ->with('site')
             ->get()
             ->map(function ($ram) {
@@ -146,8 +146,8 @@ class HealthSafetyController extends Controller
                     'type' => 'RAMS Expiring',
                     'title' => $ram->title,
                     'location' => $ram->site ? $ram->site->name : 'General',
-                    'date' => $ram->valid_to,
-                    'days_remaining' => now()->diffInDays($ram->valid_to),
+                    'date' => $ram->valid_until,
+                    'days_remaining' => now()->diffInDays($ram->valid_until),
                     'color' => 'warning'
                 ];
             });
