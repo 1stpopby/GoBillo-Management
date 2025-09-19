@@ -25,27 +25,133 @@ class DashboardController extends Controller
     
     private function companyDashboard()
     {
-        // Hardcoded stats to test if the view rendering is the issue
+        // Initialize ALL stats the view expects - this ensures no "undefined array key" errors
         $stats = [
-            'total_projects' => 5,
-            'active_projects' => 3,
-            'total_tasks' => 15,
-            'completed_tasks' => 10,
-            'pending_tasks' => 5,
-            'in_progress_tasks' => 3,
-            'overdue_tasks' => 2,
-            'total_sites' => 2,
-            'team_members' => 8,
-            'total_clients' => 4,
-            'monthly_revenue' => 25000,
-            'pending_invoices' => 5500,
-            'completion_rate' => 60,
-            'task_efficiency' => 67,
-            'budget_utilization' => 75,
-            'used_budget' => 75000,
-            'total_budget' => 100000,
+            'total_projects' => 0,
+            'active_projects' => 0,
+            'total_tasks' => 0,
+            'completed_tasks' => 0,
+            'pending_tasks' => 0,
+            'in_progress_tasks' => 0,
+            'overdue_tasks' => 0,
+            'total_sites' => 0,
+            'team_members' => 0,
+            'total_clients' => 0,
+            'monthly_revenue' => 0,
+            'pending_invoices' => 0,
+            'completion_rate' => 0,
+            'task_efficiency' => 0,
+            'budget_utilization' => 0,
+            'used_budget' => 0,
+            'total_budget' => 0,
         ];
+
+        // Get authenticated user
+        $user = auth()->user();
         
+        // Only proceed if user has a company_id
+        if (!$user || !$user->company_id) {
+            return view('dashboard', compact('stats'));
+        }
+        
+        $companyId = $user->company_id;
+        
+        // Get real data from database with proper error handling
+        try {
+            // Project statistics
+            $stats['total_projects'] = Project::where('company_id', $companyId)->count();
+            $stats['active_projects'] = Project::where('company_id', $companyId)
+                ->whereNotIn('status', ['completed', 'cancelled'])->count();
+            
+            // Basic completion rate
+            if ($stats['total_projects'] > 0) {
+                $completedProjects = Project::where('company_id', $companyId)->where('status', 'completed')->count();
+                $stats['completion_rate'] = round(($completedProjects / $stats['total_projects']) * 100, 1);
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Project stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Team statistics
+            $stats['team_members'] = User::where('company_id', $companyId)->count();
+        } catch (\Exception $e) {
+            \Log::error('User stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Client statistics
+            $stats['total_clients'] = Client::where('company_id', $companyId)->count();
+        } catch (\Exception $e) {
+            \Log::error('Client stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Task statistics (only if Task model exists and has the required columns)
+            if (class_exists('App\Models\Task')) {
+                $stats['total_tasks'] = Task::where('company_id', $companyId)->count();
+                $stats['completed_tasks'] = Task::where('company_id', $companyId)->where('status', 'completed')->count();
+                $stats['pending_tasks'] = Task::where('company_id', $companyId)->where('status', 'pending')->count();
+                $stats['in_progress_tasks'] = Task::where('company_id', $companyId)->where('status', 'in_progress')->count();
+                
+                // Calculate task efficiency
+                if ($stats['total_tasks'] > 0) {
+                    $stats['task_efficiency'] = round(($stats['completed_tasks'] / $stats['total_tasks']) * 100, 1);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Task stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Site statistics (only if Site model exists)
+            if (class_exists('App\Models\Site')) {
+                $stats['total_sites'] = \App\Models\Site::where('company_id', $companyId)->count();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Site stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Financial statistics (only if Invoice model exists)
+            if (class_exists('App\Models\Invoice')) {
+                // Monthly revenue - invoices paid this month
+                $stats['monthly_revenue'] = \App\Models\Invoice::where('company_id', $companyId)
+                    ->where('status', 'paid')
+                    ->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year)
+                    ->sum('amount');
+                
+                // Pending invoices amount
+                $stats['pending_invoices'] = \App\Models\Invoice::where('company_id', $companyId)
+                    ->whereIn('status', ['pending', 'sent'])
+                    ->sum('amount');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Invoice stats error: ' . $e->getMessage());
+        }
+        
+        try {
+            // Budget statistics (only if ProjectExpense model exists)
+            if (class_exists('App\Models\ProjectExpense')) {
+                // Calculate used budget from project expenses
+                $stats['used_budget'] = \App\Models\ProjectExpense::whereHas('project', function($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })->sum('amount');
+                
+                // Get total budget from projects
+                $stats['total_budget'] = Project::where('company_id', $companyId)->sum('budget');
+                
+                // Calculate budget utilization percentage
+                if ($stats['total_budget'] > 0) {
+                    $stats['budget_utilization'] = round(($stats['used_budget'] / $stats['total_budget']) * 100, 1);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Budget stats error: ' . $e->getMessage());
+        }
+
         return view('dashboard', compact('stats'));
     }
     
