@@ -8,6 +8,7 @@ use App\Models\Site;
 use App\Models\EmployeeSiteAllocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
@@ -245,8 +246,9 @@ class EmployeeController extends Controller
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('employees')->where('company_id', auth()->user()->company_id)
+                'unique:users,email'
             ],
+            'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female,other',
@@ -295,8 +297,24 @@ class EmployeeController extends Controller
         $employee = \DB::transaction(function () use ($request, $avatarPath, $skills, $certifications, $qualifications) {
             $employeeId = $this->generateEmployeeId(auth()->user()->company_id);
             
+            // First create the User record for login
+            $user = \App\Models\User::create([
+                'company_id' => auth()->user()->company_id,
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => $request->password,
+                'role' => $request->role,
+                'phone' => $request->phone,
+                'avatar' => $avatarPath,
+                'is_active' => true,
+            ]);
+            
+            // Then create the Employee record linked to the User
             return Employee::create([
             'company_id' => auth()->user()->company_id,
+            'user_id' => $user->id,
             'employee_id' => $employeeId,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
