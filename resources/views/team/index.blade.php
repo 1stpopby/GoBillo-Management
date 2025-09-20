@@ -200,14 +200,13 @@
                             </div>
                         </div>
                     </div>
-                        <div class="p-3 bg-light rounded">
-                            <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
-                                <div class="progress-bar bg-success" role="progressbar" 
-                                     style="width: 100%; border-radius: 4px;"></div>
-                            </div>
-                            <div class="text-center">
-                                <small class="text-muted fw-medium">100% Completed</small>
-                            </div>
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: 100%; border-radius: 4px;"></div>
+                        </div>
+                        <div class="text-center">
+                            <small class="text-muted fw-medium">100% Completed</small>
                         </div>
                     </div>
                 </div>
@@ -235,14 +234,13 @@
                             </div>
                         </div>
                     </div>
-                        <div class="p-3 bg-light rounded">
-                            <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
-                                <div class="progress-bar bg-info" role="progressbar" 
-                                     style="width: {{ $metrics['cis_applicable_operatives'] > 0 ? 100 : 0 }}%; border-radius: 4px;"></div>
-                            </div>
-                            <div class="text-center">
-                                <small class="text-muted fw-medium">{{ $metrics['cis_applicable_operatives'] }} Registered</small>
-                            </div>
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: {{ $metrics['cis_applicable_operatives'] > 0 ? 100 : 0 }}%; border-radius: 4px;"></div>
+                        </div>
+                        <div class="text-center">
+                            <small class="text-muted fw-medium">{{ $metrics['cis_applicable_operatives'] }} Registered</small>
                         </div>
                     </div>
                 </div>
