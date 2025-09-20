@@ -312,13 +312,21 @@ class SiteController extends Controller
                 ->sum('amount') ?? 0;
             $total_expenses += $project_expenses;
             
-            // Sum paid invoices for this project (assuming invoices table exists)
-            // This would include payments to subcontractors, operatives, managers, etc.
-            $project_invoices = \App\Models\Invoice::where('project_id', $project->id)
+            // Sum paid operative invoices for this project (payments to operatives/contractors)
+            $project_operative_invoices = \App\Models\OperativeInvoice::where('project_id', $project->id)
                 ->where('status', 'paid')
-                ->sum('total_amount') ?? 0;
-            $total_invoices_paid += $project_invoices;
+                ->sum('net_amount') ?? 0;
+            $total_invoices_paid += $project_operative_invoices;
         }
+        
+        // Also include any expenses directly associated with the site (not project-specific)
+        $site_expenses = \App\Models\Expense::where('company_id', $site->company_id)
+            ->where('status', 'approved')
+            ->whereHas('project', function($query) use ($site) {
+                $query->where('site_id', $site->id);
+            })
+            ->sum('amount') ?? 0;
+        $total_expenses += $site_expenses;
         
         $total_direct_costs = $total_expenses + $total_invoices_paid;
         
