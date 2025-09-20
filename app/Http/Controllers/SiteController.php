@@ -157,7 +157,8 @@ class SiteController extends Controller
 
         // For site managers, only allow access to sites they manage
         if (in_array(auth()->user()->role, ['site_manager', 'project_manager'])) {
-            if ($site->manager_id !== auth()->id()) {
+            $hasAccess = $site->activeManagers()->where('users.id', auth()->id())->exists();
+            if (!$hasAccess) {
                 abort(403, 'Access denied. You can only view sites allocated to you.');
             }
         }
@@ -312,10 +313,11 @@ class SiteController extends Controller
                 ->sum('amount') ?? 0;
             $total_expenses += $project_expenses;
             
-            // Sum paid operative invoices for this project (payments to operatives/contractors)
+            // Sum paid operative invoices for this project (including CIS costs paid to HMRC)
+            // Use gross_amount as it represents the full cost (net_amount + cis_deduction)
             $project_operative_invoices = \App\Models\OperativeInvoice::where('project_id', $project->id)
                 ->where('status', 'paid')
-                ->sum('net_amount') ?? 0;
+                ->sum('gross_amount') ?? 0;
             $total_invoices_paid += $project_operative_invoices;
         }
         
@@ -369,10 +371,12 @@ class SiteController extends Controller
             abort(403, 'Access denied. Only managers can access this section.');
         }
 
-        // Get sites where the user is the manager (direct assignment)
+        // Get sites where the user is assigned as a manager (via site_managers table)
         $query = Site::forCompany()
-            ->with(['client', 'projects', 'manager'])
-            ->where('manager_id', $user->id);
+            ->with(['client', 'projects', 'activeManagers'])
+            ->whereHas('activeManagers', function($managerQuery) use ($user) {
+                $managerQuery->where('users.id', $user->id);
+            });
 
         // Apply filters
         if ($request->filled('search')) {
@@ -400,7 +404,7 @@ class SiteController extends Controller
         $clientIds = $sites->pluck('client_id')->unique();
         $clients = Client::forCompany()->whereIn('id', $clientIds)->orderBy('company_name')->get();
 
-        return view('sites.index', compact('sites', 'clients'));
+        return view('manager.sites.index', compact('sites', 'clients'));
     }
 
     /**
