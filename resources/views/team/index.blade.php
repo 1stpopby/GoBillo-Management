@@ -141,7 +141,7 @@
     <div class="row g-4 mb-5">
         <!-- Certification Status -->
         <div class="col-lg-4">
-            <div class="metric-card-secondary">
+            <div class="metric-card-secondary h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-4">
                         <div class="metric-icon-sm bg-danger bg-opacity-10 text-danger me-3">
@@ -181,7 +181,7 @@
 
         <!-- Performance Overview -->
         <div class="col-lg-4">
-            <div class="metric-card-secondary">
+            <div class="metric-card-secondary h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-4">
                         <div class="metric-icon-sm bg-success bg-opacity-10 text-success me-3">
@@ -216,7 +216,7 @@
 
         <!-- CIS Overview -->
         <div class="col-lg-4">
-            <div class="metric-card-secondary">
+            <div class="metric-card-secondary h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-4">
                         <div class="metric-icon-sm bg-info bg-opacity-10 text-info me-3">
