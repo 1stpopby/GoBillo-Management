@@ -13,6 +13,9 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Operative Management**: Invoicing, data forms, hire requests
 
 ## Recent Changes (Sep 20, 2025)
+- **Enhanced Manager Site Views**: Updated manager site view to include all admin functionalities (project management, filtering, status updates, statistics) while excluding all financial data for proper role-based access control
+- **Complete Project Management**: Managers now have advanced project filtering, real-time status updates, archive management, and detailed project tables identical to admin functionality
+- **Visual Consistency**: Manager interface now matches admin design and functionality while maintaining strict separation of financial information
 - Fixed database column name issue: changed "assigned_user_id" to "assigned_to" in OperativeDashboardController
 - Resolved time_entries table schema mismatch by adding missing columns (clock_in, clock_out, site_id, notes, location, etc.)
 - Updated time_entries status enum to support TimeEntry model requirements (active, completed, approved, rejected)
