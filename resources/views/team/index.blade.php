@@ -192,11 +192,14 @@
                             <small class="text-muted">Task completion</small>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <div class="p-4 bg-success bg-opacity-10 rounded mb-4">
-                            <h3 class="text-success mb-3">{{ $metrics['completed_tasks_last_30_days'] }}</h3>
-                            <p class="text-muted mb-0">Tasks Completed</p>
+                    <div class="row text-center g-3">
+                        <div class="col-12">
+                            <div class="metric-stat p-3 bg-success bg-opacity-10 rounded">
+                                <h4 class="text-success mb-2">{{ $metrics['completed_tasks_last_30_days'] }}</h4>
+                                <small class="text-muted">Tasks Completed</small>
+                            </div>
                         </div>
+                    </div>
                         <div class="p-3 bg-light rounded">
                             <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
                                 <div class="progress-bar bg-success" role="progressbar" 
@@ -224,11 +227,14 @@
                             <small class="text-muted">Year to date</small>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <div class="p-4 bg-info bg-opacity-10 rounded mb-4">
-                            <h3 class="text-info mb-3">£{{ number_format($metrics['cis_deductions_this_year'], 0) }}</h3>
-                            <p class="text-muted mb-0">Total Deductions</p>
+                    <div class="row text-center g-3">
+                        <div class="col-12">
+                            <div class="metric-stat p-3 bg-info bg-opacity-10 rounded">
+                                <h4 class="text-info mb-2">£{{ number_format($metrics['cis_deductions_this_year'], 0) }}</h4>
+                                <small class="text-muted">Total Deductions</small>
+                            </div>
                         </div>
+                    </div>
                         <div class="p-3 bg-light rounded">
                             <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
                                 <div class="progress-bar bg-info" role="progressbar" 
