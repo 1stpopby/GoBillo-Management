@@ -181,8 +181,11 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     Route::post('sites/{site}/unarchive', [SiteController::class, 'unarchive'])->name('sites.unarchive');
     Route::post('sites/bulk-archive-completed', [SiteController::class, 'bulkArchiveCompleted'])->name('sites.bulk-archive-completed');
     
-    // Manager Sites - Sites allocated to the manager (using same UI as admin)
+    // Manager Sites - Sites allocated to the manager 
     Route::get('manager/sites', [SiteController::class, 'managerSites'])->name('manager.sites.index');
+    Route::get('manager/sites/{site}', [SiteController::class, 'managerShow'])->name('manager.sites.show');
+    Route::get('manager/sites/{site}/edit', [SiteController::class, 'managerEdit'])->name('manager.sites.edit');
+    Route::put('manager/sites/{site}', [SiteController::class, 'managerUpdate'])->name('manager.sites.update');
     
     // Projects Management  
     Route::resource('projects', ProjectController::class);

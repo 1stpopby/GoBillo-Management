@@ -408,6 +408,131 @@ class SiteController extends Controller
     }
 
     /**
+     * Show site details for manager
+     */
+    public function managerShow(Site $site)
+    {
+        $user = auth()->user();
+        
+        // Only managers can access this
+        if (!in_array($user->role, ['site_manager', 'project_manager', 'company_admin'])) {
+            abort(403, 'Access denied.');
+        }
+
+        // Ensure the site belongs to the current company
+        if ($site->company_id !== $user->company_id) {
+            abort(403);
+        }
+
+        // Ensure manager has access to this site
+        if (!in_array($user->role, ['company_admin'])) {
+            $hasAccess = $site->activeManagers()->where('users.id', $user->id)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Access denied. You can only view sites allocated to you.');
+            }
+        }
+
+        $site->load(['client', 'projects.tasks', 'projects.users', 'projects.manager', 'activeManagers']);
+
+        // Get site statistics
+        $stats = [
+            'total_projects' => $site->getTotalProjectsCount(),
+            'active_projects' => $site->getActiveProjectsCount(),
+            'completed_projects' => $site->getCompletedProjectsCount(),
+            'total_tasks' => $site->getTotalTasksCount()
+        ];
+
+        // Calculate financial statistics
+        $financial_stats = $this->calculateFinancialStats($site);
+
+        return view('manager.sites.show', compact('site', 'stats', 'financial_stats'));
+    }
+
+    /**
+     * Show the form for editing a site for manager
+     */
+    public function managerEdit(Site $site)
+    {
+        $user = auth()->user();
+        
+        // Only managers can access this
+        if (!in_array($user->role, ['site_manager', 'project_manager', 'company_admin'])) {
+            abort(403, 'Access denied.');
+        }
+
+        // Ensure the site belongs to the current company
+        if ($site->company_id !== $user->company_id) {
+            abort(403);
+        }
+
+        // Ensure manager has access to this site
+        if (!in_array($user->role, ['company_admin'])) {
+            $hasAccess = $site->activeManagers()->where('users.id', $user->id)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Access denied. You can only edit sites allocated to you.');
+            }
+        }
+
+        $clients = Client::forCompany()->orderBy('company_name')->get();
+        $managers = User::forCompany()
+            ->whereIn('role', [User::ROLE_COMPANY_ADMIN, User::ROLE_PROJECT_MANAGER, User::ROLE_SITE_MANAGER])
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('manager.sites.edit', compact('site', 'clients', 'managers'));
+    }
+
+    /**
+     * Update a site for manager
+     */
+    public function managerUpdate(Request $request, Site $site)
+    {
+        $user = auth()->user();
+        
+        // Only managers can access this
+        if (!in_array($user->role, ['site_manager', 'project_manager', 'company_admin'])) {
+            abort(403, 'Access denied.');
+        }
+
+        // Ensure the site belongs to the current company
+        if ($site->company_id !== $user->company_id) {
+            abort(403);
+        }
+
+        // Ensure manager has access to this site
+        if (!in_array($user->role, ['company_admin'])) {
+            $hasAccess = $site->activeManagers()->where('users.id', $user->id)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Access denied. You can only edit sites allocated to you.');
+            }
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:50',
+            'zip_code' => 'nullable|string|max:20',
+            'total_budget' => 'nullable|numeric|min:0',
+            'start_date' => 'nullable|date',
+            'expected_completion_date' => 'nullable|date|after_or_equal:start_date',
+            'status' => 'required|in:planning,active,on_hold,completed,cancelled',
+            'priority' => 'required|in:low,medium,high,urgent',
+        ]);
+
+        $site->update($request->only([
+            'name', 'client_id', 'description', 'address', 'city', 'state', 'zip_code',
+            'total_budget', 'start_date', 'expected_completion_date', 'status', 'priority'
+        ]));
+
+        return redirect()->route('manager.sites.show', $site)
+                        ->with('success', 'Site updated successfully.');
+    }
+
+    /**
      * Archive the specified site
      */
     public function archive(Site $site)
