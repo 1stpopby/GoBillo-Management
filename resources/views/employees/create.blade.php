@@ -85,6 +85,23 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                       id="password" name="password" required>
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="form-text text-muted">Minimum 8 characters required</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="password_confirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" 
+                                       id="password_confirmation" name="password_confirmation" required>
+                                <small class="form-text text-muted">Must match the password above</small>
+                            </div>
+
                             <div class="col-md-4">
                                 <label for="date_of_birth" class="form-label">Date of Birth</label>
                                 <input type="date" class="form-control @error('date_of_birth') is-invalid @enderror" 
