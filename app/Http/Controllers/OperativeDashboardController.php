@@ -28,7 +28,7 @@ class OperativeDashboardController extends Controller
 
         // Get user's tasks
         $myTasks = Task::where('company_id', $user->company_id)
-            ->where('assigned_user_id', $user->id)
+            ->where('assigned_to', $user->id)
             ->with(['project.site', 'taskCategory'])
             ->orderByRaw("
                 CASE 
@@ -120,7 +120,7 @@ class OperativeDashboardController extends Controller
         // Task statistics
         $taskStats = [
             'total_tasks' => Task::where('company_id', $companyId)->count(),
-            'my_tasks' => Task::where('company_id', $companyId)->where('assigned_user_id', $user->id)->count(),
+            'my_tasks' => Task::where('company_id', $companyId)->where('assigned_to', $user->id)->count(),
             'completed_tasks' => Task::where('company_id', $companyId)->where('status', 'completed')->count(),
             'overdue_tasks' => Task::where('company_id', $companyId)
                 ->where('status', '!=', 'completed')
