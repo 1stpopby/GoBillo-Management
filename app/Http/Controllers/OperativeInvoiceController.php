@@ -48,16 +48,9 @@ class OperativeInvoiceController extends Controller
             return redirect()->back()->with('error', 'Your day rate must be set by the company admin before creating invoices.');
         }
 
-        // Get only users with site manager role who are assigned to sites
-        $siteManagerIds = \DB::table('site_managers')
-            ->join('sites', 'site_managers.site_id', '=', 'sites.id')
-            ->where('sites.company_id', $user->company_id)
-            ->where('site_managers.is_active', true)
-            ->pluck('site_managers.manager_id');
-        
+        // Get all active site managers for the company
         $managers = User::where('company_id', $user->company_id)
             ->where('role', User::ROLE_SITE_MANAGER)
-            ->whereIn('id', $siteManagerIds)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
@@ -182,16 +175,9 @@ class OperativeInvoiceController extends Controller
             ->where('company_id', $user->company_id)
             ->first();
 
-        // Get only users with site manager role who are assigned to sites
-        $siteManagerIds = \DB::table('site_managers')
-            ->join('sites', 'site_managers.site_id', '=', 'sites.id')
-            ->where('sites.company_id', $user->company_id)
-            ->where('site_managers.is_active', true)
-            ->pluck('site_managers.manager_id');
-        
+        // Get all active site managers for the company
         $managers = User::where('company_id', $user->company_id)
             ->where('role', User::ROLE_SITE_MANAGER)
-            ->whereIn('id', $siteManagerIds)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
