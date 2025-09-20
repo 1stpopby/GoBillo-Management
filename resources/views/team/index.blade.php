@@ -167,12 +167,12 @@
                         </div>
                     </div>
                     <div class="mt-4 p-3 bg-light rounded">
-                        <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress mb-2" style="height: 8px; background-color: #e9ecef;">
                             <div class="progress-bar bg-success" role="progressbar" 
-                                 style="width: {{ $metrics['certification_compliance'] }}%"></div>
+                                 style="width: {{ $metrics['certification_compliance'] }}%; border-radius: 4px;"></div>
                         </div>
                         <div class="text-center">
-                            <small class="text-muted">{{ $metrics['certification_compliance'] }}% Compliant</small>
+                            <small class="text-muted fw-medium">{{ $metrics['certification_compliance'] }}% Compliant</small>
                         </div>
                     </div>
                 </div>
@@ -198,9 +198,10 @@
                             <p class="text-muted mb-0">Tasks Completed</p>
                         </div>
                         <div class="p-3 bg-light rounded">
-                            <span class="badge bg-success bg-opacity-20 text-success fs-6">
-                                <i class="bi bi-arrow-up me-2"></i>High Performance
-                            </span>
+                            <div class="status-indicator-bar bg-success bg-opacity-15 text-success rounded px-3 py-2">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span class="fw-medium">100% Completed</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -226,9 +227,10 @@
                             <p class="text-muted mb-0">Total Deductions</p>
                         </div>
                         <div class="p-3 bg-light rounded">
-                            <span class="badge bg-info bg-opacity-20 text-info fs-6">
-                                <i class="bi bi-shield-check me-2"></i>{{ $metrics['cis_applicable_operatives'] }} Registered
-                            </span>
+                            <div class="status-indicator-bar bg-info bg-opacity-15 text-info rounded px-3 py-2">
+                                <i class="bi bi-currency-pound me-2"></i>
+                                <span class="fw-medium">£{{ number_format($metrics['cis_deductions_this_year'], 0) }} Total Deductions</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -769,3 +771,30 @@
 </script>
 @endpush
 @endsection
+
+@push('styles')
+<style>
+.status-indicator-bar {
+    border: 1px solid rgba(var(--bs-info-rgb), 0.2);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    cursor: default !important;
+    pointer-events: none;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.status-indicator-bar:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.status-indicator-bar.bg-success {
+    border-color: rgba(var(--bs-success-rgb), 0.3);
+}
+
+.status-indicator-bar.bg-info {
+    border-color: rgba(var(--bs-info-rgb), 0.3);
+}
+</style>
+@endpush
