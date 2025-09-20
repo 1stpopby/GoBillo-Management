@@ -541,88 +541,6 @@
                     </div>
                 </form>
             </div>
-
-                    <!-- Desktop Financial Summary -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h6 class="card-title mb-0">
-                                <i class="bi bi-calculator me-2"></i>Financial Summary
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Day Rate</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">£</span>
-                                            <input type="text" class="form-control" id="day_rate_display_desktop" readonly>
-                                            <input type="hidden" id="day_rate_desktop" value="{{ $employee->day_rate ?? 0 }}">
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Total Hours</label>
-                                        <input type="text" class="form-control" id="total_hours_display_desktop" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Gross Amount</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">£</span>
-                                            <input type="text" class="form-control" id="gross_amount_display_desktop" readonly>
-                                            <input type="hidden" name="gross_amount" id="gross_amount_desktop">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="cis_applicable_desktop" 
-                                                   name="cis_applicable" {{ ($employee->cis_applicable ?? false) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="cis_applicable_desktop">
-                                                <strong>CIS Applicable</strong>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3" id="cis_section_desktop" style="display: none;">
-                                        <label class="form-label">CIS Rate (%)</label>
-                                        <div class="input-group">
-                                            <input type="number" step="0.01" class="form-control" id="cis_rate_desktop" 
-                                                   name="cis_rate" value="{{ $employee->cis_rate ?? 20 }}">
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3" id="cis_deduction_section_desktop" style="display: none;">
-                                        <label class="form-label">CIS Deduction</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">£</span>
-                                            <input type="text" class="form-control" id="cis_deduction_display_desktop" readonly>
-                                            <input type="hidden" name="cis_deduction" id="cis_deduction_desktop">
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label"><strong>Net Amount</strong></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">£</span>
-                                            <input type="text" class="form-control fw-bold" id="net_amount_display_desktop" readonly>
-                                            <input type="hidden" name="net_amount" id="net_amount_desktop">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desktop Form Actions -->
-                    <div class="d-flex gap-2 justify-content-end mt-4">
-                        <a href="{{ route('operative-dashboard') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-circle me-2"></i>Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle me-2"></i>Create Invoice
-                        </button>
-                    </div>
-                </form>
-            </div>
         </div>
 
         </div>
@@ -856,6 +774,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const dayRate = parseFloat(document.getElementById('day_rate').value) || 0;
     if (document.getElementById('day_rate_display')) {
         document.getElementById('day_rate_display').textContent = dayRate.toFixed(2);
+    }
+    
+    // Also populate desktop day rate display
+    const dayRateDesktop = parseFloat(document.getElementById('day_rate_desktop').value) || 0;
+    if (document.getElementById('day_rate_display_desktop')) {
+        document.getElementById('day_rate_display_desktop').value = dayRateDesktop.toFixed(2);
     }
 
     // Helper function to load sites for a manager
