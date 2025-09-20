@@ -12,7 +12,14 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Time Tracking**: Clock in/out, timesheet management
 - **Operative Management**: Invoicing, data forms, hire requests
 
-## Recent Changes (Sep 19, 2025)
+## Recent Changes (Sep 20, 2025)
+- Fixed database column name issue: changed "assigned_user_id" to "assigned_to" in OperativeDashboardController
+- Resolved time_entries table schema mismatch by adding missing columns (clock_in, clock_out, site_id, notes, location, etc.)
+- Updated time_entries status enum to support TimeEntry model requirements (active, completed, approved, rejected)
+- Fixed operative dashboard database errors - now loads correctly
+- Ensured time tracking functionality works with proper database schema
+
+## Previous Changes (Sep 19, 2025)
 - Successfully imported from GitHub and configured for Replit environment
 - Set up PHP 8.2 and Node.js 20 development environment
 - Configured PostgreSQL database with 90+ migration files
