@@ -181,7 +181,7 @@ class DashboardController extends Controller
     
     private function superAdminDashboard()
     {
-        // Complete SuperAdmin stats with all required keys
+        // Complete SuperAdmin stats with all required keys - Production Cache Refresh v1.1
         $stats = [
             'total_companies' => 0,
             'active_companies' => 0,
