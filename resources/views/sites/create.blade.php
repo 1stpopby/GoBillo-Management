@@ -144,7 +144,7 @@
                             <div class="col-md-6">
                                 <label for="total_budget" class="form-label">Total Budget</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">£</span>
+                                    <span class="input-group-text">{{ auth()->user()->company->getCurrencySymbol() }}</span>
                                     <input type="number" class="form-control @error('total_budget') is-invalid @enderror" 
                                            id="total_budget" name="total_budget" value="{{ old('total_budget') }}" 
                                            min="0" step="0.01">

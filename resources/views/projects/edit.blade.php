@@ -155,7 +155,7 @@
                             @enderror
                         </div>
                         <div class="col-md-4">
-                            <label for="budget" class="form-label">Budget ($)</label>
+                            <label for="budget" class="form-label">Budget ({{ auth()->user()->company->getCurrencySymbol() }})</label>
                             <input type="number" class="form-control @error('budget') is-invalid @enderror" 
                                    id="budget" name="budget" value="{{ old('budget', $project->budget) }}" 
                                    step="0.01" min="0" placeholder="0.00">

@@ -139,7 +139,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link d-flex align-items-center" id="financial-tab" data-bs-toggle="tab" data-bs-target="#financial" type="button" role="tab">
                                 <i class="bi bi-graph-up-arrow me-2"></i>Financial
-                                <span class="badge bg-success ms-1 badge-sm">£{{ number_format($financial_stats['actual_costs'] ?? 0, 0) }}</span>
+                                <span class="badge bg-success ms-1 badge-sm">{{ auth()->user()->company->formatCurrency($financial_stats['actual_costs'] ?? 0) }}</span>
                             </button>
                         </li>
                         @endif
@@ -758,7 +758,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted small mb-1">Total Expenses</p>
-                                                    <h4 class="mb-0 fw-bold">£{{ number_format($totalExpenses, 2) }}</h4>
+                                                    <h4 class="mb-0 fw-bold">{{ auth()->user()->company->formatCurrency($totalExpenses, 2) }}</h4>
                                                     <small class="text-muted">{{ $expenseCount }} {{ Str::plural('expense', $expenseCount) }}</small>
                                                 </div>
                                             </div>
@@ -774,7 +774,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted small mb-1">Approved</p>
-                                                    <h4 class="mb-0 fw-bold text-success">£{{ number_format($approvedExpenses, 2) }}</h4>
+                                                    <h4 class="mb-0 fw-bold text-success">{{ auth()->user()->company->formatCurrency($approvedExpenses, 2) }}</h4>
                                                     <small class="text-muted">{{ $totalExpenses > 0 ? round(($approvedExpenses / $totalExpenses) * 100) : 0 }}% of total</small>
                                                 </div>
                                             </div>
@@ -790,7 +790,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted small mb-1">Pending</p>
-                                                    <h4 class="mb-0 fw-bold text-warning">£{{ number_format($pendingExpenses, 2) }}</h4>
+                                                    <h4 class="mb-0 fw-bold text-warning">{{ auth()->user()->company->formatCurrency($pendingExpenses, 2) }}</h4>
                                                     <small class="text-muted">Awaiting approval</small>
                                                 </div>
                                             </div>
@@ -806,7 +806,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted small mb-1">Average Expense</p>
-                                                    <h4 class="mb-0 fw-bold text-info">£{{ $expenseCount > 0 ? number_format($totalExpenses / $expenseCount, 2) : '0.00' }}</h4>
+                                                    <h4 class="mb-0 fw-bold text-info">{{ $expenseCount > 0 ? auth()->user()->company->formatCurrency($totalExpenses / $expenseCount, 2) : auth()->user()->company->formatCurrency(0, 2) }}</h4>
                                                     <small class="text-muted">Per transaction</small>
                                                 </div>
                                             </div>
@@ -1080,7 +1080,7 @@
                                             <div class="financial-icon bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                                 <i class="bi bi-boxes text-primary fs-4"></i>
                                             </div>
-                                            <h3 class="h4 mb-2">£{{ number_format($materialsCost, 2) }}</h3>
+                                            <h3 class="h4 mb-2">{{ auth()->user()->company->formatCurrency($materialsCost, 2) }}</h3>
                                             <p class="text-muted mb-0">Materials & Supplies</p>
                                             <small class="text-muted">{{ $projectExpenses->where('category', 'materials')->count() }} transactions</small>
                                         </div>
@@ -1093,7 +1093,7 @@
                                             <div class="financial-icon bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                                 <i class="bi bi-tools text-warning fs-4"></i>
                                             </div>
-                                            <h3 class="h4 mb-2">£{{ number_format($toolsCost, 2) }}</h3>
+                                            <h3 class="h4 mb-2">{{ auth()->user()->company->formatCurrency($toolsCost, 2) }}</h3>
                                             <p class="text-muted mb-0">Tool Hire</p>
                                             <small class="text-muted">{{ $toolHires->count() }} hire requests</small>
                                         </div>
@@ -1106,7 +1106,7 @@
                                             <div class="financial-icon bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                                 <i class="bi bi-people text-success fs-4"></i>
                                             </div>
-                                            <h3 class="h4 mb-2">£{{ number_format($laborCost, 2) }}</h3>
+                                            <h3 class="h4 mb-2">{{ auth()->user()->company->formatCurrency($laborCost, 2) }}</h3>
                                             <p class="text-muted mb-0">Labor Costs</p>
                                             <small class="text-muted">{{ $operativeInvoices->count() }} operative invoices</small>
                                         </div>
@@ -1119,7 +1119,7 @@
                                             <div class="financial-icon bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                                 <i class="bi bi-receipt text-info fs-4"></i>
                                             </div>
-                                            <h3 class="h4 mb-2">£{{ number_format($otherCosts, 2) }}</h3>
+                                            <h3 class="h4 mb-2">{{ auth()->user()->company->formatCurrency($otherCosts, 2) }}</h3>
                                             <p class="text-muted mb-0">Other Expenses</p>
                                             <small class="text-muted">{{ $projectExpenses->whereNotIn('category', ['materials'])->count() }} items</small>
                                         </div>
@@ -1149,15 +1149,15 @@
                                             <div class="row text-center">
                                                 <div class="col-4">
                                                     <div class="text-muted small">Total Budget</div>
-                                                    <div class="fw-bold">£{{ number_format($projectBudget, 2) }}</div>
+                                                    <div class="fw-bold">{{ auth()->user()->company->formatCurrency($projectBudget, 2) }}</div>
                                                 </div>
                                                 <div class="col-4">
                                                     <div class="text-muted small">Spent</div>
-                                                    <div class="fw-bold text-{{ $budgetUsedPercent > 90 ? 'danger' : 'primary' }}">£{{ number_format($totalProjectCost, 2) }}</div>
+                                                    <div class="fw-bold text-{{ $budgetUsedPercent > 90 ? 'danger' : 'primary' }}">{{ auth()->user()->company->formatCurrency($totalProjectCost, 2) }}</div>
                                                 </div>
                                                 <div class="col-4">
                                                     <div class="text-muted small">Remaining</div>
-                                                    <div class="fw-bold text-{{ $remainingBudget < 0 ? 'danger' : 'success' }}">£{{ number_format($remainingBudget, 2) }}</div>
+                                                    <div class="fw-bold text-{{ $remainingBudget < 0 ? 'danger' : 'success' }}">{{ auth()->user()->company->formatCurrency($remainingBudget, 2) }}</div>
                                                 </div>
                                             </div>
                                         </div>
