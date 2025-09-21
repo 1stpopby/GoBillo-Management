@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Get Started - GoBillo Construction Management</title>
+    <title>Get Started - ProMax Team Construction Management</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -359,7 +359,7 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="bi bi-building me-2"></i>GoBillo
+                <i class="bi bi-building me-2"></i>ProMax Team
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -404,7 +404,7 @@
                         Transform Your Construction Business
                     </h1>
                     <p class="hero-subtitle fade-in fade-in-delay-1">
-                        Join thousands of construction companies using GoBillo to streamline operations, manage projects, and grow their business.
+                        Join thousands of construction companies using ProMax Team to streamline operations, manage projects, and grow their business.
                     </p>
                     
                     <ul class="hero-features fade-in fade-in-delay-2">
@@ -544,7 +544,7 @@
         <div class="container">
             <div class="row text-center mb-5">
                 <div class="col-lg-8 mx-auto">
-                    <h2 class="display-5 fw-bold text-dark mb-3">Why Choose GoBillo?</h2>
+                    <h2 class="display-5 fw-bold text-dark mb-3">Why Choose ProMax Team?</h2>
                     <p class="lead text-muted">Everything you need to manage your construction business in one powerful platform</p>
                 </div>
             </div>
@@ -680,7 +680,7 @@
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <h5 class="fw-bold mb-3">
-                        <i class="bi bi-building me-2"></i>GoBillo
+                        <i class="bi bi-building me-2"></i>ProMax Team
                     </h5>
                     <p class="text-light opacity-75 mb-3">
                         The complete construction management platform trusted by thousands of construction professionals worldwide.

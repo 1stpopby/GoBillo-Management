@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') - {{ config('app.name', 'GoBillo') }}</title>
+    <title>@yield('title') - {{ config('app.name', 'ProMax Team') }}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -430,7 +430,7 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <i class="bi bi-building"></i> GoBillo
+                <i class="bi bi-building"></i> ProMax Team
             </a>
 
             <div class="d-flex align-items-center ms-auto">

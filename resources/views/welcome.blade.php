@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'GoBillo') }} - Professional Construction Management</title>
+    <title>{{ config('app.name', 'ProMax Team') }} - Professional Construction Management</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -341,7 +341,7 @@
     <nav class="navbar navbar-expand-lg" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-buildings me-2"></i>GoBillo
+                <i class="bi bi-buildings me-2"></i>ProMax Team
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -541,7 +541,7 @@
             <div class="row">
                 <div class="col-lg-8 mx-auto text-center">
                     <h2>Ready to Transform Your Construction Management?</h2>
-                    <p>Join hundreds of construction companies who trust GoBillo to manage their projects efficiently.</p>
+                    <p>Join hundreds of construction companies who trust ProMax Team to manage their projects efficiently.</p>
                     @auth
                         <a href="{{ url('/dashboard') }}" class="btn btn-white btn-lg">
                             <i class="bi bi-speedometer2 me-2"></i>Access Dashboard
@@ -561,7 +561,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <h5><i class="bi bi-buildings me-2"></i>GoBillo</h5>
+                    <h5><i class="bi bi-buildings me-2"></i>ProMax Team</h5>
                     <p>Professional construction management platform designed to streamline your projects and boost productivity.</p>
                     <div class="social-links">
                         <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>
@@ -613,7 +613,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; {{ date('Y') }} GoBillo. All rights reserved. Built with ❤️ for construction professionals.</p>
+                <p>&copy; {{ date('Y') }} ProMax Team. All rights reserved. Built with ❤️ for construction professionals.</p>
             </div>
         </div>
     </footer>
