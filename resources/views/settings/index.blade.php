@@ -275,7 +275,7 @@
         <!-- Save Button -->
         @if(auth()->user()->isCompanyAdmin())
             <div class="text-center mt-4 mb-5">
-                <button type="submit" class="btn btn-primary btn-lg px-5" onclick="alert('Button clicked! Form should submit now...');">
+                <button type="submit" class="btn btn-primary btn-lg px-5" id="saveButton">
                     <i class="bi bi-check-circle me-2"></i>Save Company Settings
                 </button>
             </div>
@@ -290,7 +290,30 @@
     </form>
 </div>
 
-{{-- Temporarily removing all JavaScript to test form submission --}}
+@push('scripts')
+<script>
+// Simple form submission debug
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('settingsForm');
+    const saveButton = document.getElementById('saveButton');
+    
+    if (saveButton) {
+        saveButton.addEventListener('click', function(e) {
+            console.log('Save button clicked');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Saving...';
+            
+            // Let the form submit normally
+            setTimeout(() => {
+                if (form) {
+                    form.submit();
+                }
+            }, 100);
+        });
+    }
+});
+</script>
+@endpush
 
 @push('styles')
 <style>
