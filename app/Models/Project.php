@@ -262,6 +262,24 @@ class Project extends Model
         };
     }
 
+    public function getCompletionPercentage(): int
+    {
+        // If project has a progress field set, use it
+        if ($this->progress !== null && $this->progress >= 0 && $this->progress <= 100) {
+            return (int) $this->progress;
+        }
+
+        // Otherwise calculate based on completed tasks
+        $totalTasks = $this->total_tasks_count;
+        
+        if ($totalTasks === 0) {
+            return 0;
+        }
+
+        $completedTasks = $this->completed_tasks_count;
+        return (int) round(($completedTasks / $totalTasks) * 100);
+    }
+
     /**
      * Get all valid status values
      */
