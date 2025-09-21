@@ -53,7 +53,7 @@
                                     <i class="bi bi-currency-dollar fs-2 opacity-75"></i>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['site_budget'], 0) }}</div>
+                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['site_budget']) }}</div>
                                     <div class="small opacity-75">Total Site Budget</div>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                                     <i class="bi bi-cash-stack fs-2 opacity-75"></i>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['total_projects_revenue'], 0) }}</div>
+                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['total_projects_revenue']) }}</div>
                                     <div class="small opacity-75">Total Projects Revenue</div>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                                     <i class="bi bi-receipt fs-2 opacity-75"></i>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['total_direct_costs'], 0) }}</div>
+                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['total_direct_costs']) }}</div>
                                     <div class="small opacity-75">Direct Costs</div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                                     <i class="bi bi-{{ $financial_stats['remaining_budget'] >= 0 ? 'piggy-bank' : 'exclamation-triangle' }} fs-2 opacity-75"></i>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['remaining_budget'], 0) }}</div>
+                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['remaining_budget']) }}</div>
                                     <div class="small opacity-75">Remaining Budget</div>
                                 </div>
                             </div>
@@ -118,16 +118,16 @@
                             <h6 class="card-title mb-2">Cost Breakdown</h6>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted small">Expenses:</span>
-                                <span class="fw-semibold small">${{ number_format($financial_stats['total_expenses'], 0) }}</span>
+                                <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_expenses']) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted small">Invoices Paid:</span>
-                                <span class="fw-semibold small">${{ number_format($financial_stats['total_invoices_paid'], 0) }}</span>
+                                <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_invoices_paid']) }}</span>
                             </div>
                             <hr class="my-2">
                             <div class="d-flex justify-content-between">
                                 <span class="fw-bold small">Total Direct Costs:</span>
-                                <span class="fw-bold small">${{ number_format($financial_stats['total_direct_costs'], 0) }}</span>
+                                <span class="fw-bold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_direct_costs']) }}</span>
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                             <h6 class="card-title mb-2">Financial Analysis</h6>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted small">Projects Revenue:</span>
-                                <span class="fw-semibold small">${{ number_format($financial_stats['total_projects_revenue'], 0) }}</span>
+                                <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_projects_revenue']) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted small">Profit Margin:</span>
@@ -159,13 +159,13 @@
                                 <hr class="my-2">
                                 <div class="d-flex justify-content-between">
                                     <span class="text-muted small">Site Budget (Guidance):</span>
-                                    <span class="fw-semibold small text-muted">${{ number_format($financial_stats['site_budget'], 0) }}</span>
+                                    <span class="fw-semibold small text-muted">{{ auth()->user()->company->formatCurrency($financial_stats['site_budget']) }}</span>
                                 </div>
                                 @if($financial_stats['budget_variance'] != 0)
                                     <div class="d-flex justify-content-between">
                                         <span class="text-muted small">Budget Variance:</span>
                                         <span class="fw-semibold small text-{{ $financial_stats['budget_variance'] >= 0 ? 'success' : 'warning' }}">
-                                            {{ $financial_stats['budget_variance'] >= 0 ? '+' : '' }}${{ number_format($financial_stats['budget_variance'], 0) }}
+                                            {{ $financial_stats['budget_variance'] >= 0 ? '+' : '' }}{{ auth()->user()->company->formatCurrency($financial_stats['budget_variance']) }}
                                             ({{ $financial_stats['budget_variance'] >= 0 ? '+' : '' }}{{ number_format($financial_stats['budget_variance_percentage'], 1) }}%)
                                         </span>
                                     </div>
@@ -323,7 +323,7 @@
                                             </td>
                                             <td>
                                                 @if($project->budget)
-                                                    <span class="fw-semibold">${{ number_format($project->budget, 0) }}</span>
+                                                    <span class="fw-semibold">{{ auth()->user()->company->formatCurrency($project->budget) }}</span>
                                                 @else
                                                     <span class="text-muted">Not set</span>
                                                 @endif
@@ -431,7 +431,7 @@
                             <div class="col-12">
                                 <div class="detail-group mb-2">
                                     <label class="detail-label small">Total Budget</label>
-                                    <div class="detail-value small fw-bold text-success">${{ number_format($site->total_budget, 0) }}</div>
+                                    <div class="detail-value small fw-bold text-success">{{ auth()->user()->company->formatCurrency($site->total_budget) }}</div>
                                 </div>
                             </div>
                         @endif

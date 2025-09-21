@@ -43,7 +43,7 @@
                                                     <i class="bi bi-currency-dollar fs-2 opacity-75"></i>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['project_budget'], 0) }}</div>
+                                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['project_budget']) }}</div>
                                                     <div class="small opacity-75">Project Budget</div>
                                                 </div>
                                             </div>
@@ -59,7 +59,7 @@
                                                     <i class="bi bi-receipt fs-2 opacity-75"></i>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <div class="fs-6 fw-bold">${{ number_format($financial_stats['actual_costs'], 0) }}</div>
+                                                    <div class="fs-6 fw-bold">{{ auth()->user()->company->formatCurrency($financial_stats['actual_costs']) }}</div>
                                                     <div class="small opacity-75">Actual Costs</div>
                                                 </div>
                                             </div>
@@ -1983,16 +1983,16 @@
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted small">Expenses:</span>
-                        <span class="fw-semibold small">${{ number_format($financial_stats['total_expenses'], 0) }}</span>
+                        <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_expenses']) }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted small">Invoices Paid:</span>
-                        <span class="fw-semibold small">${{ number_format($financial_stats['total_invoices_paid'], 0) }}</span>
+                        <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['total_invoices_paid']) }}</span>
                     </div>
                     <hr class="my-2">
                     <div class="d-flex justify-content-between">
                         <span class="fw-bold small">Total Actual Costs:</span>
-                        <span class="fw-bold small text-primary">${{ number_format($financial_stats['actual_costs'], 0) }}</span>
+                        <span class="fw-bold small text-primary">{{ auth()->user()->company->formatCurrency($financial_stats['actual_costs']) }}</span>
                     </div>
                         </div>
                     </div>
@@ -2007,12 +2007,12 @@
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted small">Project Budget:</span>
-                        <span class="fw-semibold small">${{ number_format($financial_stats['project_budget'], 0) }}</span>
+                        <span class="fw-semibold small">{{ auth()->user()->company->formatCurrency($financial_stats['project_budget']) }}</span>
                                 </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted small">Remaining:</span>
                         <span class="fw-semibold small text-{{ $financial_stats['remaining_budget'] >= 0 ? 'success' : 'danger' }}">
-                            ${{ number_format(abs($financial_stats['remaining_budget']), 0) }}
+                            {{ auth()->user()->company->formatCurrency(abs($financial_stats['remaining_budget'])) }}
                             @if($financial_stats['remaining_budget'] < 0)
                                 <i class="bi bi-exclamation-triangle ms-1"></i>
                             @endif
@@ -2033,7 +2033,7 @@
                         <div class="alert alert-danger p-2 mb-0 budget-alert">
                             <small class="d-flex align-items-center">
                                 <i class="bi bi-exclamation-circle me-2"></i>
-                                Over budget by ${{ number_format($financial_stats['actual_costs'] - $financial_stats['project_budget'], 0) }}
+                                Over budget by {{ auth()->user()->company->formatCurrency($financial_stats['actual_costs'] - $financial_stats['project_budget']) }}
                             </small>
                             </div>
                     @else

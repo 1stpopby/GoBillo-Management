@@ -125,7 +125,7 @@
                         </div>
                         <div>
                             <p class="text-muted small mb-1">Total Budget</p>
-                            <h3 class="mb-0 fw-bold text-warning">£{{ number_format($totalBudget, 0) }}</h3>
+                            <h3 class="mb-0 fw-bold text-warning">{{ auth()->user()->company->formatCurrency($totalBudget) }}</h3>
                             <small class="text-muted">Combined value</small>
                         </div>
                     </div>
@@ -293,7 +293,7 @@
                                     </td>
                                     <td>
                                         @if($project->budget)
-                                            <span class="text-success fw-bold">${{ number_format($project->budget, 0) }}</span>
+                                            <span class="text-success fw-bold">{{ auth()->user()->company->formatCurrency($project->budget) }}</span>
                                         @else
                                             <span class="text-muted">Not set</span>
                                         @endif

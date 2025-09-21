@@ -277,6 +277,29 @@ class Company extends Model
         return $this->projects()->where('status', 'completed')->count();
     }
 
+    /**
+     * Get the currency symbol for this company
+     */
+    public function getCurrencySymbol(): string
+    {
+        return match($this->currency) {
+            'GBP' => '£',
+            'EUR' => '€',
+            'USD' => '$',
+            'CAD' => '$',
+            'AUD' => '$',
+            default => '£', // Default to GBP for UK construction companies
+        };
+    }
+
+    /**
+     * Format an amount with the company's currency symbol
+     */
+    public function formatCurrency(float $amount, int $decimals = 0): string
+    {
+        return $this->getCurrencySymbol() . number_format($amount, $decimals);
+    }
+
     // Boot method to auto-generate slug
     protected static function boot()
     {
