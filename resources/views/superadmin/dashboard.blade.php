@@ -10,6 +10,7 @@
         <div>
             <h1 class="h2 mb-1">
                 <i class="bi bi-shield-check text-danger me-2"></i>SuperAdmin Dashboard
+                <span class="badge bg-success ms-2">v1.1 LIVE</span>
             </h1>
             <p class="text-muted mb-0">Platform Overview & Company Management</p>
         </div>
