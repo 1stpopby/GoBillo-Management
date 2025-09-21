@@ -53,6 +53,13 @@ class ProjectPolicy
             return true;
         }
 
+        // Site managers can update projects in sites they manage
+        if ($project->site) {
+            return $project->site->activeManagers()
+                ->where('users.id', $user->id)
+                ->exists();
+        }
+        
         // Project manager assigned to this project can update it
         return $project->manager_id === $user->id;
     }

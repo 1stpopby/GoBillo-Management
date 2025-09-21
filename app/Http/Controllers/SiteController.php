@@ -20,7 +20,9 @@ class SiteController extends Controller
 
         // For site managers, only show sites they manage
         if (in_array(auth()->user()->role, ['site_manager', 'project_manager'])) {
-            $query->where('manager_id', auth()->id());
+            $query->whereHas('activeManagers', function($managerQuery) {
+                $managerQuery->where('users.id', auth()->id());
+            });
         }
 
         // Apply archived filter

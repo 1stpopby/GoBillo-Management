@@ -259,7 +259,16 @@ class ProjectController extends Controller
 
         // Site managers and project managers can view projects in sites they manage
         if (in_array($user->role, ['site_manager', 'project_manager'])) {
-            if (!$project->site || $project->site->manager_id !== $user->id) {
+            // Check if user is a manager of this project's site using the many-to-many relationship
+            $canAccessSite = false;
+            
+            if ($project->site) {
+                $canAccessSite = $project->site->activeManagers()
+                    ->where('users.id', $user->id)
+                    ->exists();
+            }
+            
+            if (!$canAccessSite) {
                 abort(403, 'Access denied. You can only view projects in sites allocated to you.');
             }
             

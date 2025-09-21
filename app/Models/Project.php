@@ -162,7 +162,9 @@ class Project extends Model
         // Site managers and project managers can only see projects in sites they manage
         if (in_array($user->role, ['site_manager', 'project_manager'])) {
             return $query->whereHas('site', function($siteQuery) use ($user) {
-                $siteQuery->where('manager_id', $user->id);
+                $siteQuery->whereHas('activeManagers', function($managerQuery) use ($user) {
+                    $managerQuery->where('users.id', $user->id);
+                });
             });
         }
 
