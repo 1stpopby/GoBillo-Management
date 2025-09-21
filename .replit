@@ -44,5 +44,5 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["php", "artisan", "serve", "--host=0.0.0.0", "--port=5000", "--env=production"]
+run = ["sh", "-c", "php artisan optimize:clear && DB_CONNECTION=pgsql DB_HOST=$PGHOST DB_PORT=$PGPORT DB_DATABASE=$PGDATABASE DB_USERNAME=$PGUSER DB_PASSWORD=$PGPASSWORD php artisan serve --host=0.0.0.0 --port=5000"]
 build = ["npm", "run", "build"]
