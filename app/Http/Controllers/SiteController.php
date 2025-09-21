@@ -16,7 +16,20 @@ class SiteController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Site::forCompany()->with(['client', 'projects']);
+        $query = Site::forCompany()
+            ->with(['client:id,company_name'])
+            ->withCount([
+                'projects', 
+                'projects as active_projects_count' => function($q) {
+                    $q->where('status', 'in_progress');
+                },
+                'projects as completed_projects_count' => function($q) {
+                    $q->where('status', 'completed');
+                },
+                'projects as archived_projects_count' => function($q) {
+                    $q->where('is_active', false);
+                }
+            ]);
 
         // For site managers, only show sites they manage
         if (in_array(auth()->user()->role, ['site_manager', 'project_manager'])) {
@@ -63,8 +76,12 @@ class SiteController extends Controller
 
         $sites = $query->latest()->paginate(12);
 
-        // Get filter options
-        $clients = Client::forCompany()->orderBy('company_name')->get();
+        // Get filter options with caching
+        $clients = \Illuminate\Support\Facades\Cache::remember(
+            'clients_filter_' . auth()->user()->company_id, 
+            300, // 5 minutes
+            fn() => Client::forCompany()->select('id', 'company_name')->orderBy('company_name')->get()
+        );
 
         return view('sites.index', compact('sites', 'clients'));
     }
@@ -74,12 +91,22 @@ class SiteController extends Controller
      */
     public function create()
     {
-        $clients = Client::forCompany()->orderBy('company_name')->get();
-        $managers = User::forCompany()
-            ->whereIn('role', [User::ROLE_COMPANY_ADMIN, User::ROLE_PROJECT_MANAGER, User::ROLE_SITE_MANAGER])
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+        $clients = \Illuminate\Support\Facades\Cache::remember(
+            'clients_filter_' . auth()->user()->company_id, 
+            300,
+            fn() => Client::forCompany()->select('id', 'company_name')->orderBy('company_name')->get()
+        );
+        
+        $managers = \Illuminate\Support\Facades\Cache::remember(
+            'managers_filter_' . auth()->user()->company_id, 
+            300,
+            fn() => User::forCompany()
+                ->select('id', 'name')
+                ->whereIn('role', [User::ROLE_COMPANY_ADMIN, User::ROLE_PROJECT_MANAGER, User::ROLE_SITE_MANAGER])
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get()
+        );
 
         return view('sites.create', compact('clients', 'managers'));
     }

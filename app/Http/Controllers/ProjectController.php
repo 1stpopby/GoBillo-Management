@@ -18,9 +18,17 @@ class ProjectController extends Controller
     {
         // Company admins and superadmins get full company visibility
         if (auth()->user()->isCompanyAdmin() || auth()->user()->isSuperAdmin()) {
-            $query = Project::forCompany()->with(['site', 'client', 'manager', 'tasks']);
+            $query = Project::forCompany()
+                ->with(['site:id,name', 'client:id,company_name', 'manager:id,name'])
+                ->withCount(['tasks', 'tasks as completed_tasks_count' => function($q) {
+                    $q->where('status', 'completed');
+                }]);
         } else {
-            $query = Project::forCompany()->visibleToUser()->with(['site', 'client', 'manager', 'tasks']);
+            $query = Project::forCompany()->visibleToUser()
+                ->with(['site:id,name', 'client:id,company_name', 'manager:id,name'])
+                ->withCount(['tasks', 'tasks as completed_tasks_count' => function($q) {
+                    $q->where('status', 'completed');
+                }]);
         }
 
         // Apply archived filter
@@ -58,8 +66,12 @@ class ProjectController extends Controller
 
         $projects = $query->latest()->paginate(15);
         
-        // Get filter options
-        $sites = \App\Models\Site::forCompany()->orderBy('name')->get();
+        // Get filter options with caching
+        $sites = \Illuminate\Support\Facades\Cache::remember(
+            'sites_filter_' . auth()->user()->company_id, 
+            300, // 5 minutes
+            fn() => \App\Models\Site::forCompany()->select('id', 'name')->orderBy('name')->get()
+        );
 
         return view('projects.index', compact('projects', 'sites'));
     }
