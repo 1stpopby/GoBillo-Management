@@ -43,6 +43,17 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// Production deployment test endpoint - v1.2
+Route::get('/deployment-test', function () {
+    return response()->json([
+        'status' => 'LIVE',
+        'version' => 'v1.2-FIXED',
+        'timestamp' => now()->toIsoString(),
+        'cache_cleared' => true,
+        'message' => 'Production deployment successfully updated!'
+    ]);
+});
+
 // Company Registration Routes (Public)
 Route::get('/get-started', [CompanyRegistrationController::class, 'showGetStarted'])->name('get-started');
 Route::post('/company/register', [CompanyRegistrationController::class, 'register'])->name('company.register');
