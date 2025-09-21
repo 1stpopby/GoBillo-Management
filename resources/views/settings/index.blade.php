@@ -275,7 +275,7 @@
         <!-- Save Button -->
         @if(auth()->user()->isCompanyAdmin())
             <div class="text-center mt-4 mb-5">
-                <button type="submit" class="btn btn-primary btn-lg px-5">
+                <button type="submit" class="btn btn-primary btn-lg px-5" onclick="alert('Button clicked! Form should submit now...');">
                     <i class="bi bi-check-circle me-2"></i>Save Company Settings
                 </button>
             </div>
@@ -290,143 +290,7 @@
     </form>
 </div>
 
-@push('scripts')
-<script>
-// Toggle VAT/UTR fields based on registration status
-const vatRegisteredElement = document.getElementById('is_vat_registered');
-const vatField = document.getElementById('vat_number');
-
-if (vatRegisteredElement && vatField) {
-    vatRegisteredElement.addEventListener('change', function() {
-        if (this.checked) {
-            vatField.setAttribute('required', 'required');
-        } else {
-            vatField.removeAttribute('required');
-        }
-    });
-}
-
-// Copy business address to registered address
-function copyBusinessAddress() {
-    const checkbox = document.getElementById('same_as_business');
-    if (!checkbox) return;
-    
-    const elements = {
-        address: document.getElementById('address'),
-        city: document.getElementById('city'),
-        state: document.getElementById('state'),
-        zip_code: document.getElementById('zip_code'),
-        country: document.getElementById('country'),
-        registered_address: document.getElementById('registered_address'),
-        registered_city: document.getElementById('registered_city'),
-        registered_state: document.getElementById('registered_state'),
-        registered_zip_code: document.getElementById('registered_zip_code'),
-        registered_country: document.getElementById('registered_country')
-    };
-    
-    // Only proceed if all elements exist
-    if (Object.values(elements).some(el => !el)) return;
-    
-    if (checkbox.checked) {
-        elements.registered_address.value = elements.address.value;
-        elements.registered_city.value = elements.city.value;
-        elements.registered_state.value = elements.state.value;
-        elements.registered_zip_code.value = elements.zip_code.value;
-        elements.registered_country.value = elements.country.value;
-    } else {
-        elements.registered_address.value = '';
-        elements.registered_city.value = '';
-        elements.registered_state.value = '';
-        elements.registered_zip_code.value = '';
-        elements.registered_country.value = '';
-    }
-}
-
-// Form validation and debug
-document.getElementById('settingsForm').addEventListener('submit', function(e) {
-    console.log('Form submit event triggered');
-    
-    const vatRegisteredElement = document.getElementById('is_vat_registered');
-    const vatNumberElement = document.getElementById('vat_number');
-    
-    // Only validate if both elements exist
-    if (vatRegisteredElement && vatNumberElement) {
-        const vatRegistered = vatRegisteredElement.checked;
-        const vatNumber = vatNumberElement.value.trim();
-        
-        if (vatRegistered && !vatNumber) {
-            console.log('VAT validation failed, preventing submit');
-            e.preventDefault();
-            alert('VAT Number is required when VAT Registered is checked.');
-            vatNumberElement.focus();
-            return false;
-        }
-    }
-    
-    console.log('Form validation passed, allowing submit');
-});
-
-// Debug: Add click listener to save button
-document.addEventListener('DOMContentLoaded', function() {
-    const saveButton = document.querySelector('button[type="submit"]');
-    if (saveButton) {
-        saveButton.addEventListener('click', function(e) {
-            console.log('Save button clicked');
-        });
-    }
-});
-
-// Logo preview
-const logoInput = document.getElementById('logo');
-if (logoInput) {
-    logoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.querySelector('.logo-preview img, .logo-preview .bg-light');
-                if (preview && preview.tagName === 'IMG') {
-                    preview.src = e.target.result;
-                } else if (preview) {
-                    preview.outerHTML = `<img src="${e.target.result}" alt="Company Logo" class="img-fluid rounded" style="max-height: 150px;">`;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
-
-// Auto-save draft
-let autoSaveTimeout;
-document.querySelectorAll('input, textarea, select').forEach(element => {
-    element.addEventListener('change', function() {
-        clearTimeout(autoSaveTimeout);
-        autoSaveTimeout = setTimeout(() => {
-            console.log('Auto-saving draft...');
-            // Could implement draft saving here
-        }, 2000);
-    });
-});
-
-// Tab persistence
-document.addEventListener('DOMContentLoaded', function() {
-    const activeTab = localStorage.getItem('activeSettingsTab');
-    if (activeTab) {
-        const tabTrigger = document.querySelector(`[data-bs-target="${activeTab}"]`);
-        if (tabTrigger) {
-            const tab = new bootstrap.Tab(tabTrigger);
-            tab.show();
-        }
-    }
-});
-
-document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-    tab.addEventListener('shown.bs.tab', function(e) {
-        localStorage.setItem('activeSettingsTab', e.target.getAttribute('data-bs-target'));
-    });
-});
-</script>
-@endpush
+{{-- Temporarily removing all JavaScript to test form submission --}}
 
 @push('styles')
 <style>
