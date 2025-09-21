@@ -1,13 +1,85 @@
             <!-- Contact Details Tab -->
             <div class="tab-pane fade" id="contact" role="tabpanel">
                 <div class="row g-4">
+                    <!-- Primary Contact -->
                     <div class="col-lg-6">
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Primary Contact</h5>
                             </div>
                             <div class="card-body">
-                                <p>Contact details form will be here.</p>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="primary_contact_name" class="form-label">Contact Name</label>
+                                        <input type="text" class="form-control" id="primary_contact_name" name="primary_contact_name" value="{{ old('primary_contact_name', $company->primary_contact_name) }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="primary_contact_title" class="form-label">Job Title</label>
+                                        <input type="text" class="form-control" id="primary_contact_title" name="primary_contact_title" value="{{ old('primary_contact_title', $company->primary_contact_title) }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="primary_contact_email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="primary_contact_email" name="primary_contact_email" value="{{ old('primary_contact_email', $company->primary_contact_email) }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="primary_contact_phone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="primary_contact_phone" name="primary_contact_phone" value="{{ old('primary_contact_phone', $company->primary_contact_phone) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Contact -->
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Secondary Contact</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="secondary_contact_name" class="form-label">Contact Name</label>
+                                        <input type="text" class="form-control" id="secondary_contact_name" name="secondary_contact_name" value="{{ old('secondary_contact_name', $company->secondary_contact_name) }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="secondary_contact_title" class="form-label">Job Title</label>
+                                        <input type="text" class="form-control" id="secondary_contact_title" name="secondary_contact_title" value="{{ old('secondary_contact_title', $company->secondary_contact_title) }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="secondary_contact_email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="secondary_contact_email" name="secondary_contact_email" value="{{ old('secondary_contact_email', $company->secondary_contact_email) }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="secondary_contact_phone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="secondary_contact_phone" name="secondary_contact_phone" value="{{ old('secondary_contact_phone', $company->secondary_contact_phone) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General Company Contact -->
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="bi bi-building me-2"></i>General Company Contact</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="company_email" class="form-label">Main Email Address</label>
+                                        <input type="email" class="form-control" id="company_email" name="email" value="{{ old('email', $company->email) }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="company_phone" class="form-label">Main Phone Number</label>
+                                        <input type="tel" class="form-control" id="company_phone" name="phone" value="{{ old('phone', $company->phone) }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="company_website" class="form-label">Website</label>
+                                        <input type="url" class="form-control" id="company_website" name="website" value="{{ old('website', $company->website) }}" placeholder="https://example.com">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
