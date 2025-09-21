@@ -38,7 +38,7 @@ class EmailSettingsController extends Controller
                 'name' => 'System Email Settings',
                 'smtp_port' => 587,
                 'smtp_encryption' => 'tls',
-                'from_name' => 'GoBillo System',
+                'from_name' => 'ProMax Team System',
                 'enabled_notifications' => [],
             ]);
         }

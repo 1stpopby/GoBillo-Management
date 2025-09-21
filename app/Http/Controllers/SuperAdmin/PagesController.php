@@ -347,7 +347,7 @@ class PagesController extends Controller
 <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
 
 <h2>Contact Us</h2>
-<p>If you have questions about this Privacy Policy, please contact us at privacy@gobillo.com.</p>';
+<p>If you have questions about this Privacy Policy, please contact us at privacy@promaxteam.com.</p>';
     }
 
     private function getTermsOfServiceContent()
@@ -356,19 +356,19 @@ class PagesController extends Controller
 <p><strong>Last updated:</strong> ' . now()->format('F j, Y') . '</p>
 
 <h2>Acceptance of Terms</h2>
-<p>By accessing and using GoBillo, you accept and agree to be bound by the terms and provision of this agreement.</p>
+<p>By accessing and using ProMax Team, you accept and agree to be bound by the terms and provision of this agreement.</p>
 
 <h2>Use License</h2>
-<p>Permission is granted to temporarily use GoBillo for personal, non-commercial transitory viewing only.</p>
+<p>Permission is granted to temporarily use ProMax Team for personal, non-commercial transitory viewing only.</p>
 
 <h2>Disclaimer</h2>
-<p>The materials on GoBillo are provided on an "as is" basis. GoBillo makes no warranties, expressed or implied.</p>
+<p>The materials on ProMax Team are provided on an "as is" basis. ProMax Team makes no warranties, expressed or implied.</p>
 
 <h2>Limitations</h2>
-<p>In no event shall GoBillo or its suppliers be liable for any damages arising out of the use or inability to use the materials on GoBillo.</p>
+<p>In no event shall ProMax Team or its suppliers be liable for any damages arising out of the use or inability to use the materials on ProMax Team.</p>
 
 <h2>Contact Information</h2>
-<p>If you have questions about these Terms of Service, please contact us at legal@gobillo.com.</p>';
+<p>If you have questions about these Terms of Service, please contact us at legal@promaxteam.com.</p>';
     }
 
     private function getCookiePolicyContent()
@@ -393,7 +393,7 @@ class PagesController extends Controller
 <p>You can control and/or delete cookies as you wish through your browser settings. However, removing cookies may affect the functionality of our website.</p>
 
 <h2>Contact Us</h2>
-<p>For questions about our use of cookies, please contact us at privacy@gobillo.com.</p>';
+<p>For questions about our use of cookies, please contact us at privacy@promaxteam.com.</p>';
     }
 
     private function getGDPRContent()
@@ -430,10 +430,10 @@ class PagesController extends Controller
 
     private function getAboutUsContent()
     {
-        return '<h1>About GoBillo</h1>
+        return '<h1>About ProMax Team</h1>
 
 <h2>Our Mission</h2>
-<p>GoBillo is dedicated to transforming the construction industry through innovative project management solutions that streamline operations and drive business growth.</p>
+<p>ProMax Team is dedicated to transforming the construction industry through innovative project management solutions that streamline operations and drive business growth.</p>
 
 <h2>What We Do</h2>
 <p>We provide comprehensive construction management software that helps construction companies:</p>

@@ -2,7 +2,7 @@
 
 <h2 style="color: #e74c3c; margin-bottom: 20px;">⚠️ Subscription Expiry Warning</h2>
 
-<p>Dear {{ $company->name }} Team,</p>
+<p>Dear {{ optional($company)->name ?? 'ProMax Team' }} Team,</p>
 
 <p>This is a reminder that your ProMax Team subscription is approaching its expiry date. Please take action to avoid service interruption.</p>
 

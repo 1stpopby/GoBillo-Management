@@ -85,7 +85,7 @@
                 @elseif($company && $company->logo_url)
                     <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" style="max-height: 40px;">
                 @else
-                    {{ $company->name ?? 'ProMax Team' }}
+                    {{ optional($company)->name ?? 'ProMax Team' }}
                 @endif
             </div>
             <div class="email-tagline">
@@ -104,7 +104,7 @@
             <!-- Company Information -->
             @if($company && !isset($system))
             <div class="company-info">
-                <div class="company-name">{{ $company->name }}</div>
+                <div class="company-name">{{ optional($company)->name ?? 'ProMax Team' }}</div>
                 @if($company->email)
                     <div>Email: {{ $company->email }}</div>
                 @endif
@@ -140,11 +140,11 @@
                 <div>
                     <strong>ProMax Team</strong><br>
                     Construction Management Platform<br>
-                    <a href="mailto:support@gobillo.com">support@gobillo.com</a>
+                    <a href="mailto:support@promaxteam.com">support@promaxteam.com</a>
                 </div>
             @else
                 <div>
-                    This email was sent by {{ $company->name ?? 'ProMax Team' }}<br>
+                    This email was sent by {{ optional($company)->name ?? 'ProMax Team' }}<br>
                     Powered by <strong>ProMax Team</strong> - Construction Management Platform
                 </div>
             @endif
@@ -159,7 +159,7 @@
                 This email was sent to you because you are registered with our construction management system.
                 If you believe you received this email in error, please contact support.
                 <br><br>
-                © {{ date('Y') }} {{ isset($system) && $system ? 'ProMax Team' : ($company->name ?? 'ProMax Team') }}. All rights reserved.
+                © {{ date('Y') }} {{ isset($system) && $system ? 'ProMax Team' : (optional($company)->name ?? 'ProMax Team') }}. All rights reserved.
             </div>
         </div>
     </div>

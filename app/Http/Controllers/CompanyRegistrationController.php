@@ -32,7 +32,7 @@ class CompanyRegistrationController extends Controller
                 'name' => 'Free Trial',
                 'price' => 0,
                 'period' => '30 days',
-                'description' => 'Perfect for trying out GoBillo',
+                'description' => 'Perfect for trying out ProMax Team',
                 'features' => [
                     'Up to 5 users',
                     'Up to 10 projects',
@@ -180,7 +180,7 @@ class CompanyRegistrationController extends Controller
             auth()->login($user);
 
             return redirect()->route('company.welcome')
-                ->with('success', 'Welcome to GoBillo! Your account has been created successfully.');
+                ->with('success', 'Welcome to ProMax Team! Your account has been created successfully.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -243,7 +243,7 @@ class CompanyRegistrationController extends Controller
             ]);
 
             return redirect()->route('dashboard')
-                ->with('success', 'Welcome to GoBillo! Your company profile has been completed.');
+                ->with('success', 'Welcome to ProMax Team! Your company profile has been completed.');
 
         } catch (\Exception $e) {
             return redirect()->back()

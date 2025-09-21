@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Company Assignment - {{ config('app.name', 'GoBillo') }}</title>
+    <title>Company Assignment - {{ config('app.name', 'ProMax Team') }}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,9 +13,9 @@
 
     <style>
         :root {
-            --gobillo-primary: #2c5aa0;
-            --gobillo-secondary: #f8f9fa;
-            --gobillo-accent: #17a2b8;
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #17a2b8;
         }
         
         .company-card {
@@ -24,18 +24,18 @@
         }
         
         .company-card:hover {
-            border-color: var(--gobillo-primary);
+            border-color: var(--primary-color);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .company-card.selected {
-            border-color: var(--gobillo-primary);
+            border-color: var(--primary-color);
             background-color: rgba(44, 90, 160, 0.05);
         }
         
         .plan-badge {
-            background: linear-gradient(45deg, var(--gobillo-primary), var(--gobillo-accent));
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 1rem;
@@ -49,7 +49,7 @@
         <div class="row justify-content-center min-vh-100 align-items-center">
             <div class="col-md-10 col-lg-8">
                 <div class="text-center mb-5">
-                    <h1 class="h2 text-primary">Welcome to {{ config('app.name', 'GoBillo') }}!</h1>
+                    <h1 class="h2 text-primary">Welcome to {{ config('app.name', 'ProMax Team') }}!</h1>
                     <p class="lead text-muted">
                         Hi {{ $user->name }}, to get started you need to join a company. 
                         Please select a company below to request access.

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Welcome to GoBillo - {{ $company->name }}</title>
+    <title>Welcome to ProMax Team - {{ $company->name }}</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -332,7 +332,7 @@
                         <div class="success-icon">
                             <i class="bi bi-check-circle-fill"></i>
                         </div>
-                        <h1 class="welcome-title">Welcome to GoBillo!</h1>
+                        <h1 class="welcome-title">Welcome to ProMax Team!</h1>
                         <p class="welcome-subtitle">
                             Congratulations {{ auth()->user()->first_name }}! Your account for <strong>{{ $company->name }}</strong> has been created successfully.
                         </p>
