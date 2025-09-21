@@ -293,14 +293,18 @@
 @push('scripts')
 <script>
 // Toggle VAT/UTR fields based on registration status
-document.getElementById('is_vat_registered').addEventListener('change', function() {
-    const vatField = document.getElementById('vat_number');
-    if (this.checked) {
-        vatField.setAttribute('required', 'required');
-    } else {
-        vatField.removeAttribute('required');
-    }
-});
+const vatRegisteredElement = document.getElementById('is_vat_registered');
+const vatField = document.getElementById('vat_number');
+
+if (vatRegisteredElement && vatField) {
+    vatRegisteredElement.addEventListener('change', function() {
+        if (this.checked) {
+            vatField.setAttribute('required', 'required');
+        } else {
+            vatField.removeAttribute('required');
+        }
+    });
+}
 
 // Copy business address to registered address
 function copyBusinessAddress() {
@@ -322,14 +326,20 @@ function copyBusinessAddress() {
 
 // Form validation
 document.getElementById('settingsForm').addEventListener('submit', function(e) {
-    const vatRegistered = document.getElementById('is_vat_registered').checked;
-    const vatNumber = document.getElementById('vat_number').value.trim();
+    const vatRegisteredElement = document.getElementById('is_vat_registered');
+    const vatNumberElement = document.getElementById('vat_number');
     
-    if (vatRegistered && !vatNumber) {
-        e.preventDefault();
-        alert('VAT Number is required when VAT Registered is checked.');
-        document.getElementById('vat_number').focus();
-        return false;
+    // Only validate if both elements exist
+    if (vatRegisteredElement && vatNumberElement) {
+        const vatRegistered = vatRegisteredElement.checked;
+        const vatNumber = vatNumberElement.value.trim();
+        
+        if (vatRegistered && !vatNumber) {
+            e.preventDefault();
+            alert('VAT Number is required when VAT Registered is checked.');
+            vatNumberElement.focus();
+            return false;
+        }
     }
 });
 
