@@ -53,7 +53,7 @@
 </div>
 @endif
 
-<p>Please log in to your GoBillo account to view full task details and update progress as needed.</p>
+<p>Please log in to your ProMax Team account to view full task details and update progress as needed.</p>
 
 <div style="margin: 30px 0;">
     <a href="#" style="background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">View Task Details</a>

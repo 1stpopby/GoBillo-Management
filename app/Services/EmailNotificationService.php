@@ -239,7 +239,7 @@ class EmailNotificationService
             'system_maintenance_scheduled' => 'Scheduled Maintenance Notification',
         ];
 
-        return $subjects[$notificationType] ?? 'Notification from GoBillo';
+        return $subjects[$notificationType] ?? 'Notification from ProMax Team';
     }
 
     /**

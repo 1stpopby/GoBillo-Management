@@ -81,11 +81,11 @@
         <div class="email-header">
             <div class="email-logo">
                 @if(isset($system) && $system)
-                    GoBillo
+                    ProMax Team
                 @elseif($company && $company->logo_url)
                     <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" style="max-height: 40px;">
                 @else
-                    {{ $company->name ?? 'GoBillo' }}
+                    {{ $company->name ?? 'ProMax Team' }}
                 @endif
             </div>
             <div class="email-tagline">
@@ -138,14 +138,14 @@
         <div class="email-footer">
             @if(isset($system) && $system)
                 <div>
-                    <strong>GoBillo Team</strong><br>
+                    <strong>ProMax Team</strong><br>
                     Construction Management Platform<br>
                     <a href="mailto:support@gobillo.com">support@gobillo.com</a>
                 </div>
             @else
                 <div>
-                    This email was sent by {{ $company->name ?? 'GoBillo' }}<br>
-                    Powered by <strong>GoBillo</strong> - Construction Management Platform
+                    This email was sent by {{ $company->name ?? 'ProMax Team' }}<br>
+                    Powered by <strong>ProMax Team</strong> - Construction Management Platform
                 </div>
             @endif
 
@@ -159,7 +159,7 @@
                 This email was sent to you because you are registered with our construction management system.
                 If you believe you received this email in error, please contact support.
                 <br><br>
-                © {{ date('Y') }} {{ isset($system) && $system ? 'GoBillo' : ($company->name ?? 'GoBillo') }}. All rights reserved.
+                © {{ date('Y') }} {{ isset($system) && $system ? 'ProMax Team' : ($company->name ?? 'ProMax Team') }}. All rights reserved.
             </div>
         </div>
     </div>
