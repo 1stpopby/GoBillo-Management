@@ -163,11 +163,11 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             @if($task->is_currently_on_hold)
-                                <button class="btn btn-outline-success" onclick="removeOnHold({{ $task->id }})">
+                                <button class="btn btn-success" onclick="removeOnHold({{ $task->id }})">
                                     <i class="bi bi-play-fill me-2"></i>Remove Hold
                                 </button>
                             @else
-                                <button class="btn btn-outline-danger" onclick="showOnHoldModal({{ $task->id }})">
+                                <button class="btn btn-danger" onclick="showOnHoldModal({{ $task->id }})">
                                     <i class="bi bi-pause-fill me-2"></i>Put On Hold
                                 </button>
                             @endif
@@ -346,6 +346,15 @@
 .task-modal-content .card-header {
     font-weight: 600;
     border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.task-modal-content .card-header.bg-dark {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+}
+
+.task-modal-content .card-header.bg-dark h5 {
+    color: #ffffff !important;
 }
 
 .task-modal-content .card-body {
