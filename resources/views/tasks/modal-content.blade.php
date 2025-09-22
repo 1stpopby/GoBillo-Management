@@ -34,8 +34,8 @@
         <div class="col-lg-9">
             <!-- Task Information Card -->
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Task Information</h5>
+                <div class="card-header bg-light text-dark">
+                    <h5 class="mb-0 text-dark"><i class="bi bi-info-circle me-2"></i>Task Information</h5>
                 </div>
                 <div class="card-body">
                     @if($task->description)
@@ -127,8 +127,8 @@
             @if(auth()->user()->canManageTasks() || in_array(auth()->user()->role, ['site_manager', 'project_manager']) || $task->assigned_to === auth()->id())
                 <!-- Quick Actions Card -->
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
+                    <div class="card-header bg-light text-dark">
+                        <h5 class="mb-0 text-dark"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
@@ -157,8 +157,8 @@
             @if(auth()->user()->canManageTasks() || in_array(auth()->user()->role, ['site_manager', 'project_manager']))
                 <!-- Task Management Card -->
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Task Management</h5>
+                    <div class="card-header bg-light text-dark">
+                        <h5 class="mb-0 text-dark"><i class="bi bi-gear me-2"></i>Task Management</h5>
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
@@ -188,8 +188,8 @@
 
             <!-- Task Details Card -->
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Task Details</h5>
+                <div class="card-header bg-light text-dark">
+                    <h5 class="mb-0 text-dark"><i class="bi bi-info-circle me-2"></i>Task Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="detail-item d-flex justify-content-between align-items-start mb-3">
@@ -228,8 +228,8 @@
             @if(auth()->user()->canManageTasks() || in_array(auth()->user()->role, ['site_manager', 'project_manager']))
                 <!-- Actions Card -->
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Actions</h5>
+                    <div class="card-header bg-light text-dark">
+                        <h5 class="mb-0 text-dark"><i class="bi bi-link-45deg me-2"></i>Actions</h5>
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
@@ -348,13 +348,14 @@
     border-bottom: 1px solid rgba(0,0,0,0.125);
 }
 
-.task-modal-content .card-header.bg-dark {
-    background-color: #343a40 !important;
-    color: #ffffff !important;
+.task-modal-content .card-header.bg-light {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    border-bottom: 1px solid #dee2e6;
 }
 
-.task-modal-content .card-header.bg-dark h5 {
-    color: #ffffff !important;
+.task-modal-content .card-header.bg-light h5 {
+    color: #212529 !important;
 }
 
 .task-modal-content .card-body {
