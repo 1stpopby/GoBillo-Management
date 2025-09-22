@@ -434,7 +434,7 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 35px;">
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 45px;">
             </a>
 
             <div class="d-flex align-items-center ms-auto">

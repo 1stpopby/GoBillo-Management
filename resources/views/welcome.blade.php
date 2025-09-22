@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'ProMax Team') }} - Professional Construction Management</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logos/promax-favicon.png') }}">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -341,7 +344,7 @@
     <nav class="navbar navbar-expand-lg" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 35px;">
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 45px;">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
