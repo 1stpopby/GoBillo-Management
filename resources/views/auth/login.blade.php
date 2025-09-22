@@ -96,6 +96,7 @@
             z-index: 1;
         }
 
+
         .brand-subtitle {
             font-size: 1.2rem;
             font-weight: 300;
@@ -327,7 +328,9 @@
         <!-- Left Side - Branding -->
         <div class="login-left">
             <div class="brand-logo">
-                <img src="{{ asset('images/logos/promax-main-logo.png') }}" alt="ProMax Team" style="max-width: 200px; height: auto;">
+                <img src="{{ asset('images/logos/promax-main-logo.png') }}" 
+                     srcset="{{ asset('images/logos/promax-main-logo.png') }} 1x, {{ asset('images/logos/promax-main-logo@2x.png') }} 2x"
+                     alt="ProMax Team" style="max-width: 200px; height: auto;">
             </div>
             <p class="brand-subtitle">Professional Construction Management</p>
             

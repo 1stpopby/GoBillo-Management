@@ -49,6 +49,7 @@
             color: var(--primary-color) !important;
         }
 
+
         .navbar-nav .nav-link {
             color: var(--text-dark) !important;
             font-weight: 500;
@@ -359,7 +360,9 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 45px;">
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" 
+                     srcset="{{ asset('images/logos/promax-nav-logo.png') }} 1x, {{ asset('images/logos/promax-nav-logo@2x.png') }} 2x"
+                     alt="ProMax Team" style="height: 45px; width: auto;">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

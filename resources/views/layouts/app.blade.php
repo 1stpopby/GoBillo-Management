@@ -51,6 +51,7 @@
             color: #1f2937;
         }
 
+
         .sidebar {
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             position: fixed;
@@ -434,7 +435,9 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 45px;">
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" 
+                     srcset="{{ asset('images/logos/promax-nav-logo.png') }} 1x, {{ asset('images/logos/promax-nav-logo@2x.png') }} 2x"
+                     alt="ProMax Team" style="height: 45px; width: auto;">
             </a>
 
             <div class="d-flex align-items-center ms-auto">
