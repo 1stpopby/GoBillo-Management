@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logos/promax-favicon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+
     <title>@yield('title') - {{ config('app.name', 'ProMax Team') }}</title>
 
     <!-- Bootstrap CSS -->
@@ -430,7 +434,7 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <i class="bi bi-building"></i> ProMax Team
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 35px;">
             </a>
 
             <div class="d-flex align-items-center ms-auto">

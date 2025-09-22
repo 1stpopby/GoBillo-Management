@@ -341,7 +341,7 @@
     <nav class="navbar navbar-expand-lg" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-buildings me-2"></i>ProMax Team
+                <img src="{{ asset('images/logos/promax-nav-logo.png') }}" alt="ProMax Team" style="height: 35px;">
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

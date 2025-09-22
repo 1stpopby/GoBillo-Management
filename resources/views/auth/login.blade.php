@@ -324,9 +324,8 @@
         <!-- Left Side - Branding -->
         <div class="login-left">
             <div class="brand-logo">
-                <i class="bi bi-buildings"></i>
+                <img src="{{ asset('images/logos/promax-main-logo.png') }}" alt="ProMax Team" style="max-width: 200px; height: auto;">
             </div>
-            <h1 class="brand-logo">ProMax Team</h1>
             <p class="brand-subtitle">Professional Construction Management</p>
             
             <ul class="feature-list">
