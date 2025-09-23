@@ -72,7 +72,7 @@ class ClientController extends Controller
             'state' => 'nullable|string|max:100',
             'zip_code' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'required|boolean'
         ];
 
         // Add company-specific rules only for business clients
@@ -105,7 +105,7 @@ class ClientController extends Controller
             'state' => $request->state,
             'zip_code' => $request->zip_code,
             'notes' => $request->notes,
-            'is_active' => $request->boolean('is_active')
+            'is_active' => (bool) $request->input('is_active')
         ];
 
         // Add company-specific data only for business clients
@@ -206,7 +206,7 @@ class ClientController extends Controller
             'state' => 'nullable|string|max:100',
             'zip_code' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'required|boolean'
         ];
 
         // Add company-specific rules only for business clients
@@ -238,7 +238,7 @@ class ClientController extends Controller
             'state' => $request->state,
             'zip_code' => $request->zip_code,
             'notes' => $request->notes,
-            'is_active' => $request->boolean('is_active')
+            'is_active' => (bool) $request->input('is_active')
         ];
 
         // Add company-specific data only for business clients
