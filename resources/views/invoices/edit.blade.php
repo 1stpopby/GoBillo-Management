@@ -90,35 +90,36 @@
                 <div class="card-body">
                     <div id="invoiceItems">
                         <!-- Existing Invoice items will be loaded here -->
-                        @foreach($invoice->items as $index => $item)
+                        @forelse($invoice->items as $index => $item)
                             <div class="invoice-item border rounded p-3 mb-3">
                                 <div class="row g-3 align-items-end">
                                     <div class="col-md-5">
                                         <label class="form-label">Description *</label>
                                         <input type="text" class="form-control item-description" name="items[{{ $index }}][description]" 
-                                               value="{{ old('items.'.$index.'.description', $item->description) }}" required>
+                                               value="{{ old('items.'.$index.'.description', $item->description ?? '') }}" required>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Quantity *</label>
                                         <input type="number" class="form-control item-quantity" name="items[{{ $index }}][quantity]" 
-                                               value="{{ old('items.'.$index.'.quantity', $item->quantity) }}" min="0.01" step="0.01" required>
+                                               value="{{ old('items.'.$index.'.quantity', $item->quantity ?? 1) }}" min="0.01" step="0.01" required>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Unit *</label>
                                         <select class="form-select item-unit" name="items[{{ $index }}][unit]" required>
-                                            <option value="unit" {{ old('items.'.$index.'.unit', $item->unit) === 'unit' ? 'selected' : '' }}>Unit</option>
-                                            <option value="hour" {{ old('items.'.$index.'.unit', $item->unit) === 'hour' ? 'selected' : '' }}>Hour</option>
-                                            <option value="day" {{ old('items.'.$index.'.unit', $item->unit) === 'day' ? 'selected' : '' }}>Day</option>
-                                            <option value="week" {{ old('items.'.$index.'.unit', $item->unit) === 'week' ? 'selected' : '' }}>Week</option>
-                                            <option value="month" {{ old('items.'.$index.'.unit', $item->unit) === 'month' ? 'selected' : '' }}>Month</option>
-                                            <option value="sqft" {{ old('items.'.$index.'.unit', $item->unit) === 'sqft' ? 'selected' : '' }}>Sq Ft</option>
-                                            <option value="sqm" {{ old('items.'.$index.'.unit', $item->unit) === 'sqm' ? 'selected' : '' }}>Sq M</option>
+                                            @php $itemUnit = old('items.'.$index.'.unit', $item->unit ?? 'unit') @endphp
+                                            <option value="unit" {{ $itemUnit === 'unit' ? 'selected' : '' }}>Unit</option>
+                                            <option value="hour" {{ $itemUnit === 'hour' ? 'selected' : '' }}>Hour</option>
+                                            <option value="day" {{ $itemUnit === 'day' ? 'selected' : '' }}>Day</option>
+                                            <option value="week" {{ $itemUnit === 'week' ? 'selected' : '' }}>Week</option>
+                                            <option value="month" {{ $itemUnit === 'month' ? 'selected' : '' }}>Month</option>
+                                            <option value="sqft" {{ $itemUnit === 'sqft' ? 'selected' : '' }}>Sq Ft</option>
+                                            <option value="sqm" {{ $itemUnit === 'sqm' ? 'selected' : '' }}>Sq M</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Unit Price *</label>
                                         <input type="number" step="0.01" class="form-control item-price" name="items[{{ $index }}][unit_price]" 
-                                               value="{{ old('items.'.$index.'.unit_price', $item->unit_price) }}" required>
+                                               value="{{ old('items.'.$index.'.unit_price', $item->unit_price ?? 0) }}" required>
                                     </div>
                                     <div class="col-md-1">
                                         <button type="button" class="btn btn-outline-danger btn-sm remove-item">
@@ -127,7 +128,9 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <!-- No items yet, template will handle this -->
+                        @endforelse
                     </div>
                     
                     <div class="row mt-4">
