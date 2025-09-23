@@ -442,6 +442,10 @@ class TaskController extends Controller
         } elseif ($progress > 0 && $project->status === 'planning') {
             $project->update(['status' => 'in_progress']);
         }
+
+        // Update site progress if project belongs to a site
+        // Site progress is now automatically calculated as average of project progress
+        // No need to manually update site since it uses dynamic attribute calculation
     }
 
     /**
