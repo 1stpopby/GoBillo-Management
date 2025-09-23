@@ -459,15 +459,9 @@
                 </div>
                 <div>
                     <div class="user-name">{{ Auth::user()->name }}</div>
-                    <div class="user-role">{{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}</div>
+                    <div class="user-role">{{ Auth::user()->company->name ?? 'No Company' }}</div>
                 </div>
             </div>
-        </div>
-
-        <!-- Search Box -->
-        <div class="search-box position-relative">
-            <i class="bi bi-search search-icon"></i>
-            <input type="text" class="form-control" placeholder="Search menu...">
         </div>
 
         <!-- Professional Navigation Menu -->
