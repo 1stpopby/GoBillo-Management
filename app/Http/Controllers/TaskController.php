@@ -477,6 +477,93 @@ class TaskController extends Controller
     }
 
     /**
+     * Get updated progress data for projects and sites (AJAX endpoint)
+     */
+    public function getProgressData(Request $request)
+    {
+        $user = auth()->user();
+        $companyId = $user->company_id;
+
+        $data = [];
+
+        // Get project progress if project_id is provided
+        if ($request->has('project_id')) {
+            $project = Project::where('company_id', $companyId)
+                             ->findOrFail($request->project_id);
+            
+            $data['project'] = [
+                'id' => $project->id,
+                'progress' => $project->progress,
+                'status' => $project->status,
+                'completed_tasks' => $project->tasks()->where('status', 'completed')->count(),
+                'total_tasks' => $project->tasks()->count(),
+            ];
+
+            // Include site progress if project belongs to a site
+            if ($project->site_id) {
+                $site = $project->site;
+                $data['site'] = [
+                    'id' => $site->id,
+                    'progress' => $site->progress, // This uses the updated calculation
+                    'status' => $site->status,
+                ];
+            }
+        }
+
+        // Get site progress if site_id is provided
+        if ($request->has('site_id')) {
+            $site = \App\Models\Site::where('company_id', $companyId)
+                                   ->findOrFail($request->site_id);
+            
+            $data['site'] = [
+                'id' => $site->id,
+                'progress' => $site->progress,
+                'status' => $site->status,
+                'completed_projects' => $site->projects()->where('status', 'completed')->count(),
+                'total_projects' => $site->projects()->count(),
+            ];
+        }
+
+        // Get dashboard statistics if requested
+        if ($request->has('dashboard')) {
+            $activeProjects = Project::where('company_id', $companyId)
+                                    ->whereNotIn('status', ['completed', 'cancelled'])
+                                    ->with('site')
+                                    ->get()
+                                    ->map(function($project) {
+                                        return [
+                                            'id' => $project->id,
+                                            'name' => $project->name,
+                                            'progress' => $project->progress,
+                                            'site_name' => $project->site->name ?? 'No Site',
+                                        ];
+                                    });
+
+            $activeSites = \App\Models\Site::where('company_id', $companyId)
+                                          ->where('is_active', true)
+                                          ->get()
+                                          ->map(function($site) {
+                                              return [
+                                                  'id' => $site->id,
+                                                  'name' => $site->name,
+                                                  'progress' => $site->progress,
+                                                  'status' => $site->status,
+                                              ];
+                                          });
+
+            $data['dashboard'] = [
+                'active_projects' => $activeProjects,
+                'active_sites' => $activeSites,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    /**
      * Get task delay information (AJAX endpoint)
      */
     public function getDelays(Task $task)
