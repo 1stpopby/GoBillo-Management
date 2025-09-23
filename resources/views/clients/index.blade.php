@@ -372,6 +372,17 @@
                                                             <i class="bi bi-receipt me-2"></i>Create Invoice
                                                         </a>
                                                     </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <button type="button" class="dropdown-item text-danger delete-client-btn"
+                                                                data-client-id="{{ $client->id }}"
+                                                                data-client-name="{{ $client->display_name }}"
+                                                                data-projects-count="{{ $client->total_projects_count }}"
+                                                                data-sites-count="{{ $client->sites->count() }}"
+                                                                data-invoices-count="{{ $client->invoices->count() ?? 0 }}">
+                                                            <i class="bi bi-trash me-2"></i>Delete Client
+                                                        </button>
+                                                    </li>
                                                 @endif
                                             </ul>
                                         </div>
@@ -712,4 +723,134 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<!-- Delete Client Confirmation Modal -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteClientModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirm Client Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone and will permanently delete all related data.
+                </div>
+                
+                <p class="mb-3">You are about to delete <strong id="clientName"></strong> and all associated data:</p>
+                
+                <ul class="list-group list-group-flush mb-3" id="dataList">
+                    <!-- Dynamic content will be populated here -->
+                </ul>
+                
+                <div class="form-group">
+                    <label for="confirmationText" class="form-label">
+                        To confirm deletion, please type the client name exactly as shown above:
+                    </label>
+                    <input type="text" class="form-control" id="confirmationText" placeholder="Enter client name to confirm">
+                    <small class="text-muted">This helps prevent accidental deletions.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                    <i class="bi bi-trash me-1"></i>Delete Client & All Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for delete submission -->
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+let currentClientId = null;
+let currentClientName = null;
+
+function confirmDelete(button) {
+    const clientId = button.dataset.clientId;
+    const clientName = button.dataset.clientName;
+    const projectsCount = button.dataset.projectsCount;
+    const sitesCount = button.dataset.sitesCount;
+    const invoicesCount = button.dataset.invoicesCount;
+    
+    currentClientId = clientId;
+    currentClientName = clientName;
+    
+    // Update modal content
+    document.getElementById('clientName').textContent = clientName;
+    
+    // Build data list
+    const dataList = document.getElementById('dataList');
+    dataList.innerHTML = `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-folder text-info me-2"></i>Projects</span>
+            <span class="badge bg-info rounded-pill">${projectsCount}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-building text-primary me-2"></i>Sites</span>
+            <span class="badge bg-primary rounded-pill">${sitesCount}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-receipt text-warning me-2"></i>Invoices</span>
+            <span class="badge bg-warning rounded-pill">${invoicesCount}</span>
+        </li>
+    `;
+    
+    // Reset confirmation input
+    document.getElementById('confirmationText').value = '';
+    document.getElementById('confirmDeleteBtn').disabled = true;
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('deleteClientModal')).show();
+}
+
+// Add event listeners for delete buttons and confirm button
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-client-btn') || e.target.closest('.delete-client-btn')) {
+            const button = e.target.classList.contains('delete-client-btn') ? e.target : e.target.closest('.delete-client-btn');
+            confirmDelete(button);
+        }
+        
+        if (e.target.id === 'confirmDeleteBtn') {
+            executeDelete();
+        }
+    });
+});
+
+function executeDelete() {
+    if (currentClientId) {
+        const form = document.getElementById('deleteForm');
+        form.action = `{{ route('clients.index') }}/${currentClientId}`;
+        form.submit();
+    }
+}
+
+// Enable delete button only when correct client name is entered
+document.getElementById('confirmationText').addEventListener('input', function(e) {
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    const isCorrect = e.target.value.trim() === currentClientName;
+    deleteBtn.disabled = !isCorrect;
+    
+    if (isCorrect) {
+        deleteBtn.classList.remove('btn-danger');
+        deleteBtn.classList.add('btn-success');
+        deleteBtn.innerHTML = '<i class="bi bi-check me-1"></i>Confirmed - Delete Now';
+    } else {
+        deleteBtn.classList.remove('btn-success');
+        deleteBtn.classList.add('btn-danger');
+        deleteBtn.innerHTML = '<i class="bi bi-trash me-1"></i>Delete Client & All Data';
+    }
+});
+</script>
+
 @endsection

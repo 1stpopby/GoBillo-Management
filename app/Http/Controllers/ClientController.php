@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -274,16 +275,18 @@ class ClientController extends Controller
         $user = auth()->user();
         
         $client = Client::forCompany($user->company_id)->findOrFail($id);
+        
+        // Ensure user has permission to delete clients
+        $this->authorize('delete', $client);
 
-        // Check if client has active projects
-        if ($client->projects()->whereIn('status', ['planning', 'in_progress'])->exists()) {
-            return back()->with('error', 'Cannot delete client with active projects.');
-        }
-
-        $clientName = $client->name;
-        $client->delete();
+        $clientName = $client->display_name;
+        
+        // Use database transaction for safe deletion with cascading
+        DB::transaction(function () use ($client) {
+            $client->delete();
+        });
 
         return redirect()->route('clients.index')
-                        ->with('success', "Client '{$clientName}' deleted successfully.");
+                        ->with('success', "Client '{$clientName}' and all related data deleted successfully.");
     }
 }
