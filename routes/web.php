@@ -345,7 +345,6 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     // Invoice Management
     Route::resource('invoices', InvoiceController::class);
     Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('invoices.send');
-    Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
     Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf'])->name('invoices.pdf');
     Route::post('invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
     
@@ -357,7 +356,6 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     
     // Admin Operative Invoice Management (for company admin)
     Route::get('admin/operative-invoices', [InvoiceController::class, 'adminOperativeInvoicesIndex'])->name('admin.operative-invoices.index');
-    Route::post('admin/operative-invoices/{invoice}/mark-paid', [InvoiceController::class, 'markOperativeInvoicePaid'])->name('admin.operative-invoices.mark-paid');
     
     
     // Estimate Management

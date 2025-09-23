@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get currency symbol
         const currencySelect = document.querySelector('select[name="currency"]');
         const currency = currencySelect ? currencySelect.value : 'GBP';
-        const currencySymbol = currency === 'GBP' ? '£' : (currency === 'USD' ? '$' : '€');
+        const currencySymbol = currency === 'USD' ? '$' : (currency === 'GBP' ? '£' : '€');
         
         document.querySelectorAll('.invoice-item').forEach(function(item) {
             const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;

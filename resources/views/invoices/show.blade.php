@@ -34,13 +34,6 @@
             </a>
             @can('update', $invoice)
                 @if($invoice->status !== 'paid')
-                    <form action="{{ route('invoices.mark-paid', $invoice) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-success" 
-                                onclick="return confirm('Are you sure you want to mark this invoice as paid?')">
-                            <i class="bi bi-check-circle me-1"></i>Mark as Paid
-                        </button>
-                    </form>
                     <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-primary">
                         <i class="bi bi-pencil me-1"></i>Edit Invoice
                     </a>
@@ -165,8 +158,8 @@
                                         <td class="text-center">
                                             <span class="text-muted">{{ $item->unit }}</span>
                                         </td>
-                                        <td class="text-end">£{{ number_format($item->unit_price, 2) }}</td>
-                                        <td class="text-end fw-bold">£{{ number_format($item->quantity * $item->unit_price, 2) }}</td>
+                                        <td class="text-end">${{ number_format($item->unit_price, 2) }}</td>
+                                        <td class="text-end fw-bold">${{ number_format($item->quantity * $item->unit_price, 2) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -188,23 +181,23 @@
                             <table class="table table-sm mb-0">
                                 <tr>
                                     <td class="border-0 text-muted">Subtotal:</td>
-                                    <td class="border-0 text-end">£{{ number_format($invoice->subtotal_amount ?? 0, 2) }}</td>
+                                    <td class="border-0 text-end">${{ number_format($invoice->subtotal_amount ?? 0, 2) }}</td>
                                 </tr>
                                 @if($invoice->tax_rate > 0)
                                     <tr>
                                         <td class="border-0 text-muted">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</td>
-                                        <td class="border-0 text-end">£{{ number_format($invoice->tax_amount ?? 0, 2) }}</td>
+                                        <td class="border-0 text-end">${{ number_format($invoice->tax_amount ?? 0, 2) }}</td>
                                     </tr>
                                 @endif
                                 @if($invoice->discount_amount > 0)
                                     <tr>
                                         <td class="border-0 text-muted">Discount:</td>
-                                        <td class="border-0 text-end text-success">-£{{ number_format($invoice->discount_amount, 2) }}</td>
+                                        <td class="border-0 text-end text-success">-${{ number_format($invoice->discount_amount, 2) }}</td>
                                     </tr>
                                 @endif
                                 <tr class="border-top">
                                     <td class="fw-bold fs-5 text-primary">Total ({{ $invoice->currency }}):</td>
-                                    <td class="fw-bold fs-5 text-end text-primary">£{{ number_format($invoice->total_amount ?? 0, 2) }}</td>
+                                    <td class="fw-bold fs-5 text-end text-primary">${{ number_format($invoice->total_amount ?? 0, 2) }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -302,15 +295,6 @@
                             </form>
                         @endif
                         
-                        @if(in_array($invoice->status, ['sent','overdue']))
-                            <form method="POST" action="{{ route('invoices.mark-paid', $invoice) }}" 
-                                  onsubmit="return confirm('Mark this invoice as paid?')">
-                                @csrf
-                                <button type="submit" class="btn btn-success w-100">
-                                    <i class="bi bi-check-circle me-2"></i>Mark as Paid
-                                </button>
-                            </form>
-                        @endif
 
                         @if($invoice->status !== 'paid')
                             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-outline-secondary">
