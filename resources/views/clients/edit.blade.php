@@ -110,7 +110,7 @@
                                     <option value="LLC" {{ old('business_type', $client->business_type) == 'LLC' ? 'selected' : '' }}>LLC</option>
                                     <option value="Corporation" {{ old('business_type', $client->business_type) == 'Corporation' ? 'selected' : '' }}>Corporation</option>
                                     <option value="Partnership" {{ old('business_type', $client->business_type) == 'Partnership' ? 'selected' : '' }}>Partnership</option>
-                                    <option value="Sole Proprietorship" {{ old('business_type', $client->business_type) == 'Sole Proprietorship' ? 'selected' : '' }}>Sole Proprietorship</option>
+                                    <option value="Limited Company" {{ old('business_type', $client->business_type) == 'Limited Company' ? 'selected' : '' }}>Limited Company</option>
                                     <option value="Non-Profit" {{ old('business_type', $client->business_type) == 'Non-Profit' ? 'selected' : '' }}>Non-Profit</option>
                                     <option value="Government" {{ old('business_type', $client->business_type) == 'Government' ? 'selected' : '' }}>Government</option>
                                     <option value="Other" {{ old('business_type', $client->business_type) == 'Other' ? 'selected' : '' }}>Other</option>
