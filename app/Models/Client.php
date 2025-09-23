@@ -32,12 +32,14 @@ class Client extends Model
         'zip_code',
         'notes',
         'is_active',
+        'is_private_client',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'is_private_client' => 'boolean',
         ];
     }
 
