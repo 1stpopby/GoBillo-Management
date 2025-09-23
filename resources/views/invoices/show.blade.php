@@ -34,6 +34,13 @@
             </a>
             @can('update', $invoice)
                 @if($invoice->status !== 'paid')
+                    <form action="{{ route('invoices.mark-paid', $invoice) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-success" 
+                                onclick="return confirm('Are you sure you want to mark this invoice as paid?')">
+                            <i class="bi bi-check-circle me-1"></i>Mark as Paid
+                        </button>
+                    </form>
                     <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-primary">
                         <i class="bi bi-pencil me-1"></i>Edit Invoice
                     </a>

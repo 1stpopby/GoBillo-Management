@@ -367,6 +367,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('tax_rate').addEventListener('input', calculateTotals);
     document.getElementById('discount_amount').addEventListener('input', calculateTotals);
     document.getElementById('currency').addEventListener('change', calculateTotals);
+    
+    // Initial calculation to set correct currency symbols
+    calculateTotals();
 });
 </script>
 @endsection 

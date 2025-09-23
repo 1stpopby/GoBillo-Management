@@ -339,6 +339,12 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
         
+        // Check if already paid
+        if ($invoice->status === Invoice::STATUS_PAID) {
+            return redirect()->route('invoices.show', $invoice)
+                ->with('info', 'Invoice is already marked as paid.');
+        }
+        
         $request->validate([
             'payment_method' => 'nullable|string|max:100',
             'payment_reference' => 'nullable|string|max:100',
@@ -346,8 +352,8 @@ class InvoiceController extends Controller
 
         $invoice->markAsPaid($request->payment_method, $request->payment_reference);
         
-        return redirect()->route('financial-reports.index')
-            ->with('success', 'Invoice marked as paid and reports updated.');
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Invoice successfully marked as paid.');
     }
 
     /**
