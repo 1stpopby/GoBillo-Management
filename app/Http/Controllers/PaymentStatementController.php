@@ -137,6 +137,8 @@ class PaymentStatementController extends Controller
             'total_invoiced' => $totalInvoiced,
             'total_paid' => $totalPaid,
             'outstanding_balance' => $outstandingBalance,
+            'remaining_budget' => $remainingBudget,
+            'statement_date' => $statementData['statement_date'],
             'generated_by' => auth()->id(),
             'created_at' => now(),
             'updated_at' => now(),
