@@ -156,15 +156,20 @@ class Site extends Model
 
     public function getProgressAttribute(): int
     {
-        $totalProjects = $this->projects->count();
+        // Use efficient query instead of loading full relationship
+        if (!$this->relationLoaded('projects')) {
+            $projectStats = $this->projects()->selectRaw('COUNT(*) as total, SUM(progress) as total_progress')->first();
+            $totalProjects = $projectStats->total ?? 0;
+            $totalProgress = $projectStats->total_progress ?? 0;
+        } else {
+            $totalProjects = $this->projects->count();
+            $totalProgress = $this->projects->sum('progress');
+        }
         
         if ($totalProjects === 0) {
             return 0;
         }
 
-        // Calculate average progress of all projects instead of just counting completed ones
-        $totalProgress = $this->projects->sum('progress');
-        
         return round($totalProgress / $totalProjects);
     }
 

@@ -242,12 +242,12 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     });
 
     // Tasks Management
+    Route::get('tasks/progress-data', [TaskController::class, 'getProgressData'])->name('tasks.progress-data');
     Route::resource('tasks', TaskController::class);
     Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
     Route::get('tasks/{task}/status/{status}', [TaskController::class, 'updateStatusGet'])->name('tasks.update-status-get');
     Route::get('tasks/{task}/attachments', [TaskController::class, 'getAttachments'])->name('tasks.attachments');
     Route::get('tasks/{task}/delays', [TaskController::class, 'getDelays'])->name('tasks.delays');
-    Route::get('tasks/progress-data', [TaskController::class, 'getProgressData'])->name('tasks.progress-data');
     
     // Task Delay and On Hold Management
     Route::post('tasks/{task}/apply-delay', [TaskController::class, 'applyDelay'])->name('tasks.apply-delay');
