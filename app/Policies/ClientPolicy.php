@@ -29,7 +29,7 @@ class ClientPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_active && ($user->isAdmin() || $user->isProjectManager());
+        return $user->is_active && ($user->isSuperAdmin() || $user->isCompanyAdmin() || $user->isProjectManager());
     }
 
     /**
@@ -41,7 +41,7 @@ class ClientPolicy
             return false;
         }
 
-        return $user->isAdmin() || $user->isProjectManager();
+        return $user->isSuperAdmin() || $user->isCompanyAdmin() || $user->isProjectManager();
     }
 
     /**
@@ -53,7 +53,7 @@ class ClientPolicy
             return false;
         }
 
-        return $user->isAdmin() || $user->isProjectManager();
+        return $user->isSuperAdmin() || $user->isCompanyAdmin() || $user->isProjectManager();
     }
 
     /**
@@ -65,7 +65,7 @@ class ClientPolicy
             return false;
         }
 
-        return $user->isAdmin();
+        return $user->isSuperAdmin() || $user->isCompanyAdmin();
     }
 
     /**
@@ -77,6 +77,6 @@ class ClientPolicy
             return false;
         }
 
-        return $user->isAdmin();
+        return $user->isSuperAdmin() || $user->isCompanyAdmin();
     }
 }
