@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Site;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 
@@ -177,6 +178,28 @@ class DashboardController extends Controller
             \Log::error('Recent tasks error: ' . $e->getMessage());
         }
 
+        // Get recent sites for the company
+        $recentSites = collect([]);
+        try {
+            $recentSites = Site::where('company_id', $companyId)
+                ->where('is_active', true)
+                ->with(['client', 'projects'])
+                ->withCount([
+                    'projects',
+                    'projects as active_projects_count' => function($q) {
+                        $q->where('status', 'in_progress');
+                    },
+                    'projects as completed_projects_count' => function($q) {
+                        $q->where('status', 'completed');
+                    }
+                ])
+                ->latest()
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            \Log::error('Recent sites error: ' . $e->getMessage());
+        }
+
         // Get recent activities for the company
         $recentActivities = collect([]);
         try {
@@ -220,7 +243,7 @@ class DashboardController extends Controller
             \Log::error('Recent activities error: ' . $e->getMessage());
         }
 
-        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentActivities'));
+        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentSites', 'recentActivities'));
     }
     
     private function superAdminDashboard()

@@ -307,27 +307,63 @@
                 </div>
             </div>
 
-            <!-- Activity Timeline -->
-            <div class="content-card">
+            <!-- Active Sites -->
+            <div class="analytics-card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title">Recent Activity</h5>
-                    <p class="card-subtitle">Latest updates across your projects</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Active Sites</h5>
+                            <p class="card-subtitle">Current site status and project progress</p>
+                        </div>
+                        <a href="{{ route('sites.index') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>View All Sites
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
-                    @if($recentActivities->count() > 0)
-                        <div class="activity-timeline">
-                            @foreach($recentActivities as $activity)
-                                <div class="timeline-item">
-                                    <div class="timeline-dot bg-{{ $activity['color'] }}">
-                                        <i class="bi {{ $activity['icon'] }}"></i>
-                                    </div>
-                                    <div class="timeline-content">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h6>{{ $activity['title'] }}</h6>
-                                                <p class="text-muted mb-1">{{ $activity['description'] }}</p>
+                    @if($recentSites && $recentSites->count() > 0)
+                        <div class="project-portfolio">
+                            @foreach($recentSites as $site)
+                                <div class="portfolio-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-7">
+                                            <div class="project-details">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <h6 class="project-title mb-0">
+                                                        <a href="{{ route('sites.show', $site) }}">{{ $site->name }}</a>
+                                                    </h6>
+                                                    <span class="badge ms-2 bg-{{ $site->status === 'completed' ? 'success' : ($site->status === 'active' ? 'primary' : ($site->status === 'on_hold' ? 'warning' : 'secondary')) }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $site->status)) }}
+                                                    </span>
+                                                </div>
+                                                <div class="project-meta">
+                                                    <span class="meta-item">
+                                                        <i class="bi bi-building"></i>{{ $site->client->company_name ?? 'No client' }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="bi bi-geo-alt"></i>{{ $site->city ?? 'No location' }}
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="bi bi-kanban"></i>{{ $site->projects_count }} project{{ $site->projects_count !== 1 ? 's' : '' }}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <small class="text-muted">{{ $activity['time']->diffForHumans() }}</small>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="project-progress">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="progress-label">Progress</span>
+                                                    <span class="progress-value">{{ $site->progress ?? 0 }}%</span>
+                                                </div>
+                                                <div class="progress progress-modern">
+                                                    <div class="progress-bar" style="width: {{ $site->progress ?? 0 }}%"></div>
+                                                </div>
+                                                <div class="progress-stats mt-2">
+                                                    <small class="text-muted">
+                                                        {{ $site->completed_projects_count ?? 0 }} of {{ $site->projects_count ?? 0 }} projects completed
+                                                    </small>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -336,10 +372,15 @@
                     @else
                         <div class="empty-state-professional">
                             <div class="empty-icon">
-                                <i class="bi bi-activity"></i>
+                                <i class="bi bi-geo-alt"></i>
                             </div>
-                            <h6>No Recent Activity</h6>
-                            <p class="text-muted">Activities will appear here as your team works on projects</p>
+                            <h6>No Active Sites</h6>
+                            <p class="text-muted">Create your first site to see location analytics</p>
+                            @if(auth()->user()->canManageProjects())
+                                <a href="{{ route('sites.create') }}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Create New Site
+                                </a>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -445,6 +486,48 @@
                         <div class="empty-state text-center py-4">
                             <i class="bi bi-check-circle display-4 text-muted"></i>
                             <p class="text-muted mt-2">All caught up!</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="analytics-card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Recent Activity</h5>
+                            <p class="card-subtitle">Latest updates across your projects</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if($recentActivities->count() > 0)
+                        <div class="activity-timeline">
+                            @foreach($recentActivities as $activity)
+                                <div class="timeline-item">
+                                    <div class="timeline-dot bg-{{ $activity['color'] }}">
+                                        <i class="bi {{ $activity['icon'] }}"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6>{{ $activity['title'] }}</h6>
+                                                <p class="text-muted mb-1">{{ $activity['description'] }}</p>
+                                            </div>
+                                            <small class="text-muted">{{ $activity['time']->diffForHumans() }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="empty-state-professional">
+                            <div class="empty-icon">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h6>No Recent Activity</h6>
+                            <p class="text-muted">Activities will appear here as your team works on projects</p>
                         </div>
                     @endif
                 </div>
