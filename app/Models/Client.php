@@ -67,7 +67,12 @@ class Client extends Model
     // Scopes
     public function scopeForCompany($query, $companyId = null)
     {
-        $companyId = $companyId ?: auth()->user()->company_id;
+        $companyId = $companyId ?: (auth()->check() ? auth()->user()->company_id : null);
+        
+        if (auth()->user() && auth()->user()->isSuperAdmin()) {
+            return $query; // Superadmin can see all clients
+        }
+        
         return $query->where('company_id', $companyId);
     }
 
