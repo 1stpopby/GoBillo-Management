@@ -20,6 +20,7 @@ use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FinancialReportController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentStatementController;
 use App\Http\Controllers\PlaceholderController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TaskCategoryController;
@@ -454,6 +455,16 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     Route::get('time-entries', [TimeTrackingController::class, 'index'])->name('time-entries.index');
     Route::get('messages', [PlaceholderController::class, 'messaging'])->name('messages.index');
     Route::resource('payments', PaymentController::class);
+    
+    // Payment Statements
+    Route::prefix('payment-statements')->name('payment-statements.')->group(function () {
+        Route::get('/', [PaymentStatementController::class, 'index'])->name('index');
+        Route::get('/create', [PaymentStatementController::class, 'create'])->name('create');
+        Route::post('/generate', [PaymentStatementController::class, 'generate'])->name('generate');
+        Route::get('/{id}', [PaymentStatementController::class, 'show'])->name('show');
+        Route::get('/{id}/pdf', [PaymentStatementController::class, 'pdf'])->name('pdf');
+        Route::get('/{id}/send', [PaymentStatementController::class, 'send'])->name('send');
+    });
 
     // Membership Routes
     Route::get('/membership', [App\Http\Controllers\MembershipController::class, 'index'])->name('membership.index');
