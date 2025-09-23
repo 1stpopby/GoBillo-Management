@@ -37,8 +37,46 @@
         
         <div class="row">
             <div class="col-lg-8">
-                <!-- Company Information -->
+                <!-- Client Type Selection -->
                 <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Client Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Select Client Type <span class="text-danger">*</span></label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="is_private_client" 
+                                                   id="business_client" value="0" 
+                                                   {{ old('is_private_client', '0') == '0' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="business_client">
+                                                <strong>Business Client</strong>
+                                                <small class="d-block text-muted">Company or organization with business details</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="is_private_client" 
+                                                   id="private_client" value="1"
+                                                   {{ old('is_private_client') == '1' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="private_client">
+                                                <strong>Private Client</strong>
+                                                <small class="d-block text-muted">Individual person without company details</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Information -->
+                <div class="card mb-4" id="company-info-section">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Company Information</h5>
                     </div>
@@ -129,12 +167,14 @@
                 <!-- Contact Information -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Contact Information</h5>
+                        <h5 class="card-title mb-0" id="contact-info-title">Contact Information</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="contact_person_name" class="form-label">Primary Contact Person</label>
+                                <label for="contact_person_name" class="form-label" id="contact-name-label">
+                                    Primary Contact Person <span class="text-danger" id="contact-name-required" style="display: none;">*</span>
+                                </label>
                                 <input type="text" class="form-control @error('contact_person_name') is-invalid @enderror" 
                                        id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name') }}">
                                 @error('contact_person_name')
@@ -170,7 +210,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 company-fields">
                                 <label for="email" class="form-label">Company General Email</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                        id="email" name="email" value="{{ old('email') }}">
@@ -179,7 +219,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 company-fields">
                                 <label for="phone" class="form-label">Company Main Phone</label>
                                 <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
                                        id="phone" name="phone" value="{{ old('phone') }}">
@@ -315,4 +355,66 @@
         </div>
     </form>
 </div>
-@endsection 
+@endsection
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const businessClientRadio = document.getElementById('business_client');
+    const privateClientRadio = document.getElementById('private_client');
+    const companyInfoSection = document.getElementById('company-info-section');
+    const companyFields = document.querySelectorAll('.company-fields');
+    const contactInfoTitle = document.getElementById('contact-info-title');
+    const contactNameLabel = document.getElementById('contact-name-label');
+    const contactNameRequired = document.getElementById('contact-name-required');
+    const companyNameField = document.getElementById('company_name');
+
+    function toggleClientType() {
+        const isPrivateClient = privateClientRadio.checked;
+        
+        if (isPrivateClient) {
+            // Hide company information section
+            companyInfoSection.style.display = 'none';
+            
+            // Hide company-specific fields in contact section
+            companyFields.forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            // Update labels for private client
+            contactInfoTitle.textContent = 'Client Information';
+            contactNameLabel.innerHTML = 'Client Name <span class="text-danger">*</span>';
+            contactNameRequired.style.display = 'inline';
+            
+            // Remove required attribute from company name
+            if (companyNameField) {
+                companyNameField.removeAttribute('required');
+            }
+        } else {
+            // Show company information section
+            companyInfoSection.style.display = 'block';
+            
+            // Show company-specific fields in contact section
+            companyFields.forEach(field => {
+                field.style.display = 'block';
+            });
+            
+            // Update labels for business client
+            contactInfoTitle.textContent = 'Contact Information';
+            contactNameLabel.innerHTML = 'Primary Contact Person';
+            contactNameRequired.style.display = 'none';
+            
+            // Add required attribute to company name
+            if (companyNameField) {
+                companyNameField.setAttribute('required', 'required');
+            }
+        }
+    }
+
+    // Initialize on page load
+    toggleClientType();
+
+    // Add event listeners
+    businessClientRadio.addEventListener('change', toggleClientType);
+    privateClientRadio.addEventListener('change', toggleClientType);
+});
+</script> 
