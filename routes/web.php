@@ -19,6 +19,7 @@ use App\Http\Controllers\SuperAdmin\ModuleController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlaceholderController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TaskCategoryController;
@@ -453,7 +454,7 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     Route::get('resources', [FieldOperationsController::class, 'index'])->name('resources.index');
     Route::get('time-entries', [TimeTrackingController::class, 'index'])->name('time-entries.index');
     Route::get('messages', [PlaceholderController::class, 'messaging'])->name('messages.index');
-    Route::get('payments', [PlaceholderController::class, 'payments'])->name('payments.index');
+    Route::resource('payments', PaymentController::class);
 
     // Membership Routes
     Route::get('/membership', [App\Http\Controllers\MembershipController::class, 'index'])->name('membership.index');
