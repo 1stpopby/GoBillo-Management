@@ -151,6 +151,19 @@
                                                 onclick="sendStatement({{ $statement->id }})">
                                             <i class="bi bi-envelope-fill"></i>
                                         </button>
+                                        <form action="{{ route('payment-statements.destroy', $statement->id) }}" 
+                                              method="POST" 
+                                              class="d-inline"
+                                              onsubmit="return confirmDelete()">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Delete Statement">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -183,6 +196,10 @@ function sendStatement(statementId) {
     if (confirm('Are you sure you want to send this statement to the client?')) {
         window.location.href = `/payment-statements/${statementId}/send`;
     }
+}
+
+function confirmDelete() {
+    return confirm('Are you sure you want to delete this payment statement? This action cannot be undone.');
 }
 
 // Initialize tooltips

@@ -464,6 +464,7 @@ Route::middleware(['auth', 'company.access'])->group(function () {
         Route::get('/{id}', [PaymentStatementController::class, 'show'])->name('show');
         Route::get('/{id}/pdf', [PaymentStatementController::class, 'pdf'])->name('pdf');
         Route::get('/{id}/send', [PaymentStatementController::class, 'send'])->name('send');
+        Route::delete('/{id}', [PaymentStatementController::class, 'destroy'])->name('destroy');
     });
 
     // Membership Routes

@@ -333,6 +333,31 @@ class PaymentStatementController extends Controller
     }
 
     /**
+     * Delete a payment statement
+     */
+    public function destroy($id)
+    {
+        $statement = DB::table('payment_statements')
+            ->where('company_id', auth()->user()->company_id)
+            ->where('id', $id)
+            ->first();
+            
+        if (!$statement) {
+            return redirect()->route('payment-statements.index')
+                ->with('error', 'Payment statement not found.');
+        }
+        
+        // Delete the statement
+        DB::table('payment_statements')
+            ->where('id', $id)
+            ->where('company_id', auth()->user()->company_id)
+            ->delete();
+            
+        return redirect()->route('payment-statements.index')
+            ->with('success', 'Payment statement deleted successfully.');
+    }
+
+    /**
      * Generate a unique statement number
      */
     private function generateStatementNumber()
