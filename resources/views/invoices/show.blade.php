@@ -166,7 +166,7 @@
                                             <span class="text-muted">{{ $item->unit }}</span>
                                         </td>
                                         <td class="text-end">${{ number_format($item->unit_price, 2) }}</td>
-                                        <td class="text-end fw-bold">${{ number_format($item->quantity * $item->unit_price, 2) }}</td>
+                                        <td class="text-end fw-bold">£{{ number_format($item->quantity * $item->unit_price, 2) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -188,23 +188,23 @@
                             <table class="table table-sm mb-0">
                                 <tr>
                                     <td class="border-0 text-muted">Subtotal:</td>
-                                    <td class="border-0 text-end">${{ number_format($invoice->subtotal_amount ?? 0, 2) }}</td>
+                                    <td class="border-0 text-end">£{{ number_format($invoice->subtotal_amount ?? 0, 2) }}</td>
                                 </tr>
                                 @if($invoice->tax_rate > 0)
                                     <tr>
                                         <td class="border-0 text-muted">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</td>
-                                        <td class="border-0 text-end">${{ number_format($invoice->tax_amount ?? 0, 2) }}</td>
+                                        <td class="border-0 text-end">£{{ number_format($invoice->tax_amount ?? 0, 2) }}</td>
                                     </tr>
                                 @endif
                                 @if($invoice->discount_amount > 0)
                                     <tr>
                                         <td class="border-0 text-muted">Discount:</td>
-                                        <td class="border-0 text-end text-success">-${{ number_format($invoice->discount_amount, 2) }}</td>
+                                        <td class="border-0 text-end text-success">-£{{ number_format($invoice->discount_amount, 2) }}</td>
                                     </tr>
                                 @endif
                                 <tr class="border-top">
                                     <td class="fw-bold fs-5 text-primary">Total ({{ $invoice->currency }}):</td>
-                                    <td class="fw-bold fs-5 text-end text-primary">${{ number_format($invoice->total_amount ?? 0, 2) }}</td>
+                                    <td class="fw-bold fs-5 text-end text-primary">£{{ number_format($invoice->total_amount ?? 0, 2) }}</td>
                                 </tr>
                             </table>
                         </div>
