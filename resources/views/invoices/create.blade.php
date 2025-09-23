@@ -151,19 +151,19 @@
                                 <table class="table table-sm">
                                     <tr>
                                         <td><strong>Subtotal:</strong></td>
-                                        <td class="text-end"><span id="subtotal">$0.00</span></td>
+                                        <td class="text-end"><span id="subtotal">£0.00</span></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Tax:</strong></td>
-                                        <td class="text-end"><span id="taxAmount">$0.00</span></td>
+                                        <td class="text-end"><span id="taxAmount">£0.00</span></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Discount:</strong></td>
-                                        <td class="text-end"><span id="discountDisplay">-$0.00</span></td>
+                                        <td class="text-end"><span id="discountDisplay">-£0.00</span></td>
                                     </tr>
                                     <tr class="table-primary">
                                         <td><strong>Total:</strong></td>
-                                        <td class="text-end"><strong><span id="totalAmount">$0.00</span></strong></td>
+                                        <td class="text-end"><strong><span id="totalAmount">£0.00</span></strong></td>
                                     </tr>
                                 </table>
                             </div>
@@ -337,12 +337,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateTotals() {
         let subtotal = 0;
         
+        // Get currency symbol
+        const currencySelect = document.getElementById('currency');
+        const currency = currencySelect ? currencySelect.value : 'GBP';
+        const currencySymbol = currency === 'GBP' ? '£' : (currency === 'USD' ? '$' : '€');
+        
         document.querySelectorAll('.invoice-item').forEach(function(item) {
             const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
             const price = parseFloat(item.querySelector('.item-price').value) || 0;
             const total = quantity * price;
             
-            item.querySelector('.item-total').value = '$' + total.toFixed(2);
+            item.querySelector('.item-total').value = currencySymbol + total.toFixed(2);
             subtotal += total;
         });
         
@@ -352,15 +357,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const taxAmount = subtotal * (taxRate / 100);
         const totalAmount = subtotal + taxAmount - discountAmount;
         
-        document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-        document.getElementById('taxAmount').textContent = '$' + taxAmount.toFixed(2);
-        document.getElementById('discountDisplay').textContent = '-$' + discountAmount.toFixed(2);
-        document.getElementById('totalAmount').textContent = '$' + totalAmount.toFixed(2);
+        document.getElementById('subtotal').textContent = currencySymbol + subtotal.toFixed(2);
+        document.getElementById('taxAmount').textContent = currencySymbol + taxAmount.toFixed(2);
+        document.getElementById('discountDisplay').textContent = '-' + currencySymbol + discountAmount.toFixed(2);
+        document.getElementById('totalAmount').textContent = currencySymbol + totalAmount.toFixed(2);
     }
 
-    // Recalculate when tax rate or discount changes
+    // Recalculate when tax rate, discount, or currency changes
     document.getElementById('tax_rate').addEventListener('input', calculateTotals);
     document.getElementById('discount_amount').addEventListener('input', calculateTotals);
+    document.getElementById('currency').addEventListener('change', calculateTotals);
 });
 </script>
 @endsection 
