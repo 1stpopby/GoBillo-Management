@@ -245,7 +245,7 @@
                 <!-- Address Information -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Address Information</h5>
+                        <h5 class="card-title mb-0" id="address-info-title">Address Information</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const pageSubtitle = document.getElementById('page-subtitle');
         const contactNameField = document.getElementById('contact_person_name');
         const submitButton = document.getElementById('submit-button');
+        const addressInfoTitle = document.getElementById('address-info-title');
         
         if (isPrivateClient) {
             // Hide company information section
@@ -403,6 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
             contactInfoTitle.textContent = 'Client Information';
             contactNameLabel.innerHTML = 'Client Name <span class="text-danger">*</span>';
             contactNameRequired.style.display = 'inline';
+            
+            // Update address section title
+            if (addressInfoTitle) {
+                addressInfoTitle.textContent = 'Client Address';
+            }
             
             // Remove required and disable company name field
             if (companyNameField) {
@@ -441,6 +447,11 @@ document.addEventListener('DOMContentLoaded', function() {
             contactInfoTitle.textContent = 'Contact Information';
             contactNameLabel.innerHTML = 'Primary Contact Person';
             contactNameRequired.style.display = 'none';
+            
+            // Update address section title
+            if (addressInfoTitle) {
+                addressInfoTitle.textContent = 'Company Address';
+            }
             
             // Add required attribute to company name and enable it
             if (companyNameField) {
