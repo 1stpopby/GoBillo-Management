@@ -332,6 +332,26 @@ class InvoiceController extends Controller
         return back()->with('success', 'Invoice sent successfully.');
     }
 
+    /**
+     * Mark invoice as paid
+     */
+    public function markAsPaid(Request $request, Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+        
+        // Check if already paid
+        if ($invoice->status === Invoice::STATUS_PAID) {
+            return redirect()->route('invoices.show', $invoice)
+                ->with('info', 'Invoice is already marked as paid.');
+        }
+        
+        // Mark as paid using the model method
+        $invoice->markAsPaid();
+        
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Invoice has been marked as paid successfully.');
+    }
+
 
     /**
      * Generate PDF for invoice
