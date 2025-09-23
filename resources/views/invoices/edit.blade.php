@@ -9,7 +9,9 @@
     
 </div>
 
-@php($currency = old('currency', $invoice->currency))
+@php
+    $currency = old('currency', $invoice->currency);
+@endphp
 
 <form action="{{ route('invoices.update', $invoice) }}" method="POST">
     @csrf
