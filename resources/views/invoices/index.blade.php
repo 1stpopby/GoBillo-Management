@@ -2,6 +2,119 @@
 
 @section('title', 'Invoices')
 
+@push('styles')
+<style>
+    /* Table Styles */
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+        font-weight: 600;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 0.75rem;
+    }
+    
+    .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    /* Enhanced Action Button Styles */
+    .btn-sm {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 4px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .btn-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    
+    .btn-info {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
+    
+    .btn-info:hover {
+        background-color: #0bacce;
+        border-color: #0bacce;
+    }
+    
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #e0a800;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5c636a;
+        border-color: #5c636a;
+    }
+    
+    .dropdown-menu {
+        min-width: 180px;
+        border-radius: 8px;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        transition: background-color 0.2s ease;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .dropdown-item i {
+        width: 20px;
+    }
+    
+    /* Ensure icons display properly */
+    .bi::before {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    /* Badge Styles */
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Card Styles */
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.75rem;
+    }
+    
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 0.75rem 0.75rem 0 0 !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -222,52 +335,66 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="btn-group btn-group-sm" role="group">
+                                    <div class="d-flex gap-1 justify-content-start">
                                         <a href="{{ route('invoices.show', $invoice) }}" 
-                                           class="btn btn-primary btn-sm" title="View Invoice">
-                                            <i class="bi bi-eye"></i>
+                                           class="btn btn-sm btn-info text-white" 
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-placement="top" 
+                                           title="View Invoice">
+                                            <i class="bi bi-eye-fill"></i>
                                         </a>
-                                        <a href="{{ route('invoices.pdf', $invoice) }}" 
-                                           class="btn btn-success btn-sm" title="Download PDF">
-                                            <i class="bi bi-file-pdf"></i>
-                                        </a>
+                                        
                                         @if(auth()->user()->canManageProjects() && $invoice->status !== 'paid')
                                             <a href="{{ route('invoices.edit', $invoice) }}" 
-                                               class="btn btn-outline-secondary btn-sm" title="Edit Invoice">
-                                                <i class="bi bi-pencil"></i>
+                                               class="btn btn-sm btn-warning text-white"
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-placement="top" 
+                                               title="Edit Invoice">
+                                                <i class="bi bi-pencil-square"></i>
                                             </a>
                                         @endif
-                                        @if(auth()->user()->canManageProjects())
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" 
-                                                        data-bs-toggle="dropdown" title="More actions">
-                                                    <i class="bi bi-three-dots"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
+                                        
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-secondary dropdown-toggle" 
+                                                    type="button" 
+                                                    data-bs-toggle="dropdown" 
+                                                    aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                <li>
+                                                    <a href="{{ route('invoices.pdf', $invoice) }}" 
+                                                       class="dropdown-item">
+                                                        <i class="bi bi-file-pdf text-danger me-2"></i> Download PDF
+                                                    </a>
+                                                </li>
+                                                @if(auth()->user()->canManageProjects())
                                                     @if($invoice->status === 'draft')
                                                         <li>
                                                             <form method="POST" action="{{ route('invoices.send', $invoice) }}" class="d-inline">
                                                                 @csrf
                                                                 <button type="submit" class="dropdown-item">
-                                                                    <i class="bi bi-send"></i> Send Invoice
+                                                                    <i class="bi bi-send text-primary me-2"></i> Send Invoice
                                                                 </button>
                                                             </form>
                                                         </li>
                                                     @endif
                                                     @if(in_array($invoice->status, ['sent', 'overdue']))
                                                         <li>
-                                                            <button type="button" class="dropdown-item" 
-                                                                    data-bs-toggle="modal" 
-                                                                    data-bs-target="#markPaidModal{{ $invoice->id }}">
-                                                                <i class="bi bi-check-circle"></i> Mark as Paid
-                                                            </button>
+                                                            <form method="POST" action="{{ route('invoices.mark-paid', $invoice) }}" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="dropdown-item"
+                                                                        onclick="return confirm('Are you sure you want to mark this invoice as paid?')">
+                                                                    <i class="bi bi-check-circle text-success me-2"></i> Mark as Paid
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                     @endif
                                                     <li>
                                                         <form method="POST" action="{{ route('invoices.duplicate', $invoice) }}" class="d-inline">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
-                                                                <i class="bi bi-files"></i> Duplicate
+                                                                <i class="bi bi-files text-info me-2"></i> Duplicate
                                                             </button>
                                                         </form>
                                                     </li>
@@ -363,64 +490,17 @@
 </style>
 @endsection
 
-<style>
-.table th {
-    background-color: #f8f9fa;
-    border-top: none;
-    font-weight: 600;
-    color: #495057;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    padding: 1rem 0.75rem;
-}
-
-.table td {
-    padding: 1rem 0.75rem;
-    vertical-align: middle;
-}
-
-.table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.btn-group-sm .btn {
-    padding: 0.375rem 0.5rem;
-    font-size: 0.875rem;
-    border-radius: 0.25rem;
-}
-
-.btn-group .btn:first-child {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.btn-group .btn:not(:first-child):not(:last-child) {
-    border-radius: 0;
-}
-
-.btn-group .btn:last-child {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.5rem 0.75rem;
-}
-
-.card {
-    border: none;
-    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075);
-    border-radius: 0.75rem;
-}
-
-.card-header {
-    background-color: #fff;
-    border-bottom: 1px solid #e9ecef;
-    border-radius: 0.75rem 0.75rem 0 0 !important;
-}
+@push('scripts')
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+@endpush
 
 .nav-pills .nav-link {
     border-radius: 0.5rem;

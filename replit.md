@@ -12,7 +12,18 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Time Tracking**: Clock in/out, timesheet management
 - **Operative Management**: Invoicing, data forms, hire requests
 
-## Recent Changes (Sep 21, 2025)
+## Recent Changes (Sep 23, 2025)
+- **Invoice UI Improvements**: Enhanced action buttons in invoice list with better styling, icons, and dropdown menus
+- **Mark as Paid Feature**: Restored "Mark as Paid" functionality with route, controller method, and confirmation dialogs
+- **Button Design**: Replaced basic action buttons with professional Bootstrap buttons featuring:
+  - Color-coded actions (View: info/cyan, Edit: warning/yellow, More: secondary/gray)
+  - Hover effects with elevation and shadow
+  - Tooltips for better user guidance
+  - Dropdown menu for additional actions (PDF download, Send, Mark as Paid, Duplicate, Delete)
+  - Proper icon integration with Bootstrap Icons
+  - Responsive design with proper spacing
+
+## Previous Changes (Sep 21, 2025)
 - **Major Performance Optimization**: Comprehensive loading time improvements implemented across the platform
 - **Database Query Optimization**: Fixed N+1 query problems in ProjectController and SiteController using withCount() and selective eager loading instead of heavy collection loading
 - **Database Indexing**: Added 20+ critical indexes on foreign keys, pivot tables, and filtering columns for dramatically faster queries
