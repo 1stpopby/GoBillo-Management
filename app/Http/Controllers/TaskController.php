@@ -273,6 +273,7 @@ class TaskController extends Controller
             'actual_time' => 'nullable|numeric|min:0',
             'actual_time_unit' => 'nullable|in:hours,days',
             'actual_cost' => 'nullable|numeric|min:0',
+            'progress' => 'nullable|integer|min:0|max:100',
         ]);
 
         // Ensure project belongs to same company
@@ -420,7 +421,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Update project progress based on task completion
+     * Update project progress based on task progress values
      */
     private function updateProjectProgress(Project $project)
     {
@@ -431,8 +432,9 @@ class TaskController extends Controller
             return;
         }
 
-        $completedTasks = $project->tasks()->where('status', 'completed')->count();
-        $progress = round(($completedTasks / $totalTasks) * 100);
+        // Calculate average progress of all tasks (considering individual progress values)
+        $totalProgress = $project->tasks()->sum('progress');
+        $progress = round($totalProgress / $totalTasks);
         
         $project->update(['progress' => $progress]);
 
