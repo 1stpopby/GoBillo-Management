@@ -773,6 +773,207 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ProMax Team Progress Update System -->
+    <script>
+        // Global Progress Update System
+        window.ProMaxProgress = {
+            /**
+             * Update progress bars after task status changes
+             * @param {object} options - Configuration object
+             * @param {number} options.projectId - Project ID (optional)
+             * @param {number} options.siteId - Site ID (optional)
+             * @param {boolean} options.dashboard - Whether to update dashboard (optional)
+             */
+            updateProgress: function(options = {}) {
+                const params = new URLSearchParams();
+                
+                if (options.projectId) params.append('project_id', options.projectId);
+                if (options.siteId) params.append('site_id', options.siteId);
+                if (options.dashboard) params.append('dashboard', 'true');
+                
+                fetch(`/tasks/progress-data?${params.toString()}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.updateProgressBars(data.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Progress update failed:', error);
+                    });
+            },
+
+            /**
+             * Update progress bar elements on the page
+             * @param {object} data - Progress data from API
+             */
+            updateProgressBars: function(data) {
+                // Update project progress bars
+                if (data.project) {
+                    this.updateElementProgress(`project-${data.project.id}`, data.project.progress);
+                    this.updateElementProgress('project-progress', data.project.progress);
+                    
+                    // Update task counts if elements exist
+                    this.updateElementText(`project-${data.project.id}-completed-tasks`, data.project.completed_tasks);
+                    this.updateElementText(`project-${data.project.id}-total-tasks`, data.project.total_tasks);
+                }
+
+                // Update site progress bars
+                if (data.site) {
+                    this.updateElementProgress(`site-${data.site.id}`, data.site.progress);
+                    this.updateElementProgress('site-progress', data.site.progress);
+                }
+
+                // Update dashboard progress data
+                if (data.dashboard) {
+                    this.updateDashboardProgress(data.dashboard);
+                }
+            },
+
+            /**
+             * Update a specific progress element
+             * @param {string} elementId - Element ID or class
+             * @param {number} progress - Progress percentage
+             */
+            updateElementProgress: function(elementId, progress) {
+                // Update by ID
+                const elementById = document.getElementById(elementId);
+                if (elementById) {
+                    this.setProgressBarValue(elementById, progress);
+                }
+
+                // Update by class or data attributes
+                const elements = document.querySelectorAll(`[data-progress="${elementId}"]`);
+                elements.forEach(element => {
+                    this.setProgressBarValue(element, progress);
+                });
+            },
+
+            /**
+             * Set progress bar value and text
+             * @param {HTMLElement} container - Container element
+             * @param {number} progress - Progress percentage
+             */
+            setProgressBarValue: function(container, progress) {
+                const progressBar = container.querySelector('.progress-bar');
+                const progressText = container.querySelector('.progress-text, small');
+                
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                    progressBar.setAttribute('aria-valuenow', progress);
+                    
+                    // Update color based on progress
+                    progressBar.className = progressBar.className.replace(/bg-\w+/g, '');
+                    if (progress >= 75) {
+                        progressBar.classList.add('bg-success');
+                    } else if (progress >= 50) {
+                        progressBar.classList.add('bg-info');
+                    } else {
+                        progressBar.classList.add('bg-warning');
+                    }
+                }
+                
+                if (progressText) {
+                    progressText.textContent = progress + '%';
+                }
+            },
+
+            /**
+             * Update text content of an element
+             * @param {string} elementId - Element ID
+             * @param {string} text - New text content
+             */
+            updateElementText: function(elementId, text) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = text;
+                }
+            },
+
+            /**
+             * Update dashboard progress displays
+             * @param {object} dashboardData - Dashboard data
+             */
+            updateDashboardProgress: function(dashboardData) {
+                // Update active projects
+                if (dashboardData.active_projects) {
+                    dashboardData.active_projects.forEach(project => {
+                        this.updateElementProgress(`project-${project.id}`, project.progress);
+                    });
+                }
+
+                // Update active sites
+                if (dashboardData.active_sites) {
+                    dashboardData.active_sites.forEach(site => {
+                        this.updateElementProgress(`site-${site.id}`, site.progress);
+                    });
+                }
+            }
+        };
+
+        // Enhanced task status update function
+        window.updateTaskStatus = function(taskId, status, projectId = null, siteId = null) {
+            const url = `/tasks/${taskId}/status/${status}`;
+            
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        // Show success message
+                        ProMaxProgress.showAlert('success', 'Task status updated successfully!');
+                        
+                        // Update progress bars
+                        const updateOptions = {};
+                        if (projectId) updateOptions.projectId = projectId;
+                        if (siteId) updateOptions.siteId = siteId;
+                        
+                        // Check if we're on the dashboard
+                        if (window.location.pathname === '/dashboard') {
+                            updateOptions.dashboard = true;
+                        }
+                        
+                        ProMaxProgress.updateProgress(updateOptions);
+                        
+                        // Refresh page after a short delay to show updated content
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        ProMaxProgress.showAlert('error', 'Failed to update task status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Task status update failed:', error);
+                    ProMaxProgress.showAlert('error', 'An error occurred while updating task status.');
+                });
+        };
+
+        // Alert system for feedback
+        ProMaxProgress.showAlert = function(type, message) {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Add to page
+            document.body.appendChild(alertDiv);
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        };
+
+        // Console log for debugging
+        console.log('ProMax Team Progress System loaded');
+    </script>
+    
     @yield('scripts')
     @stack('scripts')
 </body>
