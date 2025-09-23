@@ -6,13 +6,24 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Project Management**: Projects, tasks, client management
 - **Asset Management**: Equipment, locations, vendors, QR codes
 - **Employee Management**: Staff, site allocations, roles
-- **Financial Management**: Invoices, estimates, expenses, CIS payments
+- **Financial Management**: Invoices, estimates, expenses, CIS payments, payment statements
 - **Health & Safety**: RAMS, incidents, observations, toolbox talks
 - **Document Management**: File uploads, attachments, versioning
 - **Time Tracking**: Clock in/out, timesheet management
 - **Operative Management**: Invoicing, data forms, hire requests
 
 ## Recent Changes (Sep 23, 2025)
+- **Payment Statements Feature**: Added comprehensive payment statement generation system
+  - Created PaymentStatementController for managing client payment history
+  - Built statement generation form with client selection and date range filtering
+  - Implemented statement viewing with financial summary, project budgets, invoice history, and payment transactions
+  - Added PDF generation capability for sending statements to clients
+  - Created payment_statements database table to store generated statements
+  - Integrated Payment Statements into Financial section of navigation
+  - Statements show total budget vs invoiced vs paid with visual progress indicators
+  - Automatic statement numbering with format STMT-YYYYMM-XXXX
+  - Outstanding balance tracking and payment reminders
+
 - **Payment Form Fix**: Resolved empty invoice dropdown in payment creation form
   - Added payments() relationship to Invoice model  
   - Added getTotalAttribute() accessor for field compatibility
