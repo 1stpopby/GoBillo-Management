@@ -314,44 +314,34 @@
                     <p class="card-subtitle">Latest updates across your projects</p>
                 </div>
                 <div class="card-body">
-                    <div class="activity-timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-dot bg-success"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6>Project "Downtown Office Complex" updated</h6>
-                                        <p class="text-muted mb-1">Progress increased to 85%. Foundation work completed.</p>
+                    @if($recentActivities->count() > 0)
+                        <div class="activity-timeline">
+                            @foreach($recentActivities as $activity)
+                                <div class="timeline-item">
+                                    <div class="timeline-dot bg-{{ $activity['color'] }}">
+                                        <i class="bi {{ $activity['icon'] }}"></i>
                                     </div>
-                                    <small class="text-muted">2 hours ago</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot bg-info"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6>New task assigned to John Smith</h6>
-                                        <p class="text-muted mb-1">Electrical inspection scheduled for next week.</p>
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6>{{ $activity['title'] }}</h6>
+                                                <p class="text-muted mb-1">{{ $activity['description'] }}</p>
+                                            </div>
+                                            <small class="text-muted">{{ $activity['time']->diffForHumans() }}</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">4 hours ago</small>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot bg-warning"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6>Budget alert for "Residential Complex"</h6>
-                                        <p class="text-muted mb-1">Project is approaching 90% of allocated budget.</p>
-                                    </div>
-                                    <small class="text-muted">1 day ago</small>
-                                </div>
+                    @else
+                        <div class="empty-state-professional">
+                            <div class="empty-icon">
+                                <i class="bi bi-activity"></i>
                             </div>
+                            <h6>No Recent Activity</h6>
+                            <p class="text-muted">Activities will appear here as your team works on projects</p>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\User;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
@@ -176,7 +177,50 @@ class DashboardController extends Controller
             \Log::error('Recent tasks error: ' . $e->getMessage());
         }
 
-        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks'));
+        // Get recent activities for the company
+        $recentActivities = collect([]);
+        try {
+            $recentActivities = Activity::with(['subject', 'causer'])
+                ->where(function($query) use ($companyId) {
+                    // Get activities where the subject belongs to this company
+                    $query->whereHasMorph('subject', [Project::class, Task::class, Client::class, User::class], function($q, $type) use ($companyId) {
+                        if ($type === Project::class) {
+                            $q->where('company_id', $companyId);
+                        } elseif ($type === Task::class) {
+                            $q->whereHas('project', function($projectQuery) use ($companyId) {
+                                $projectQuery->where('company_id', $companyId);
+                            });
+                        } elseif ($type === Client::class) {
+                            $q->where('company_id', $companyId);
+                        } elseif ($type === User::class) {
+                            $q->where('company_id', $companyId);
+                        }
+                    })
+                    // OR get activities with no subject but caused by users from this company
+                    ->orWhere(function($subQuery) use ($companyId) {
+                        $subQuery->whereNull('subject_type')
+                                 ->whereHasMorph('causer', [User::class], function($q) use ($companyId) {
+                                     $q->where('company_id', $companyId);
+                                 });
+                    });
+                })
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(function($activity) {
+                    return [
+                        'title' => $this->formatActivityTitle($activity),
+                        'description' => $this->formatActivityDescription($activity),
+                        'time' => $activity->created_at,
+                        'icon' => $this->getActivityIcon($activity),
+                        'color' => $this->getActivityColor($activity)
+                    ];
+                });
+        } catch (\Exception $e) {
+            \Log::error('Recent activities error: ' . $e->getMessage());
+        }
+
+        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentActivities'));
     }
     
     private function superAdminDashboard()
@@ -252,5 +296,102 @@ class DashboardController extends Controller
         }
         
         return view('superadmin.dashboard', compact('stats', 'recentCompanies', 'companiesByStatus', 'companiesByPlan', 'recentActivity', 'topCompanies'));
+    }
+
+    /**
+     * Format activity title based on the activity description and subject
+     */
+    private function formatActivityTitle($activity)
+    {
+        $subjectType = class_basename($activity->subject_type ?? '');
+        $description = $activity->description ?? 'updated';
+        
+        if ($activity->subject) {
+            $subjectName = $activity->subject->name ?? $activity->subject->title ?? "#{$activity->subject->id}";
+            
+            switch ($description) {
+                case 'created':
+                    return "{$subjectType} \"{$subjectName}\" was created";
+                case 'updated':
+                    return "{$subjectType} \"{$subjectName}\" was updated";
+                case 'deleted':
+                    return "{$subjectType} \"{$subjectName}\" was deleted";
+                default:
+                    return "{$subjectType} \"{$subjectName}\" {$description}";
+            }
+        }
+        
+        return ucfirst($description) . ' activity';
+    }
+
+    /**
+     * Format activity description based on the changes made
+     */
+    private function formatActivityDescription($activity)
+    {
+        $causerName = $activity->causer->name ?? 'System';
+        
+        if (!empty($activity->properties['attributes']) && !empty($activity->properties['old'])) {
+            $changes = array_keys(array_diff_assoc($activity->properties['attributes'], $activity->properties['old']));
+            if (!empty($changes)) {
+                $changeList = implode(', ', array_slice($changes, 0, 3));
+                if (count($changes) > 3) {
+                    $changeList .= ' and ' . (count($changes) - 3) . ' more';
+                }
+                return "Changes: {$changeList} by {$causerName}";
+            }
+        }
+        
+        return "Action performed by {$causerName}";
+    }
+
+    /**
+     * Get Bootstrap icon class for activity type
+     */
+    private function getActivityIcon($activity)
+    {
+        $description = $activity->description ?? '';
+        $subjectType = class_basename($activity->subject_type ?? '');
+        
+        switch ($description) {
+            case 'created':
+                return 'bi-plus-circle';
+            case 'updated':
+                return 'bi-pencil-square';
+            case 'deleted':
+                return 'bi-trash';
+            default:
+                switch (strtolower($subjectType)) {
+                    case 'project':
+                        return 'bi-folder';
+                    case 'task':
+                        return 'bi-check-square';
+                    case 'user':
+                        return 'bi-person';
+                    case 'client':
+                        return 'bi-building';
+                    default:
+                        return 'bi-activity';
+                }
+        }
+    }
+
+    /**
+     * Get Bootstrap color class for activity type
+     */
+    private function getActivityColor($activity)
+    {
+        $description = $activity->description ?? '';
+        
+        switch ($description) {
+            case 'created':
+                return 'success';
+            case 'updated':
+                return 'info';
+            case 'deleted':
+                return 'danger';
+            default:
+                return 'primary';
+        }
     }
 }
