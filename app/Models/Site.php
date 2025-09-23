@@ -162,9 +162,10 @@ class Site extends Model
             return 0;
         }
 
-        $completedProjects = $this->projects->where('status', Project::STATUS_COMPLETED)->count();
+        // Calculate average progress of all projects instead of just counting completed ones
+        $totalProgress = $this->projects->sum('progress');
         
-        return round(($completedProjects / $totalProjects) * 100);
+        return round($totalProgress / $totalProjects);
     }
 
     public function getIsOverdueAttribute(): bool
