@@ -105,7 +105,7 @@ class ClientController extends Controller
             'state' => $request->state,
             'zip_code' => $request->zip_code,
             'notes' => $request->notes,
-            'is_active' => $request->has('is_active')
+            'is_active' => $request->boolean('is_active')
         ];
 
         // Add company-specific data only for business clients
@@ -238,7 +238,7 @@ class ClientController extends Controller
             'state' => $request->state,
             'zip_code' => $request->zip_code,
             'notes' => $request->notes,
-            'is_active' => $request->has('is_active')
+            'is_active' => $request->boolean('is_active')
         ];
 
         // Add company-specific data only for business clients
