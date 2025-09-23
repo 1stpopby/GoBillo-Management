@@ -57,53 +57,80 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'company_name' => 'required|string|max:255',
-            'legal_name' => 'nullable|string|max:255',
-            'contact_person_name' => 'nullable|string|max:255',
+        // Determine if this is a private client
+        $isPrivateClient = $request->boolean('is_private_client');
+        
+        // Build validation rules based on client type
+        $rules = [
+            'is_private_client' => 'boolean',
+            'contact_person_name' => $isPrivateClient ? 'required|string|max:255' : 'nullable|string|max:255',
             'contact_person_title' => 'nullable|string|max:255',
             'contact_person_email' => 'nullable|email|max:255',
             'contact_person_phone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'website' => 'nullable|url|max:255',
-            'tax_id' => 'nullable|string|max:50',
-            'business_type' => 'nullable|string|max:100',
-            'business_description' => 'nullable|string',
-            'industry' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'zip_code' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
             'is_active' => 'boolean'
-        ]);
+        ];
 
-        $client = Client::create([
+        // Add company-specific rules only for business clients
+        if (!$isPrivateClient) {
+            $rules = array_merge($rules, [
+                'company_name' => 'required|string|max:255',
+                'legal_name' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'website' => 'nullable|url|max:255',
+                'tax_id' => 'nullable|string|max:50',
+                'business_type' => 'nullable|string|max:100',
+                'business_description' => 'nullable|string',
+                'industry' => 'nullable|string|max:100',
+            ]);
+        }
+        
+        $request->validate($rules);
+
+        // Build client data based on client type
+        $clientData = [
             'company_id' => auth()->user()->company_id,
-            'company_name' => $request->company_name,
-            'legal_name' => $request->legal_name,
+            'is_private_client' => $isPrivateClient,
             'contact_person_name' => $request->contact_person_name,
             'contact_person_title' => $request->contact_person_title,
             'contact_person_email' => $request->contact_person_email,
             'contact_person_phone' => $request->contact_person_phone,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'website' => $request->website,
-            'tax_id' => $request->tax_id,
-            'business_type' => $request->business_type,
-            'business_description' => $request->business_description,
-            'industry' => $request->industry,
             'address' => $request->address,
             'city' => $request->city,
             'state' => $request->state,
             'zip_code' => $request->zip_code,
             'notes' => $request->notes,
             'is_active' => $request->has('is_active')
-        ]);
+        ];
 
+        // Add company-specific data only for business clients
+        if (!$isPrivateClient) {
+            $clientData = array_merge($clientData, [
+                'company_name' => $request->company_name,
+                'legal_name' => $request->legal_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'website' => $request->website,
+                'tax_id' => $request->tax_id,
+                'business_type' => $request->business_type,
+                'business_description' => $request->business_description,
+                'industry' => $request->industry,
+            ]);
+        } else {
+            // For private clients, use contact person name as company name for display purposes
+            $clientData['company_name'] = $request->contact_person_name;
+        }
+
+        $client = Client::create($clientData);
+
+        $clientType = $isPrivateClient ? 'Private client' : 'Client company';
         return redirect()->route('clients.show', $client)
-                        ->with('success', 'Client company created successfully.');
+                        ->with('success', $clientType . ' created successfully.');
     }
 
     /**
