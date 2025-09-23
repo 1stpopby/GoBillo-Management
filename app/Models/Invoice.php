@@ -194,6 +194,22 @@ class Invoice extends Model
             'payment_method' => $paymentMethod,
             'payment_reference' => $paymentReference,
         ]);
+        
+        // Create a payment record when marking as paid
+        $this->payments()->create([
+            'company_id' => $this->company_id,
+            'client_id' => $this->client_id,
+            'payment_number' => 'PMT-' . date('Ymd') . '-' . str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT),
+            'amount' => $this->total_amount,
+            'payment_gateway' => $paymentMethod ?: 'manual',
+            'status' => 'completed',
+            'processed_at' => now(),
+            'metadata' => [
+                'marked_as_paid' => true,
+                'marked_by' => auth()->id(),
+                'reference' => $paymentReference,
+            ],
+        ]);
     }
 
     /**

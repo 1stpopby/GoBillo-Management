@@ -90,19 +90,55 @@ class PaymentStatementController extends Controller
 
         // Get all payments for these invoices
         foreach ($invoices as $invoice) {
-            $invoicePayments = $invoice->payments()
-                ->where('status', 'completed');
+            // Check if invoice is marked as paid
+            if ($invoice->status === 'paid') {
+                // First try to get payment records
+                $invoicePayments = $invoice->payments()
+                    ->where('status', 'completed');
+                    
+                if ($dateFrom) {
+                    $invoicePayments->where('processed_at', '>=', $dateFrom);
+                }
+                if ($dateTo) {
+                    $invoicePayments->where('processed_at', '<=', $dateTo);
+                }
                 
-            if ($dateFrom) {
-                $invoicePayments->where('processed_at', '>=', $dateFrom);
+                $invoicePayments = $invoicePayments->get();
+                
+                // If no payment records exist but invoice is marked as paid (legacy data)
+                if ($invoicePayments->isEmpty()) {
+                    // Consider the full invoice amount as paid
+                    $totalPaid += $invoice->total_amount;
+                    // Create a virtual payment record for display
+                    $virtualPayment = new \stdClass();
+                    $virtualPayment->payment_number = 'PAID-' . $invoice->invoice_number;
+                    $virtualPayment->amount = $invoice->total_amount;
+                    $virtualPayment->payment_gateway = 'manual';
+                    $virtualPayment->status = 'completed';
+                    $virtualPayment->processed_at = $invoice->paid_at ?: $invoice->updated_at;
+                    $virtualPayment->invoice = $invoice;
+                    $payments->push($virtualPayment);
+                } else {
+                    // Use actual payment records
+                    $payments = $payments->merge($invoicePayments);
+                    $totalPaid += $invoicePayments->sum('amount');
+                }
+            } else {
+                // For non-paid invoices, still check for partial payments
+                $invoicePayments = $invoice->payments()
+                    ->where('status', 'completed');
+                    
+                if ($dateFrom) {
+                    $invoicePayments->where('processed_at', '>=', $dateFrom);
+                }
+                if ($dateTo) {
+                    $invoicePayments->where('processed_at', '<=', $dateTo);
+                }
+                
+                $invoicePayments = $invoicePayments->get();
+                $payments = $payments->merge($invoicePayments);
+                $totalPaid += $invoicePayments->sum('amount');
             }
-            if ($dateTo) {
-                $invoicePayments->where('processed_at', '<=', $dateTo);
-            }
-            
-            $invoicePayments = $invoicePayments->get();
-            $payments = $payments->merge($invoicePayments);
-            $totalPaid += $invoicePayments->sum('amount');
         }
 
         // Calculate balances
