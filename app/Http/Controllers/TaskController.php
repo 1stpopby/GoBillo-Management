@@ -280,12 +280,12 @@ class TaskController extends Controller
         $project = Project::forCompany($user->company_id)->findOrFail($validated['project_id']);
         
         // Ensure assigned user belongs to same company (if provided)
-        if ($validated['assigned_to']) {
+        if (isset($validated['assigned_to']) && $validated['assigned_to']) {
             $assignedUser = User::forCompany($user->company_id)->findOrFail($validated['assigned_to']);
         }
 
         // Verify task category belongs to the same company (if provided)
-        if ($validated['task_category_id']) {
+        if (isset($validated['task_category_id']) && $validated['task_category_id']) {
             \App\Models\TaskCategory::forCompany($user->company_id)->findOrFail($validated['task_category_id']);
         }
 
@@ -433,8 +433,8 @@ class TaskController extends Controller
         }
 
         // Calculate average progress of all tasks (considering individual progress values)
-        $totalProgress = $project->tasks()->sum('progress');
-        $progress = round($totalProgress / $totalTasks);
+        $totalProgress = (int) ($project->tasks()->sum('progress') ?? 0);
+        $progress = (int) round($totalProgress / max(1, $totalTasks));
         
         $project->update(['progress' => $progress]);
 
