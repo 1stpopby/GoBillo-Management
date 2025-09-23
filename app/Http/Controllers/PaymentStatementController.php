@@ -127,7 +127,7 @@ class PaymentStatementController extends Controller
         ];
 
         // Store statement record
-        DB::table('payment_statements')->insert([
+        $statementId = DB::table('payment_statements')->insertGetId([
             'company_id' => auth()->user()->company_id,
             'client_id' => $client->id,
             'statement_number' => $statementData['statement_number'],
@@ -144,7 +144,9 @@ class PaymentStatementController extends Controller
             'updated_at' => now(),
         ]);
 
-        return view('payment-statements.view', $statementData);
+        // Redirect to the view instead of directly returning the view
+        return redirect()->route('payment-statements.show', $statementId)
+            ->with('success', 'Payment statement generated successfully.');
     }
 
     /**
@@ -195,6 +197,7 @@ class PaymentStatementController extends Controller
         }
 
         $statementData = [
+            'statement_id' => $id,
             'client' => $client,
             'projects' => $projects,
             'invoices' => $invoices,

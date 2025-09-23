@@ -9,7 +9,7 @@
         <p class="text-muted mb-0">{{ $statement_number }} - Generated on {{ $statement_date->format('F d, Y') }}</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="{{ route('payment-statements.pdf', request()->route('id')) }}" class="btn btn-danger">
+        <a href="{{ route('payment-statements.pdf', $statement_id ?? request()->route('id')) }}" class="btn btn-danger">
             <i class="bi bi-file-pdf me-2"></i>Download PDF
         </a>
         <button type="button" class="btn btn-success" onclick="sendStatement()">
@@ -334,7 +334,7 @@
 <script>
 function sendStatement() {
     if (confirm('Send this statement to the client via email?')) {
-        window.location.href = '{{ route("payment-statements.send", request()->route("id")) }}';
+        window.location.href = '{{ route("payment-statements.send", $statement_id ?? request()->route("id")) }}';
     }
 }
 </script>
