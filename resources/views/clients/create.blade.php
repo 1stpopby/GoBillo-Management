@@ -14,8 +14,8 @@
                         <li class="breadcrumb-item active">Create Client</li>
                     </ol>
                 </nav>
-                <h1 class="page-title">Create New Client Company</h1>
-                <p class="page-subtitle">Add a new client company to your system</p>
+                <h1 class="page-title" id="page-title">Create New Client</h1>
+                <p class="page-subtitle" id="page-subtitle">Add a new client to your system</p>
             </div>
         </div>
     </div>
@@ -85,7 +85,7 @@
                             <div class="col-md-6">
                                 <label for="company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('company_name') is-invalid @enderror" 
-                                       id="company_name" name="company_name" value="{{ old('company_name') }}" required>
+                                       id="company_name" name="company_name" value="{{ old('company_name') }}">
                                 @error('company_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -327,8 +327,8 @@
                             Create a new client company record with complete business information and contact details.
                         </p>
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle me-2"></i>Create Client Company
+                            <button type="submit" class="btn btn-primary btn-lg" id="submit-button">
+                                <i class="bi bi-check-circle me-2"></i>Create Client
                             </button>
                             <a href="{{ route('clients.index') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-x-circle me-2"></i>Cancel
@@ -343,11 +343,12 @@
                         <h6 class="card-title mb-0">Tips</h6>
                     </div>
                     <div class="card-body">
-                        <ul class="list-unstyled small text-muted mb-0">
-                            <li class="mb-2">• Only Company Name is required</li>
-                            <li class="mb-2">• Legal Name is used for contracts if different</li>
-                            <li class="mb-2">• Contact person details help with project communication</li>
-                            <li>• Business type and industry help with reporting</li>
+                        <ul class="list-unstyled small text-muted mb-0" id="tips-list">
+                            <li class="mb-2">• Choose between Business Client (company details) or Private Client (individual)</li>
+                            <li class="mb-2">• For Business: Company Name is required</li>
+                            <li class="mb-2">• For Private: Client Name is required</li>
+                            <li class="mb-2">• Contact details help with project communication</li>
+                            <li>• Business type and industry help with reporting (business clients only)</li>
                         </ul>
                     </div>
                 </div>
@@ -370,6 +371,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function toggleClientType() {
         const isPrivateClient = privateClientRadio.checked;
+        const pageTitle = document.getElementById('page-title');
+        const pageSubtitle = document.getElementById('page-subtitle');
+        const contactNameField = document.getElementById('contact_person_name');
+        const submitButton = document.getElementById('submit-button');
+        const formDescription = document.querySelector('.text-muted.text-center');
         
         if (isPrivateClient) {
             // Hide company information section
@@ -378,16 +384,40 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide company-specific fields in contact section
             companyFields.forEach(field => {
                 field.style.display = 'none';
+                // Disable company-specific inputs to prevent validation
+                const inputs = field.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.disabled = true;
+                    input.removeAttribute('required');
+                });
             });
+            
+            // Update page titles
+            pageTitle.textContent = 'Create New Private Client';
+            pageSubtitle.textContent = 'Add a new individual client to your system';
             
             // Update labels for private client
             contactInfoTitle.textContent = 'Client Information';
             contactNameLabel.innerHTML = 'Client Name <span class="text-danger">*</span>';
             contactNameRequired.style.display = 'inline';
             
-            // Remove required attribute from company name
+            // Remove required and disable company name field
             if (companyNameField) {
                 companyNameField.removeAttribute('required');
+                companyNameField.disabled = true;
+            }
+            
+            // Make contact name required for private clients
+            if (contactNameField) {
+                contactNameField.setAttribute('required', 'required');
+            }
+            
+            // Update submit button and form description
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>Create Private Client';
+            }
+            if (formDescription) {
+                formDescription.textContent = 'Create a new private client record with individual contact information.';
             }
         } else {
             // Show company information section
@@ -396,16 +426,39 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show company-specific fields in contact section
             companyFields.forEach(field => {
                 field.style.display = 'block';
+                // Re-enable company-specific inputs
+                const inputs = field.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.disabled = false;
+                });
             });
+            
+            // Update page titles
+            pageTitle.textContent = 'Create New Business Client';
+            pageSubtitle.textContent = 'Add a new client company to your system';
             
             // Update labels for business client
             contactInfoTitle.textContent = 'Contact Information';
             contactNameLabel.innerHTML = 'Primary Contact Person';
             contactNameRequired.style.display = 'none';
             
-            // Add required attribute to company name
+            // Add required attribute to company name and enable it
             if (companyNameField) {
                 companyNameField.setAttribute('required', 'required');
+                companyNameField.disabled = false;
+            }
+            
+            // Make contact name optional for business clients
+            if (contactNameField) {
+                contactNameField.removeAttribute('required');
+            }
+            
+            // Update submit button and form description
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>Create Business Client';
+            }
+            if (formDescription) {
+                formDescription.textContent = 'Create a new client company record with complete business information and contact details.';
             }
         }
     }
