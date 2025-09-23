@@ -13,6 +13,13 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Operative Management**: Invoicing, data forms, hire requests
 
 ## Recent Changes (Sep 23, 2025)
+- **Payment Form Fix**: Resolved empty invoice dropdown in payment creation form
+  - Added payments() relationship to Invoice model  
+  - Added getTotalAttribute() accessor for field compatibility
+  - Fixed invoice status requirement (only sent/overdue/partial invoices appear in dropdown)
+  - Invoice must have unpaid status to appear when recording payments
+
+## Previous Updates (Sep 23, 2025)
 - **Invoice UI Improvements**: Enhanced action buttons in invoice list with better styling, icons, and dropdown menus
 - **Mark as Paid Feature**: Restored "Mark as Paid" functionality with route, controller method, and confirmation dialogs
 - **Button Design**: Replaced basic action buttons with professional Bootstrap buttons featuring:
