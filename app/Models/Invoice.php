@@ -82,6 +82,14 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceItem::class)->orderBy('sort_order');
     }
+    
+    /**
+     * Get the payments for this invoice
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 
     /**
      * Scope for company isolation
@@ -196,6 +204,14 @@ class Invoice extends Model
         if ($this->isOverdue() && $this->status === self::STATUS_SENT) {
             $this->update(['status' => self::STATUS_OVERDUE]);
         }
+    }
+    
+    /**
+     * Get the total attribute (accessor for compatibility)
+     */
+    public function getTotalAttribute()
+    {
+        return $this->total_amount;
     }
 
     /**
