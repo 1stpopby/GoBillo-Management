@@ -603,17 +603,17 @@
                 <div class="accordion sidebar-accordion" id="financialAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button {{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*']) ? '' : 'collapsed' }}" 
+                            <button class="accordion-button {{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*', 'payment-statements.*']) ? '' : 'collapsed' }}" 
                                     type="button" 
                                     data-bs-toggle="collapse" 
                                     data-bs-target="#financialCollapse" 
-                                    aria-expanded="{{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*']) ? 'true' : 'false' }}">
+                                    aria-expanded="{{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*', 'payment-statements.*']) ? 'true' : 'false' }}">
                                 <i class="bi bi-graph-up-arrow"></i>
                                 <span>Financial</span>
                             </button>
                         </h2>
                         <div id="financialCollapse" 
-                             class="accordion-collapse collapse {{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*']) ? 'show' : '' }}" 
+                             class="accordion-collapse collapse {{ request()->routeIs(['cis.*', 'financial-reports.*', 'payments.*', 'payment-statements.*']) ? 'show' : '' }}" 
                              data-bs-parent="#financialAccordion">
                             <div class="accordion-body">
                                 <a class="sub-nav-link {{ request()->routeIs('cis.*') ? 'active' : '' }}" href="{{ route('cis.index') }}">
@@ -621,6 +621,9 @@
                                 </a>
                                 <a class="sub-nav-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">
                                     <i class="bi bi-credit-card-2-front"></i> Payments
+                                </a>
+                                <a class="sub-nav-link {{ request()->routeIs('payment-statements.*') ? 'active' : '' }}" href="{{ route('payment-statements.index') }}">
+                                    <i class="bi bi-file-text"></i> Payment Statements
                                 </a>
                                 <a class="sub-nav-link {{ request()->routeIs('financial-reports.*') ? 'active' : '' }}" href="{{ route('financial-reports.index') }}">
                                     <i class="bi bi-bar-chart-line"></i> Reports
