@@ -131,8 +131,15 @@ class EmailSetting extends Model
                 'encryption' => $this->smtp_encryption,
                 'username' => $this->smtp_username,
                 'password' => $this->smtp_password,
-                'timeout' => null,
+                'timeout' => 10, // Set 10 second timeout instead of null
                 'local_domain' => env('MAIL_EHLO_DOMAIN'),
+                'stream' => [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ],
             ],
             'mail.from' => [
                 'address' => $this->from_email,

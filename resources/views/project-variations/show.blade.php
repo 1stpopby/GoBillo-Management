@@ -457,14 +457,27 @@ document.getElementById('sendEmailBtn').addEventListener('click', function() {
     sendBtn.disabled = true;
     sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
     
+    // Create a timeout controller for the fetch request (15 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    
     fetch(`/projects/{{ $project->id }}/variations/{{ $variation->id }}/send-email`, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         },
-        body: formData
+        body: formData,
+        signal: controller.signal
     })
-    .then(response => response.json())
+    .then(response => {
+        clearTimeout(timeoutId);
+        if (!response.ok && response.status === 500) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Server error occurred');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Show success message
@@ -479,11 +492,16 @@ document.getElementById('sendEmailBtn').addEventListener('click', function() {
             // Close modal
             bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
         } else {
-            alert('Error sending email: ' + (data.message || 'Unknown error'));
+            alert('Error: ' + (data.message || 'Failed to send email'));
         }
     })
     .catch(error => {
-        alert('Error sending email: ' + error.message);
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            alert('Email sending timed out. Please check your email settings and try again.');
+        } else {
+            alert('Error: ' + error.message);
+        }
     })
     .finally(() => {
         sendBtn.disabled = false;

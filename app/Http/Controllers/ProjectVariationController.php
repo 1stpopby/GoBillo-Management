@@ -352,31 +352,49 @@ class ProjectVariationController extends Controller
             
             $company = auth()->user()->company;
 
-            // Send email directly using Laravel's Mail facade
-            \Mail::send('emails.templates.project_variation_created', [
-                'variation' => $variation,
-                'project' => $project,
-                'client' => $client,
-                'company' => $company,
-            ], function ($message) use ($validated, $variation, $project) {
-                $message->to($validated['client_email'], $validated['client_name'])
-                        ->subject($validated['email_subject']);
-                
-                // Attach PDF if requested
-                if ($validated['include_pdf']) {
-                    try {
-                        $pdfContent = $this->generateVariationPDF($variation, $project);
-                        $filename = 'Variation_' . $variation->variation_number . '.pdf';
-                        $message->attachData($pdfContent, $filename, [
-                            'mime' => 'application/pdf',
-                        ]);
-                        \Log::info('PDF attached to email', ['filename' => $filename]);
-                    } catch (\Exception $e) {
-                        \Log::warning('Failed to attach PDF to email: ' . $e->getMessage());
-                        // Continue sending email without PDF
+            // Send email directly using Laravel's Mail facade with timeout handling
+            try {
+                \Mail::send('emails.templates.project_variation_created', [
+                    'variation' => $variation,
+                    'project' => $project,
+                    'client' => $client,
+                    'company' => $company,
+                ], function ($message) use ($validated, $variation, $project) {
+                    $message->to($validated['client_email'], $validated['client_name'])
+                            ->subject($validated['email_subject']);
+                    
+                    // Attach PDF if requested
+                    if ($validated['include_pdf']) {
+                        try {
+                            $pdfContent = $this->generateVariationPDF($variation, $project);
+                            $filename = 'Variation_' . $variation->variation_number . '.pdf';
+                            $message->attachData($pdfContent, $filename, [
+                                'mime' => 'application/pdf',
+                            ]);
+                            \Log::info('PDF attached to email', ['filename' => $filename]);
+                        } catch (\Exception $e) {
+                            \Log::warning('Failed to attach PDF to email: ' . $e->getMessage());
+                            // Continue sending email without PDF
+                        }
                     }
+                });
+            } catch (\Swift_TransportException $e) {
+                \Log::error('SMTP connection failed: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to connect to email server. Please check your email settings and try again. Error: ' . $e->getMessage()
+                ], 500);
+            } catch (\Exception $e) {
+                if (strpos($e->getMessage(), 'Connection timed out') !== false || 
+                    strpos($e->getMessage(), 'Connection could not be established') !== false) {
+                    \Log::error('Email connection timeout: ' . $e->getMessage());
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Email server connection timed out. Please verify your SMTP settings (host, port, and credentials) are correct.'
+                    ], 500);
                 }
-            });
+                throw $e; // Re-throw if it's not a connection issue
+            }
 
             // Update email usage statistics
             $emailSetting->increment('emails_sent_today');
