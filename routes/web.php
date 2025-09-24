@@ -231,6 +231,7 @@ Route::middleware(['auth', 'company.access'])->group(function () {
         Route::patch('variations/{variation}/approve', [ProjectVariationController::class, 'approve'])->name('variations.approve');
         Route::patch('variations/{variation}/reject', [ProjectVariationController::class, 'reject'])->name('variations.reject');
         Route::patch('variations/{variation}/implement', [ProjectVariationController::class, 'implement'])->name('variations.implement');
+        Route::patch('variations/{variation}/quick-cost-update', [ProjectVariationController::class, 'quickCostUpdate'])->name('variations.quickCostUpdate');
         Route::post('variations/{variation}/send-email', [ProjectVariationController::class, 'sendEmail'])->name('variations.send-email');
         Route::get('variations/{variation}/email-preview', [ProjectVariationController::class, 'previewEmail'])->name('variations.email-preview');
         Route::get('variations/{variation}/pdf', [ProjectVariationController::class, 'generatePDF'])->name('variations.pdf');

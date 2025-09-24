@@ -106,19 +106,23 @@ class ProjectVariationController extends Controller
      */
     public function edit(Project $project, ProjectVariation $variation)
     {
+        // Only allow editing if not approved or implemented
+        if (in_array($variation->status, ['approved', 'implemented'])) {
+            return redirect()->route('project.variations.show', ['project' => $project, 'variation' => $variation])
+                ->with('error', 'Cannot edit approved or implemented variations');
+        }
+        
         $variation->load(['creator', 'approver']);
         $tasks = $project->tasks()->select('id', 'title')->get();
         
-        return response()->json([
-            'variation' => $variation,
-            'types' => [
-                'addition' => 'Addition',
-                'omission' => 'Omission',
-                'substitution' => 'Substitution',
-                'change_order' => 'Change Order'
-            ],
-            'tasks' => $tasks
-        ]);
+        $types = [
+            'addition' => 'Addition',
+            'omission' => 'Omission',
+            'substitution' => 'Substitution',
+            'change_order' => 'Change Order'
+        ];
+        
+        return view('project-variations.edit', compact('project', 'variation', 'tasks', 'types'));
     }
 
     /**
@@ -128,10 +132,8 @@ class ProjectVariationController extends Controller
     {
         // Only allow editing if not approved or implemented
         if (in_array($variation->status, ['approved', 'implemented'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot edit approved or implemented variations'
-            ], 422);
+            return redirect()->route('project.variations.show', ['project' => $project, 'variation' => $variation])
+                ->with('error', 'Cannot edit approved or implemented variations');
         }
 
         $validated = $request->validate([
@@ -149,13 +151,9 @@ class ProjectVariationController extends Controller
         ]);
 
         $variation->update($validated);
-        $variation->load(['creator', 'approver']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Variation updated successfully',
-            'variation' => $variation
-        ]);
+        return redirect()->route('project.variations.show', ['project' => $project, 'variation' => $variation])
+            ->with('success', 'Variation updated successfully');
     }
 
     /**
@@ -503,6 +501,34 @@ class ProjectVariationController extends Controller
     /**
      * Send notification to company admins when a manager submits a variation
      */
+    /**
+     * Quick update cost for a variation (Admin only)
+     */
+    public function quickCostUpdate(Request $request, Project $project, ProjectVariation $variation)
+    {
+        // Only allow admins to update costs
+        if (auth()->user()->role !== 'company_admin') {
+            abort(403, 'Unauthorized to update variation costs');
+        }
+
+        // Only allow cost updates for pending variations
+        if (in_array($variation->status, ['approved', 'implemented', 'rejected'])) {
+            return redirect()->route('project.variations.show', ['project' => $project, 'variation' => $variation])
+                ->with('error', 'Cannot update cost for variations that are already approved, rejected, or implemented');
+        }
+
+        $validated = $request->validate([
+            'cost_impact' => 'required|numeric'
+        ]);
+
+        $variation->update([
+            'cost_impact' => $validated['cost_impact']
+        ]);
+
+        return redirect()->route('project.variations.edit', ['project' => $project, 'variation' => $variation])
+            ->with('success', 'Cost updated successfully. You can now continue editing other details.');
+    }
+
     private function notifyAdminsOfNewVariation(ProjectVariation $variation, Project $project)
     {
         try {
