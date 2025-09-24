@@ -218,17 +218,60 @@
     </div>
 </div>
 
+<!-- Test Email Modal -->
+<div class="modal fade" id="testEmailModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-envelope-check me-2"></i>Test Email Configuration
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-3">Send a test email to verify your configuration is working correctly.</p>
+                <div class="mb-3">
+                    <label for="testEmailAddress" class="form-label">Test Email Address</label>
+                    <input type="email" class="form-control" id="testEmailAddress" 
+                           placeholder="Enter email to send test to"
+                           value="{{ auth()->user()->email }}">
+                    <small class="text-muted">A test email will be sent to this address</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="sendTestEmail">
+                    <i class="bi bi-send me-2"></i>Send Test Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Include the JavaScript for email settings -->
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Test Email functionality
+    // Test Email functionality - Open Modal
     document.getElementById('testEmailBtn').addEventListener('click', function() {
+        // Open the test email modal
+        const modal = new bootstrap.Modal(document.getElementById('testEmailModal'));
+        modal.show();
+    });
+    
+    // Send Test Email
+    document.getElementById('sendTestEmail').addEventListener('click', function() {
         const btn = this;
         const originalText = btn.innerHTML;
+        const testEmail = document.getElementById('testEmailAddress').value;
+        
+        if (!testEmail) {
+            alert('Please enter a test email address');
+            return;
+        }
         
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
         
         fetch('{{ route("settings.email.test") }}', {
             method: 'POST',
@@ -243,19 +286,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 smtp_password: document.getElementById('smtp_password').value,
                 smtp_encryption: document.getElementById('smtp_encryption').value,
                 from_email: document.getElementById('from_email').value,
-                from_name: document.getElementById('from_name').value
+                from_name: document.getElementById('from_name').value,
+                test_email: testEmail
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showAlert('success', data.message);
+                showAlert('success', 'Test email sent successfully to ' + testEmail);
+                // Close the modal
+                bootstrap.Modal.getInstance(document.getElementById('testEmailModal')).hide();
             } else {
-                showAlert('danger', data.message);
+                showAlert('danger', 'Failed: ' + (data.message || 'Unknown error'));
             }
         })
         .catch(error => {
-            showAlert('danger', 'Failed to test email configuration');
+            showAlert('danger', 'Failed to test email configuration: ' + error.message);
         })
         .finally(() => {
             btn.disabled = false;
