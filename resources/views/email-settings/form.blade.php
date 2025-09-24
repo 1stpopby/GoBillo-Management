@@ -264,9 +264,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const btn = this;
         const originalText = btn.innerHTML;
         const testEmail = document.getElementById('testEmailAddress').value;
+        const modalBody = document.querySelector('#testEmailModal .modal-body');
+        
+        // Remove any existing alerts in the modal
+        const existingAlert = modalBody.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
         
         if (!testEmail) {
-            alert('Please enter a test email address');
+            showModalAlert('danger', 'Please enter a test email address', modalBody);
             return;
         }
         
@@ -293,15 +300,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showAlert('success', 'Test email sent successfully to ' + testEmail);
-                // Close the modal
-                bootstrap.Modal.getInstance(document.getElementById('testEmailModal')).hide();
+                showModalAlert('success', 'Test email sent successfully to ' + testEmail + '! Check your inbox.', modalBody);
+                // Auto close modal after 3 seconds
+                setTimeout(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('testEmailModal')).hide();
+                    // Show success on main page too
+                    showAlert('success', 'Test email sent successfully to ' + testEmail);
+                }, 3000);
             } else {
-                showAlert('danger', 'Failed: ' + (data.message || 'Unknown error'));
+                showModalAlert('danger', 'Failed: ' + (data.message || 'Unknown error'), modalBody);
             }
         })
         .catch(error => {
-            showAlert('danger', 'Failed to test email configuration: ' + error.message);
+            showModalAlert('danger', 'Failed to test email configuration: ' + error.message, modalBody);
         })
         .finally(() => {
             btn.disabled = false;
@@ -380,6 +391,32 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             alertDiv.remove();
         }, 5000);
+    }
+    
+    function showModalAlert(type, message, container) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+        alertDiv.innerHTML = `
+            <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Insert after the first paragraph or at the beginning
+        const firstParagraph = container.querySelector('p');
+        if (firstParagraph) {
+            firstParagraph.insertAdjacentElement('afterend', alertDiv);
+        } else {
+            container.insertBefore(alertDiv, container.firstChild);
+        }
+        
+        // Auto remove after some time
+        if (type === 'danger') {
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 10000); // 10 seconds for errors
+        }
     }
 });
 </script>
