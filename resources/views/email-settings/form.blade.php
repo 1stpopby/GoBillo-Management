@@ -314,7 +314,12 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('{{ route("settings.email.usage") }}')
         .then(response => response.json())
         .then(data => {
-            const message = `Email Usage Statistics:\n\nToday: ${data.today} emails\nThis Month: ${data.month} emails\nTotal: ${data.total} emails`;
+            const today = data.emails_sent_today || 0;
+            const month = data.emails_sent_month || 0;
+            const lastTested = data.last_tested || 'Never';
+            const isVerified = data.is_verified ? 'Yes' : 'No';
+            
+            const message = `Email Usage Statistics:\n\nEmails Today: ${today}\nEmails This Month: ${month}\n\nLast Tested: ${lastTested}\nVerified: ${isVerified}`;
             alert(message);
         })
         .catch(error => {
@@ -324,31 +329,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Preview Template functionality
     document.getElementById('previewTemplateBtn').addEventListener('click', function() {
-        const previewData = {
-            template: 'invoice_created',
-            data: {
-                company_name: document.getElementById('from_name').value,
-                logo_url: document.getElementById('logo_url').value,
-                signature: document.getElementById('email_signature').value
-            }
-        };
-
+        // Show a modal or dropdown to select template type
+        const templates = [
+            'invoice_created',
+            'project_variation_created', 
+            'task_assigned',
+            'payment_received'
+        ];
+        
+        // For simplicity, let's preview invoice_created template
+        const templateType = 'invoice_created';
+        
         fetch('{{ route("settings.email.preview") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify(previewData)
+            body: JSON.stringify({
+                template_type: templateType  // Changed from 'template' to 'template_type'
+            })
         })
-        .then(response => response.text())
-        .then(html => {
-            const newWindow = window.open('', '_blank');
-            newWindow.document.write(html);
-            newWindow.document.close();
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Open preview in new window
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(data.html);
+                newWindow.document.close();
+            } else {
+                showAlert('danger', 'Failed to generate preview: ' + (data.message || 'Unknown error'));
+            }
         })
         .catch(error => {
-            showAlert('danger', 'Failed to generate preview');
+            showAlert('danger', 'Failed to generate preview: ' + error.message);
         });
     });
 
