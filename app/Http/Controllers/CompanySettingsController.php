@@ -238,6 +238,8 @@ class CompanySettingsController extends Controller
         if (!$emailSetting) {
             $emailSetting = new EmailSetting();
             $emailSetting->company_id = $company->id;
+            $emailSetting->type = 'company';
+            $emailSetting->name = $company->name . ' Email Settings';
         }
 
         // Prepare data
@@ -253,7 +255,9 @@ class CompanySettingsController extends Controller
             'enabled_notifications' => json_encode($request->enabled_notifications ?? []),
             'email_signature' => $request->email_signature,
             'logo_url' => $request->logo_url,
-            'is_active' => $request->has('is_active'),
+            'is_active' => $request->has('is_active') ? 1 : 0,
+            'type' => 'company',
+            'name' => $company->name . ' Email Settings',
         ];
 
         // Handle password (only update if provided)

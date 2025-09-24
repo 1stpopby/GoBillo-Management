@@ -183,11 +183,11 @@
                     <div class="card-body">
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" 
-                                   id="is_active" name="is_active" 
+                                   id="is_active" name="is_active" value="1"
                                    {{ old('is_active', $emailSetting && $emailSetting->is_active) ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_active">
                                 <strong>Active</strong>
-                                <small class="d-block text-muted">Enable email sending</small>
+                                <small class="d-block text-muted">Enable email sending for this company</small>
                             </label>
                         </div>
 
