@@ -71,6 +71,11 @@ class ProjectVariationController extends Controller
         $variation = ProjectVariation::create($validated);
         $variation->load(['creator', 'approver']);
 
+        // Send notification to company admins when a manager submits a variation
+        if (in_array(auth()->user()->role, ['site_manager', 'project_manager'])) {
+            $this->notifyAdminsOfNewVariation($variation, $project);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Variation created successfully',
@@ -492,6 +497,62 @@ class ProjectVariationController extends Controller
                 'project' => $project,
                 'variation' => $variation
             ])->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send notification to company admins when a manager submits a variation
+     */
+    private function notifyAdminsOfNewVariation(ProjectVariation $variation, Project $project)
+    {
+        try {
+            // Get all company admins
+            $admins = \App\Models\User::where('company_id', auth()->user()->company_id)
+                ->where('role', 'admin')
+                ->get();
+
+            if ($admins->isEmpty()) {
+                return;
+            }
+
+            // Prepare notification data
+            $notificationData = [
+                'subject' => 'New Variation Submitted for Approval',
+                'title' => 'New Variation Requires Your Attention',
+                'message' => sprintf(
+                    '%s has submitted a new variation for project "%s" that requires cost agreement and approval.',
+                    auth()->user()->name,
+                    $project->name
+                ),
+                'variation_title' => $variation->title,
+                'variation_number' => $variation->variation_number,
+                'project_name' => $project->name,
+                'submitted_by' => auth()->user()->name,
+                'requested_date' => $variation->requested_date,
+                'type' => ucfirst(str_replace('_', ' ', $variation->type)),
+                'description' => $variation->description,
+                'reason' => $variation->reason,
+                'action_url' => route('project.variations.show', [
+                    'project' => $project->id,
+                    'variation' => $variation->id
+                ])
+            ];
+
+            // Send email to each admin
+            foreach ($admins as $admin) {
+                try {
+                    Mail::send('emails.variation-notification', $notificationData, function ($message) use ($admin, $notificationData) {
+                        $message->to($admin->email, $admin->name)
+                                ->subject($notificationData['subject']);
+                    });
+                } catch (\Exception $e) {
+                    // Log the error but don't stop the process
+                    \Log::error('Failed to send variation notification to ' . $admin->email . ': ' . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            // Log the error but don't stop the main process
+            \Log::error('Failed to send variation notifications: ' . $e->getMessage());
         }
     }
 }
