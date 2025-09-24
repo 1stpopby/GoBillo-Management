@@ -7,6 +7,20 @@
         <h5 class="mb-0"><i class="bi bi-envelope-gear me-2"></i>Email Settings</h5>
     </div>
     <div class="card-body">
+        @if($emailSetting && $emailSetting->smtp_host && strpos($emailSetting->smtp_host, 'milogroup') !== false)
+        <div class="alert alert-warning mb-4">
+            <h6><i class="bi bi-exclamation-triangle me-2"></i>Important: SMTP Configuration Issue</h6>
+            <p class="mb-2">Your current SMTP host "<strong>{{ $emailSetting->smtp_host }}</strong>" appears to be your domain, not an email server.</p>
+            <p class="mb-2">You need to use your email provider's SMTP server. Here are the correct settings:</p>
+            <ul class="mb-0">
+                <li><strong>Gmail:</strong> smtp.gmail.com (port 587, TLS) - Use App Password</li>
+                <li><strong>Outlook/Office 365:</strong> smtp.office365.com (port 587, TLS)</li>
+                <li><strong>Yahoo:</strong> smtp.mail.yahoo.com (port 587, TLS)</li>
+                <li><strong>Your hosting provider:</strong> Check your hosting control panel for SMTP details</li>
+            </ul>
+        </div>
+        @endif
+
         <!-- Action Buttons -->
         <div class="d-flex gap-2 mb-4">
             <button type="button" class="btn btn-outline-primary btn-sm" id="testEmailBtn">
@@ -34,7 +48,14 @@
                                     <label for="smtp_host" class="form-label">SMTP Host <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('smtp_host') is-invalid @enderror" 
                                            id="smtp_host" name="smtp_host" 
-                                           value="{{ old('smtp_host', $emailSetting->smtp_host ?? '') }}" required>
+                                           value="{{ old('smtp_host', $emailSetting->smtp_host ?? '') }}" required
+                                           placeholder="e.g., smtp.gmail.com">
+                                    <small class="text-muted">
+                                        Common SMTP servers:
+                                        <br>• Gmail: smtp.gmail.com
+                                        <br>• Outlook: smtp.office365.com
+                                        <br>• Yahoo: smtp.mail.yahoo.com
+                                    </small>
                                     @error('smtp_host')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -64,10 +85,26 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="smtp_password" class="form-label">SMTP Password <span class="text-danger">*</span></label>
+                                    <label for="smtp_password" class="form-label">
+                                        SMTP Password 
+                                        @if(!$emailSetting || !$emailSetting->smtp_password)
+                                            <span class="text-danger">*</span>
+                                        @endif
+                                    </label>
                                     <input type="password" class="form-control @error('smtp_password') is-invalid @enderror" 
                                            id="smtp_password" name="smtp_password" 
                                            placeholder="{{ $emailSetting && $emailSetting->smtp_password ? '••••••••' : 'Enter password' }}">
+                                    @if($emailSetting && $emailSetting->smtp_password)
+                                        <small class="text-success">
+                                            <i class="bi bi-check-circle me-1"></i>Password saved (hidden for security)
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">Leave blank to keep existing password</small>
+                                    @else
+                                        <small class="text-warning">
+                                            <i class="bi bi-info-circle me-1"></i>For Gmail: Use App Password, not regular password
+                                        </small>
+                                    @endif
                                     @error('smtp_password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
