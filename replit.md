@@ -12,7 +12,20 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Time Tracking**: Clock in/out, timesheet management
 - **Operative Management**: Invoicing, data forms, hire requests
 
-## Recent Changes (Sep 23, 2025)
+## Recent Changes (Sep 24, 2025)
+- **Variation Edit UI Fix**: Fixed variation edit functionality that was showing JSON response
+  - Created proper edit.blade.php view with full form interface
+  - Updated ProjectVariationController edit method to return view instead of JSON
+  - Modified update method to redirect with success message instead of JSON response
+  
+- **Quick Cost Update Feature**: Added easy cost updating for admins when variations are submitted without costs
+  - Added prominent cost update alert box on edit page for variations with zero cost
+  - Created quickCostUpdate method for admins to immediately update cost values
+  - Integrated role-based cost field visibility (hidden for managers, visible for admins)
+  - Added route for quick cost updates with proper authorization
+  - Admins now receive visual notifications when cost agreement is needed
+
+## Previous Changes (Sep 23, 2025)
 - **Payment Statements Feature**: Added comprehensive payment statement generation system
   - Created PaymentStatementController for managing client payment history
   - Built statement generation form with client selection and date range filtering
