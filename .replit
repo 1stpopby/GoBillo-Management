@@ -42,10 +42,6 @@ externalPort = 3001
 localPort = 40511
 externalPort = 3000
 
-[[ports]]
-localPort = 46723
-externalPort = 3002
-
 [deployment]
 deploymentTarget = "autoscale"
 run = ["bash", "-c", "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && DB_CONNECTION=pgsql DB_HOST=$DB_HOST DB_PORT=$DB_PORT DB_DATABASE=$DB_DATABASE DB_USERNAME=$DB_USERNAME DB_PASSWORD=$DB_PASSWORD php artisan serve --host=0.0.0.0 --port=5000"]
