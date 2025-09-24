@@ -44,6 +44,7 @@
         <!-- Main Content - Made Larger -->
         <div class="col-lg-9">
             <!-- Financial Report Cards -->
+            @if(!in_array(auth()->user()->role, ['site_manager', 'project_manager']))
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card border-0 bg-gradient-primary text-white">
@@ -175,6 +176,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
             <!-- Projects - Now with more space -->
             <div class="card">

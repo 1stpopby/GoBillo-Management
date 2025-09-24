@@ -2399,6 +2399,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            @if(!in_array(auth()->user()->role, ['site_manager', 'project_manager']))
                             <div class="mb-3">
                                 <label class="form-label">Cost Impact *</label>
                                 <div class="input-group">
@@ -2407,6 +2408,15 @@
                                 </div>
                                 <small class="text-muted">Use negative values for cost reductions</small>
                             </div>
+                            @else
+                            <div class="mb-3">
+                                <input type="hidden" name="cost_impact" value="0">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <small>Cost impact will be agreed with admin after submission.</small>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="row">
