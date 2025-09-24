@@ -284,7 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 smtp_host: document.getElementById('smtp_host').value,
@@ -297,7 +298,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 test_email: testEmail
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            // Check if response is OK first
+            if (!response.ok) {
+                // Try to get JSON error if available
+                return response.text().then(text => {
+                    try {
+                        const json = JSON.parse(text);
+                        throw new Error(json.message || 'Server error');
+                    } catch {
+                        // If not JSON, it's probably an HTML error page
+                        console.error('Server returned HTML:', text);
+                        throw new Error('Server error. Please check your settings and try again.');
+                    }
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showModalAlert('success', 'Test email sent successfully to ' + testEmail + '! Check your inbox.', modalBody);

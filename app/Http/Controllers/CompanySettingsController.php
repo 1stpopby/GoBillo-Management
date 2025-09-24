@@ -320,25 +320,66 @@ class CompanySettingsController extends Controller
      */
     public function testEmail(Request $request)
     {
-        $request->validate([
-            'smtp_host' => 'required|string',
-            'smtp_port' => 'required|integer',
-            'smtp_username' => 'required|string',
-            'smtp_password' => 'required|string',
-            'smtp_encryption' => 'nullable|string',
-            'from_email' => 'required|email',
-            'from_name' => 'required|string',
-        ]);
-
         try {
-            // Use the EmailSettingsController logic
-            $emailController = new \App\Http\Controllers\EmailSettingsController();
-            return $emailController->test($request);
+            // Get the company's existing email settings
+            $company = auth()->user()->company;
+            $emailSetting = $company->emailSettings()->first();
+            
+            // If no email settings exist, ask user to save them first
+            if (!$emailSetting) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please save your email settings first before testing.'
+                ], 422);
+            }
+            
+            // If test_email is provided, use the EmailSettingsController directly
+            if ($request->has('test_email')) {
+                $emailController = new \App\Http\Controllers\EmailSettingsController();
+                return $emailController->test($request);
+            }
+            
+            // Otherwise validate that we have required fields from the form
+            $request->validate([
+                'smtp_host' => 'required|string',
+                'smtp_port' => 'required|integer',
+                'smtp_username' => 'required|string',
+                'smtp_encryption' => 'nullable|string',
+                'from_email' => 'required|email',
+                'from_name' => 'required|string',
+            ]);
+            
+            // Update email settings temporarily for testing
+            $originalPassword = $emailSetting->smtp_password;
+            
+            // Only update password if provided
+            if ($request->filled('smtp_password')) {
+                $emailSetting->smtp_password = $request->smtp_password;
+            }
+            
+            // Update other settings temporarily
+            $emailSetting->smtp_host = $request->smtp_host;
+            $emailSetting->smtp_port = $request->smtp_port;
+            $emailSetting->smtp_username = $request->smtp_username;
+            $emailSetting->smtp_encryption = $request->smtp_encryption;
+            $emailSetting->from_email = $request->from_email;
+            $emailSetting->from_name = $request->from_name;
+            
+            // Test the connection
+            $result = $emailSetting->testConnection($request->test_email ?? $request->from_email);
+            
+            // Restore original password if we changed it
+            if ($request->filled('smtp_password')) {
+                $emailSetting->smtp_password = $originalPassword;
+            }
+            
+            return response()->json($result);
+            
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Test failed: ' . $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 
