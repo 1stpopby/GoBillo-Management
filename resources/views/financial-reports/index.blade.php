@@ -130,37 +130,51 @@
                     <div class="row g-4 mb-4">
                         <!-- Revenue Card -->
                         <div class="col-xl-3 col-lg-6">
-                            <div class="metric-card bg-gradient-success">
-                                <div class="metric-card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="metric-number text-white mb-1">£{{ number_format($reportData['overview']['total_revenue'], 0) }}</h3>
-                                            <p class="metric-label text-white-75 mb-0">Total Revenue</p>
+                            <a href="{{ route('invoices.index') }}" class="text-decoration-none">
+                                <div class="metric-card bg-gradient-success hover-lift">
+                                    <div class="metric-card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h3 class="metric-number text-white mb-1">£{{ number_format($reportData['overview']['total_revenue'], 0) }}</h3>
+                                                <p class="metric-label text-white-75 mb-0">Total Revenue</p>
+                                            </div>
+                                            <div class="metric-icon text-white-50">
+                                                <i class="bi bi-currency-pound fs-1"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-white-75">
+                                                <i class="bi bi-arrow-right-circle me-1"></i> View Invoices
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                                        <div class="metric-icon text-white-50">
-                                            <i class="bi bi-currency-pound fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+                        
                         <!-- Expenses Card -->
                         <div class="col-xl-3 col-lg-6">
-                            <div class="metric-card bg-gradient-danger">
-                                <div class="metric-card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="metric-number text-white mb-1">£{{ number_format($reportData['overview']['total_expenses'], 0) }}</h3>
-                                            <p class="metric-label text-white-75 mb-0">Total Expenses</p>
+                            <a href="{{ route('expenses.index') }}" class="text-decoration-none">
+                                <div class="metric-card bg-gradient-danger hover-lift">
+                                    <div class="metric-card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h3 class="metric-number text-white mb-1">£{{ number_format($reportData['overview']['total_expenses'], 0) }}</h3>
+                                                <p class="metric-label text-white-75 mb-0">Total Expenses</p>
+                                            </div>
+                                            <div class="metric-icon text-white-50">
+                                                <i class="bi bi-credit-card fs-1"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-white-75">
+                                                <i class="bi bi-arrow-right-circle me-1"></i> View Expenses
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                                        <div class="metric-icon text-white-50">
-                                            <i class="bi bi-credit-card fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
                         <!-- Gross Profit Card -->
                         <div class="col-xl-3 col-lg-6">
@@ -186,21 +200,28 @@
 
                         <!-- Active Projects Card -->
                         <div class="col-xl-3 col-lg-6">
-                            <div class="metric-card bg-gradient-info">
-                                <div class="metric-card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h3 class="metric-number text-white mb-1">{{ $reportData['overview']['active_projects'] }}</h3>
-                                            <p class="metric-label text-white-75 mb-0">Active Projects</p>
+                            <a href="{{ route('projects.index') }}" class="text-decoration-none">
+                                <div class="metric-card bg-gradient-info hover-lift">
+                                    <div class="metric-card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h3 class="metric-number text-white mb-1">{{ $reportData['overview']['active_projects'] }}</h3>
+                                                <p class="metric-label text-white-75 mb-0">Active Projects</p>
+                                            </div>
+                                            <div class="metric-icon text-white-50">
+                                                <i class="bi bi-kanban fs-1"></i>
+                                            </div>
                                         </div>
-                                        <div class="metric-icon text-white-50">
-                                            <i class="bi bi-kanban fs-1"></i>
+                                        <div class="mt-2">
+                                            <small class="text-white-75">
+                                                <i class="bi bi-arrow-right-circle me-1"></i> View Projects
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
                     <!-- Charts Section -->
                     <div class="row g-4">
@@ -225,6 +246,122 @@
             </div>
         </div>
     </div>
+    
+                    <!-- Recent Transactions Section -->
+                    <div class="row g-4 mt-4">
+                        <!-- Recent Invoices -->
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-receipt-cutoff me-2"></i>Recent Invoices
+                                        <a href="{{ route('invoices.index') }}" class="btn btn-sm btn-outline-primary float-end">
+                                            View All <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Invoice #</th>
+                                                    <th>Client</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($reportData['overview']['recent_invoices'] ?? [] as $invoice)
+                                                    <tr>
+                                                        <td>{{ $invoice->invoice_number }}</td>
+                                                        <td>{{ $invoice->client->name ?? 'N/A' }}</td>
+                                                        <td>£{{ number_format($invoice->total_amount, 2) }}</td>
+                                                        <td>
+                                                            <span class="badge bg-{{ 
+                                                                $invoice->status == 'paid' ? 'success' : 
+                                                                ($invoice->status == 'overdue' ? 'danger' : 
+                                                                ($invoice->status == 'sent' ? 'warning' : 'secondary')) 
+                                                            }}">
+                                                                {{ ucfirst($invoice->status) }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{ route('invoices.show', $invoice->id) }}" 
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                View
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-3 text-muted">
+                                                            No recent invoices found
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Expenses -->
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-credit-card-2-back me-2"></i>Recent Expenses
+                                        <a href="{{ route('expenses.index') }}" class="btn btn-sm btn-outline-primary float-end">
+                                            View All <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Description</th>
+                                                    <th>User</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($reportData['overview']['recent_expenses'] ?? [] as $expense)
+                                                    <tr>
+                                                        <td>{{ \Carbon\Carbon::parse($expense->expense_date)->format('d/m/Y') }}</td>
+                                                        <td>{{ Str::limit($expense->description, 30) }}</td>
+                                                        <td>{{ $expense->user->name ?? 'N/A' }}</td>
+                                                        <td>£{{ number_format($expense->amount, 2) }}</td>
+                                                        <td>
+                                                            <span class="badge bg-{{ 
+                                                                $expense->status == 'approved' ? 'success' : 
+                                                                ($expense->status == 'pending' ? 'warning' : 
+                                                                ($expense->status == 'rejected' ? 'danger' : 'info')) 
+                                                            }}">
+                                                                {{ ucfirst($expense->status) }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-3 text-muted">
+                                                            No recent expenses found
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 </div>
 
                 <!-- Sites Tab -->

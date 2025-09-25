@@ -45,7 +45,57 @@ class FinancialReportController extends Controller
         $paymentsFromClients = $this->getPaymentsFromClients($startDate, $endDate);
         [$paymentsByRole, $topPaidUsers] = $this->getPaymentsToTeam($startDate, $endDate);
 
+        // Calculate additional overview metrics
+        $grossProfit = $summary['total_revenue'] - $summary['total_expenses'];
+        $profitMargin = $summary['total_revenue'] > 0 
+            ? round(($grossProfit / $summary['total_revenue']) * 100, 1)
+            : 0;
+        
+        $activeProjects = Project::forCompany()
+            ->whereIn('status', ['in_progress', 'planning', 'on_hold'])
+            ->count();
+        
+        // Get recent financial records for overview tab
+        $recentInvoices = Invoice::forCompany()
+            ->with(['client', 'project'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        $recentExpenses = Expense::forCompany()
+            ->with(['user', 'project'])
+            ->orderBy('expense_date', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Structure the data for the view
+        $reportData = [
+            'overview' => [
+                'total_revenue' => $summary['total_revenue'],
+                'total_expenses' => $summary['total_expenses'],
+                'gross_profit' => $grossProfit,
+                'profit_margin' => $profitMargin,
+                'active_projects' => $activeProjects,
+                'outstanding_invoices' => $summary['outstanding_invoices'],
+                'pending_estimates' => $summary['pending_estimates'],
+                'recent_invoices' => $recentInvoices,
+                'recent_expenses' => $recentExpenses,
+            ],
+            'sites' => $siteOverview,
+            'siteTotals' => $siteTotals,
+            'projects' => $projectProfits,
+            'monthlyTrends' => $monthlyTrends,
+            'topClients' => $topClients,
+            'paymentsFromClients' => $paymentsFromClients,
+            'paymentsByRole' => $paymentsByRole,
+            'topPaidUsers' => $topPaidUsers,
+            // VAT and CIS data will be calculated in their respective methods
+            'vat' => [],
+            'cis' => [],
+        ];
+
         return view('financial-reports.index', compact(
+            'reportData',
             'summary',
             'monthlyTrends',
             'topClients',
