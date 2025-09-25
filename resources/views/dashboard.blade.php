@@ -615,7 +615,7 @@
 .kpi-card {
     background: white;
     border-radius: 20px;
-    padding: 2rem;
+    padding: 1.25rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
@@ -643,28 +643,28 @@
     display: flex;
     justify-content: between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .kpi-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.125rem;
 }
 
 .kpi-trend {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    gap: 0.25rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.25rem 0.75rem;
+    padding: 0.125rem 0.5rem;
     border-radius: 20px;
 }
 
@@ -679,46 +679,46 @@
 }
 
 .kpi-value {
-    font-size: 2.5rem;
+    font-size: 1.875rem;
     font-weight: 700;
     color: #1f2937;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     line-height: 1;
 }
 
 .kpi-label {
-    font-size: 1rem;
+    font-size: 0.875rem;
     color: #6b7280;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .kpi-progress {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .kpi-progress .progress {
-    height: 8px;
+    height: 6px;
     background: #f3f4f6;
     border-radius: 4px;
     overflow: hidden;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .kpi-details {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 .detail-item {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     color: #6b7280;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 /* Secondary Metrics */
@@ -1001,7 +1001,11 @@
     }
     
     .kpi-value {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+    
+    .kpi-card {
+        padding: 1.125rem;
     }
 }
 
@@ -1021,7 +1025,7 @@
     }
     
     .kpi-card {
-        padding: 1.5rem;
+        padding: 1rem;
     }
     
     .kpi-header {
@@ -1059,11 +1063,11 @@
     }
     
     .kpi-card {
-        padding: 1.25rem;
+        padding: 0.875rem;
     }
     
     .kpi-value {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
     
     .action-grid {
