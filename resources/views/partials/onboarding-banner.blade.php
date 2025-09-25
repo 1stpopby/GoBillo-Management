@@ -1,12 +1,12 @@
 @if($onboardingData && $onboardingData['show'])
-<div class="onboarding-banner bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg shadow-lg mb-6 p-6" id="onboardingBanner">
+<div class="onboarding-banner rounded-lg shadow-lg mb-6 p-6" id="onboardingBanner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="row align-items-center">
         <div class="col-lg-8">
-            <h4 class="text-white mb-3">
+            <h4 class="mb-3 text-white">
                 <i class="bi bi-rocket-takeoff me-2"></i>
                 Welcome to ProMax Team! Let's get you started
             </h4>
-            <p class="mb-3">Complete these steps to set up your construction management system:</p>
+            <p class="mb-3 text-white">Complete these steps to set up your construction management system:</p>
             
             <!-- Progress Bar -->
             <div class="progress mb-3" style="height: 30px; background-color: rgba(255,255,255,0.2);">
@@ -75,8 +75,8 @@
                     </button>
                 </div>
                 
-                <a href="{{ route('kb.index') }}" class="btn btn-link text-white mt-2">
-                    <i class="bi bi-book me-1"></i>View Help Guide
+                <a href="{{ route('knowledge-base.index') }}" class="btn btn-link text-white mt-2">
+                    <i class="bi bi-book me-1"></i>View Full KB
                 </a>
             @else
                 <div class="text-center">
