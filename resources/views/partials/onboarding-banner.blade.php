@@ -75,7 +75,7 @@
                     </button>
                 </div>
                 
-                <a href="{{ route('knowledge-base.index') }}" class="btn btn-link text-white mt-2">
+                <a href="{{ route('kb.index') }}" class="btn btn-link text-white mt-2">
                     <i class="bi bi-book me-1"></i>View Full KB
                 </a>
             @else
