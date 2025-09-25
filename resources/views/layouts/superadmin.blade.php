@@ -77,6 +77,11 @@
                         </a>
                     </li>
                     <li class="nav-item mb-2">
+                        <a class="nav-link {{ request()->routeIs('superadmin.kb.*') ? 'active' : '' }}" href="{{ route('superadmin.kb.categories.index') }}">
+                            <i class="bi bi-book me-2"></i>Knowledge Base
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
                         <a class="nav-link {{ request()->routeIs('superadmin.analytics.*') ? 'active' : '' }}" href="{{ route('superadmin.analytics.index') }}">
                             <i class="bi bi-graph-up me-2"></i>Analytics
                         </a>
@@ -224,6 +229,11 @@
                     <li class="nav-item mb-2">
                         <a class="nav-link {{ request()->routeIs('superadmin.pages.*') ? 'active' : '' }}" href="{{ route('superadmin.pages.index') }}">
                             <i class="bi bi-file-earmark-text me-2"></i>Pages
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link {{ request()->routeIs('superadmin.kb.*') ? 'active' : '' }}" href="{{ route('superadmin.kb.categories.index') }}">
+                            <i class="bi bi-book me-2"></i>Knowledge Base
                         </a>
                     </li>
                     <li class="nav-item mb-2">
