@@ -5,10 +5,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('knowledge-base.index') }}">Knowledge Base</a>
+                <a href="{{ route('kb.index') }}">Knowledge Base</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('knowledge-base.category', $article->category) }}">
+                <a href="{{ route('kb.category', $article->category->slug) }}">
                     {{ $article->category->name }}
                 </a>
             </li>
@@ -47,14 +47,14 @@
                         <div class="card-body">
                             <h5 class="card-title">Was this article helpful?</h5>
                             <div class="btn-group" role="group">
-                                <form method="POST" action="{{ route('knowledge-base.feedback', $article) }}" class="d-inline">
+                                <form method="POST" action="#" class="d-inline">
                                     @csrf
                                     <input type="hidden" name="helpful" value="1">
                                     <button type="submit" class="btn btn-outline-success">
                                         <i class="bi bi-hand-thumbs-up me-1"></i> Yes
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ route('knowledge-base.feedback', $article) }}" class="d-inline">
+                                <form method="POST" action="#" class="d-inline">
                                     @csrf
                                     <input type="hidden" name="helpful" value="0">
                                     <button type="submit" class="btn btn-outline-danger">
@@ -71,7 +71,7 @@
                             <h4 class="mb-3">Related Articles</h4>
                             <div class="list-group">
                                 @foreach($relatedArticles as $related)
-                                    <a href="{{ route('knowledge-base.article', $related) }}" 
+                                    <a href="{{ route('kb.article', [$related->category->slug, $related->slug]) }}" 
                                        class="list-group-item list-group-item-action">
                                         <h6 class="mb-1">{{ $related->title }}</h6>
                                         <small class="text-muted">{{ $related->category->name }}</small>

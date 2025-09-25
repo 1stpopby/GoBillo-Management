@@ -5,7 +5,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('knowledge-base.index') }}">Knowledge Base</a>
+                <a href="{{ route('kb.index') }}">Knowledge Base</a>
             </li>
             <li class="breadcrumb-item active">{{ $category->name }}</li>
         </ol>
@@ -30,7 +30,7 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{{ route('knowledge-base.article', $article) }}" class="text-decoration-none">
+                                <a href="{{ route('kb.article', [$article->category->slug, $article->slug]) }}" class="text-decoration-none">
                                     {{ $article->title }}
                                 </a>
                             </h5>
@@ -42,7 +42,7 @@
                                     <i class="bi bi-clock me-1"></i>
                                     {{ $article->created_at->format('M d, Y') }}
                                 </small>
-                                <a href="{{ route('knowledge-base.article', $article) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('kb.article', [$article->category->slug, $article->slug]) }}" class="btn btn-sm btn-outline-primary">
                                     Read More <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>

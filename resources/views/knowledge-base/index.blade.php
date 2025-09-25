@@ -13,7 +13,7 @@
     <!-- Search Bar -->
     <div class="row mb-4">
         <div class="col-md-8 mx-auto">
-            <form method="GET" action="{{ route('knowledge-base.index') }}">
+            <form method="GET" action="{{ route('kb.index') }}">
                 <div class="input-group">
                     <input type="text" 
                            class="form-control" 
@@ -24,7 +24,7 @@
                         <i class="bi bi-search"></i> Search
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('knowledge-base.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('kb.index') }}" class="btn btn-secondary">
                             Clear
                         </a>
                     @endif
@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <h5 class="card-title mb-1">
-                                        <a href="{{ route('knowledge-base.category', $category) }}" class="text-decoration-none">
+                                        <a href="{{ route('kb.category', $category->slug) }}" class="text-decoration-none">
                                             {{ $category->name }}
                                         </a>
                                     </h5>
@@ -75,7 +75,7 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <a href="{{ route('knowledge-base.article', $article) }}">
+                                    <a href="{{ route('kb.article', [$article->category->slug, $article->slug]) }}">
                                         {{ $article->title }}
                                     </a>
                                 </h5>
@@ -117,7 +117,7 @@
                 </h4>
                 <div class="list-group">
                     @foreach($popularArticles as $article)
-                        <a href="{{ route('knowledge-base.article', $article) }}" 
+                        <a href="{{ route('kb.article', [$article->category->slug, $article->slug]) }}" 
                            class="list-group-item list-group-item-action">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
