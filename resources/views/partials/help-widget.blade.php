@@ -64,7 +64,7 @@
             <a href="{{ route('kb.index') }}" class="btn btn-sm btn-outline-primary w-100">
                 <i class="bi bi-book me-2"></i>View Full Knowledge Base
             </a>
-            @if(auth()->user()->hasRole('admin'))
+            @if(auth()->user()->role === 'admin')
             <a href="{{ route('onboarding.start') }}" class="btn btn-sm btn-outline-secondary w-100 mt-2">
                 <i class="bi bi-rocket me-2"></i>Restart Setup Guide
             </a>
