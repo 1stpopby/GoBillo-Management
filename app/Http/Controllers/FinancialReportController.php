@@ -9,6 +9,8 @@ use App\Models\Project;
 use App\Models\Client;
 use App\Models\Site;
 use App\Models\User;
+use App\Models\OperativeInvoice;
+use App\Models\ToolHireRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -51,18 +53,19 @@ class FinancialReportController extends Controller
             ? round(($grossProfit / $summary['total_revenue']) * 100, 1)
             : 0;
         
-        $activeProjects = Project::forCompany()
+        $companyId = auth()->user()->company_id ?? 1;
+        $activeProjects = Project::where('company_id', $companyId)
             ->whereIn('status', ['in_progress', 'planning', 'on_hold'])
             ->count();
         
         // Get recent financial records for overview tab
-        $recentInvoices = Invoice::forCompany()
+        $recentInvoices = Invoice::where('company_id', $companyId)
             ->with(['client', 'project'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
         
-        $recentExpenses = Expense::forCompany()
+        $recentExpenses = Expense::where('company_id', $companyId)
             ->with(['user', 'project'])
             ->orderBy('expense_date', 'desc')
             ->limit(5)
@@ -197,7 +200,7 @@ class FinancialReportController extends Controller
         $dateRange = $this->getDateRange($request);
         $startDate = $dateRange['start'];
         $endDate = $dateRange['end'];
-        $companyId = auth()->user()->company_id;
+        $companyId = auth()->user()->company_id ?? 1;
 
         // Expenses by category (explicit DB query, SQLite-safe date filter)
         $expensesByCategory = DB::table('expenses')
@@ -432,25 +435,53 @@ class FinancialReportController extends Controller
      */
     private function getFinancialSummary($startDate, $endDate): array
     {
-        // Revenue: paid invoices; if none, fallback to sum of project budgets created/started in range
-        $paidRevenue = Invoice::forCompany()
+        // For SuperAdmin (company_id = null), default to company 1 for now
+        // In a real implementation, SuperAdmin should be able to select which company to view
+        $companyId = auth()->user()->company_id ?? 1;
+        
+        // Revenue: paid invoices
+        $paidRevenue = Invoice::where('company_id', $companyId)
             ->where('status', 'paid')
             ->whereBetween('paid_at', [$startDate, $endDate])
             ->sum('total_amount');
 
-        // Expenses: include items whose reimbursed_at OR approved_at OR expense_date falls in range
-        $companyId = auth()->user()->company_id;
-        $totalExpenses = Expense::forCompany()
+        // Regular Expenses: include items whose reimbursed_at OR approved_at OR expense_date falls in range
+        $regularExpenses = Expense::where('company_id', $companyId)
             ->whereBetween(DB::raw('date(COALESCE(reimbursed_at, approved_at, expense_date))'), [$startDate, $endDate])
             ->sum(DB::raw('amount + COALESCE(mileage * mileage_rate, 0)'));
+        
+        // Operative Wages: include paid and approved operative invoices
+        $operativeWages = OperativeInvoice::where('company_id', $companyId)
+            ->whereIn('status', ['paid', 'approved'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('paid_at', [$startDate, $endDate])
+                      ->orWhereBetween('approved_at', [$startDate, $endDate])
+                      ->orWhereBetween('week_ending', [$startDate, $endDate]);
+            })
+            ->sum('gross_amount');
+        
+        // Tool Hire Costs: include completed tool hire requests
+        $toolHireCosts = ToolHireRequest::where('company_id', $companyId)
+            ->whereIn('status', ['completed', 'returned', 'in_use', 'delivered'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('hire_end_date', [$startDate, $endDate])
+                      ->orWhereBetween('actual_return_date', [$startDate, $endDate]);
+            })
+            ->sum(DB::raw('COALESCE(actual_total_cost, estimated_total_cost, 0)'));
+        
+        // Total Expenses = Regular Expenses + Operative Wages + Tool Hire
+        $totalExpenses = $regularExpenses + $operativeWages + $toolHireCosts;
 
         return [
             'total_revenue' => $paidRevenue,
             'total_expenses' => $totalExpenses,
-            'outstanding_invoices' => Invoice::forCompany()
+            'regular_expenses' => $regularExpenses,
+            'operative_wages' => $operativeWages,
+            'tool_hire_costs' => $toolHireCosts,
+            'outstanding_invoices' => Invoice::where('company_id', $companyId)
                 ->whereIn('status', ['sent', 'overdue'])
                 ->sum('total_amount'),
-            'pending_estimates' => Estimate::forCompany()
+            'pending_estimates' => Estimate::where('company_id', $companyId)
                 ->where('status', 'sent')
                 ->sum('total_amount'),
         ];
@@ -556,7 +587,7 @@ class FinancialReportController extends Controller
      */
     private function getSiteOverview($startDate, $endDate): array
     {
-        $companyId = auth()->user()->company_id;
+        $companyId = auth()->user()->company_id ?? 1;
 
         // Revenue by site
         $revenueBySite = Invoice::query()

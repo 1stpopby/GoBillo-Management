@@ -378,9 +378,9 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="border-0 ps-4">Site Name</th>
-                                            <th class="border-0">Location</th>
                                             <th class="border-0">Projects</th>
-                                            <th class="border-0">Active</th>
+                                            <th class="border-0">Revenue</th>
+                                            <th class="border-0">Profit</th>
                                             <th class="border-0 text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -389,23 +389,23 @@
                                             <tr>
                                                 <td class="ps-4">
                                                     <div>
-                                                        <h6 class="mb-1">{{ $siteData['site']->name }}</h6>
-                                                        <small class="text-muted">{{ $siteData['site']->site_id }}</small>
+                                                        <h6 class="mb-1">{{ $siteData['site_name'] }}</h6>
+                                                        <small class="text-muted">Site #{{ $siteData['site_id'] }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <small class="text-muted">
-                                                        {{ $siteData['site']->city }}, {{ $siteData['site']->postcode }}
+                                                        {{ $siteData['projects_count'] }} project(s)
                                                     </small>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-primary bg-opacity-10 text-primary">
-                                                        {{ $siteData['project_count'] }} Projects
+                                                        £{{ number_format($siteData['revenue'], 2) }}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-success bg-opacity-10 text-success">
-                                                        {{ $siteData['active_projects'] }} Active
+                                                        Profit: £{{ number_format($siteData['profit'], 2) }}
                                                     </span>
                                         </td>
                                         <td class="text-center">
