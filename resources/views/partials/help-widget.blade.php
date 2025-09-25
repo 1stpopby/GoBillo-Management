@@ -306,7 +306,7 @@ function loadContextualHelp() {
             // Display suggested articles
             if (data.suggested && data.suggested.length > 0) {
                 suggestedContainer.innerHTML = data.suggested.map(article => `
-                    <a href="/kb/article/${article.slug}" class="help-article-item" target="_blank">
+                    <a href="/knowledge-base/article/${article.category_slug || 'uncategorized'}/${article.slug}" class="help-article-item" target="_blank">
                         <div class="help-article-title">${article.title}</div>
                         <div class="help-article-excerpt">${article.excerpt || 'Click to learn more...'}</div>
                     </a>
@@ -318,7 +318,7 @@ function loadContextualHelp() {
             // Display popular articles
             if (data.popular && data.popular.length > 0) {
                 popularContainer.innerHTML = data.popular.map(article => `
-                    <a href="/kb/article/${article.slug}" class="help-article-item" target="_blank">
+                    <a href="/knowledge-base/article/${article.category_slug || 'uncategorized'}/${article.slug}" class="help-article-item" target="_blank">
                         <div class="help-article-title">${article.title}</div>
                         <div class="help-article-excerpt">${article.excerpt || 'Click to learn more...'}</div>
                     </a>
@@ -360,7 +360,7 @@ function searchHelp(event) {
         .then(data => {
             if (data.articles && data.articles.length > 0) {
                 resultsContainer.innerHTML = data.articles.map(article => `
-                    <a href="/kb/article/${article.slug}" class="help-article-item" target="_blank">
+                    <a href="/knowledge-base/article/${article.category_slug || 'uncategorized'}/${article.slug}" class="help-article-item" target="_blank">
                         <div class="help-article-title">${article.title}</div>
                         <div class="help-article-excerpt">${article.excerpt || 'Click to learn more...'}</div>
                     </a>

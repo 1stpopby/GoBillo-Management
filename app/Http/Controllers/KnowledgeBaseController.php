@@ -297,11 +297,21 @@ class KnowledgeBaseController extends Controller
     {
         $page = $request->get('page', '/');
         $suggested = collect();
-        $popular = KBArticle::published()
-            ->where('is_featured', true)
+        $popular = KBArticle::with('category')
+            ->published()
+            ->orderBy('priority', 'desc')
             ->orderBy('view_count', 'desc')
             ->limit(3)
-            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+            ->get()
+            ->map(function($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->summary,
+                    'category_slug' => $article->category ? $article->category->slug : 'uncategorized'
+                ];
+            });
         
         // Get articles bound to current page
         if ($page) {
@@ -332,11 +342,21 @@ class KnowledgeBaseController extends Controller
                 if (strpos($page, $route) === 0) {
                     $category = KBCategory::where('slug', $categorySlug)->first();
                     if ($category) {
-                        $suggested = KBArticle::where('category_id', $category->id)
+                        $suggested = KBArticle::with('category')
+                            ->where('category_id', $category->id)
                             ->published()
                             ->orderBy('priority', 'desc')
                             ->limit(3)
-                            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+                            ->get()
+                            ->map(function($article) {
+                                return [
+                                    'id' => $article->id,
+                                    'title' => $article->title,
+                                    'slug' => $article->slug,
+                                    'excerpt' => $article->summary,
+                                    'category_slug' => $article->category ? $article->category->slug : 'uncategorized'
+                                ];
+                            });
                         break;
                     }
                 }
@@ -380,8 +400,18 @@ class KnowledgeBaseController extends Controller
         }
         
         $articles = $articlesQuery
+            ->with('category')
             ->limit(10)
-            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+            ->get()
+            ->map(function($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->summary,
+                    'category_slug' => $article->category ? $article->category->slug : 'uncategorized'
+                ];
+            });
         
         return response()->json(['articles' => $articles]);
     }
