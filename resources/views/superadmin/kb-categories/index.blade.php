@@ -12,6 +12,9 @@
             <p class="text-muted">Organize your knowledge base content into categories</p>
         </div>
         <div class="col-md-6 text-md-end">
+            <a href="{{ route('superadmin.kb.articles.index') }}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-file-earmark-text me-2"></i>Manage Articles
+            </a>
             <a href="{{ route('superadmin.kb.categories.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Add New Category
             </a>
