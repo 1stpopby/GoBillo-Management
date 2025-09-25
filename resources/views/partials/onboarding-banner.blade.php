@@ -1,5 +1,6 @@
 @if($onboardingData && $onboardingData['show'])
-<div class="onboarding-banner bg-white rounded-lg shadow-lg mb-6" id="onboardingBanner" style="border: 2px solid #e3f2fd; padding: 2.5rem;">
+<div class="onboarding-banner bg-white rounded-lg shadow-lg" id="onboardingBanner" style="border: 2px solid #e3f2fd; padding: 2.5rem; margin-bottom: 3rem; position: relative;">
+    <button type="button" class="btn-close position-absolute" style="top: 1.5rem; right: 1.5rem; z-index: 10;" onclick="closeOnboarding()" aria-label="Close"></button>
     <div class="row align-items-center">
         <div class="col-lg-8">
             <h4 class="mb-3 text-primary">
@@ -127,6 +128,14 @@
 </style>
 
 <script>
+function closeOnboarding() {
+    document.getElementById('onboardingBanner').style.transition = 'opacity 0.3s ease';
+    document.getElementById('onboardingBanner').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('onboardingBanner').style.display = 'none';
+    }, 300);
+}
+
 function dismissOnboarding() {
     fetch('{{ route("onboarding.dismiss") }}', {
         method: 'POST',
