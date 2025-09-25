@@ -35,6 +35,9 @@
         </div>
     </div>
 
+    <!-- Onboarding Banner -->
+    @include('partials.onboarding-banner')
+
     <!-- Executive KPI Cards -->
     <div class="row g-4 mb-5">
         <!-- Monthly Revenue -->

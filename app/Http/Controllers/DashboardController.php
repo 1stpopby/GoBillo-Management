@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
+use App\Http\Controllers\OnboardingController;
 
 class DashboardController extends Controller
 {
@@ -243,7 +244,11 @@ class DashboardController extends Controller
             \Log::error('Recent activities error: ' . $e->getMessage());
         }
 
-        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentSites', 'recentActivities'));
+        // Get onboarding data for new users
+        $onboardingController = new OnboardingController();
+        $onboardingData = $onboardingController->getDashboardData();
+        
+        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentSites', 'recentActivities', 'onboardingData'));
     }
     
     private function superAdminDashboard()

@@ -39,6 +39,10 @@ use App\Http\Controllers\CisController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FieldOperationsController;
 use App\Http\Controllers\TimeTrackingController;
+use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\SuperAdmin\KBCategoryController;
+use App\Http\Controllers\SuperAdmin\KBArticleController;
 
 // Public routes
 Route::get('/', function () {
@@ -69,6 +73,16 @@ Route::get('/register', function () {
 
 // Public Pages Routes
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
+
+// Knowledge Base Routes (Public)
+Route::prefix('knowledge-base')->name('kb.')->group(function () {
+    Route::get('/', [KnowledgeBaseController::class, 'index'])->name('index');
+    Route::get('/search', [KnowledgeBaseController::class, 'search'])->name('search');
+    Route::get('/category/{slug}', [KnowledgeBaseController::class, 'category'])->name('category');
+    Route::get('/tag/{slug}', [KnowledgeBaseController::class, 'tag'])->name('tag');
+    Route::get('/article/{categorySlug}/{articleSlug}', [KnowledgeBaseController::class, 'article'])->name('article');
+    Route::get('/context-help', [KnowledgeBaseController::class, 'contextHelp'])->name('context-help');
+});
 
 // Authentication routes (excluding register - we have our own)
 Auth::routes(['register' => false]);
@@ -167,6 +181,18 @@ Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(fu
     // Pages Management
     Route::resource('pages', PagesController::class);
     Route::post('/pages/initialize', [PagesController::class, 'initializeDefaults'])->name('pages.initialize');
+    
+    // Knowledge Base Management
+    Route::prefix('knowledge-base')->name('kb.')->group(function () {
+        // Categories
+        Route::resource('categories', KBCategoryController::class);
+        Route::post('categories/update-order', [KBCategoryController::class, 'updateOrder'])->name('categories.update-order');
+        
+        // Articles
+        Route::resource('articles', KBArticleController::class);
+        Route::post('articles/{article}/restore-version/{version}', [KBArticleController::class, 'restoreVersion'])->name('articles.restore-version');
+        Route::post('articles/{article}/duplicate', [KBArticleController::class, 'duplicate'])->name('articles.duplicate');
+    });
 });
 
 // Protected Routes with Company Access Control
@@ -175,6 +201,16 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     // Core Features
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/operative-dashboard', [\App\Http\Controllers\OperativeDashboardController::class, 'index'])->name('operative-dashboard');
+    
+    // Onboarding Routes
+    Route::prefix('onboarding')->name('onboarding.')->group(function () {
+        Route::get('/status', [OnboardingController::class, 'status'])->name('status');
+        Route::get('/dashboard-data', [OnboardingController::class, 'getDashboardData'])->name('dashboard-data');
+        Route::post('/dismiss', [OnboardingController::class, 'dismiss'])->name('dismiss');
+        Route::post('/skip', [OnboardingController::class, 'skip'])->name('skip');
+        Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete');
+        Route::post('/mark-step-complete', [OnboardingController::class, 'markStepComplete'])->name('mark-step-complete');
+    });
     
     // Operative Time Tracking
     Route::post('/operative/clock-in', [\App\Http\Controllers\OperativeDashboardController::class, 'clockIn'])->name('operative.clock-in');
