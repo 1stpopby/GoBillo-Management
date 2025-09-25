@@ -289,4 +289,100 @@ class KnowledgeBaseController extends Controller
             })
         ]);
     }
+    
+    /**
+     * API endpoint for help widget contextual articles
+     */
+    public function getContextualHelp(Request $request)
+    {
+        $page = $request->get('page', '/');
+        $suggested = collect();
+        $popular = KBArticle::published()
+            ->where('is_featured', true)
+            ->orderBy('view_count', 'desc')
+            ->limit(3)
+            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+        
+        // Get articles bound to current page
+        if ($page) {
+            $suggested = KBArticle::whereHas('bindings', function($q) use ($page) {
+                $q->where('route_name', 'LIKE', '%' . ltrim($page, '/') . '%');
+            })
+            ->published()
+            ->orderBy('priority', 'desc')
+            ->limit(5)
+            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+        }
+        
+        // If no bound articles, get articles from related category
+        if ($suggested->isEmpty()) {
+            // Map common routes to categories
+            $categoryMap = [
+                '/projects' => 'projects',
+                '/sites' => 'sites',
+                '/clients' => 'clients',
+                '/invoices' => 'invoicing',
+                '/estimates' => 'estimates',
+                '/assets' => 'assets',
+                '/employees' => 'employees',
+                '/dashboard' => 'getting-started',
+            ];
+            
+            foreach ($categoryMap as $route => $categorySlug) {
+                if (strpos($page, $route) === 0) {
+                    $category = KBCategory::where('slug', $categorySlug)->first();
+                    if ($category) {
+                        $suggested = KBArticle::where('category_id', $category->id)
+                            ->published()
+                            ->orderBy('priority', 'desc')
+                            ->limit(3)
+                            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return response()->json([
+            'suggested' => $suggested,
+            'popular' => $popular
+        ]);
+    }
+    
+    /**
+     * API endpoint for help widget search
+     */
+    public function searchApi(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json(['articles' => []]);
+        }
+        
+        $articlesQuery = KBArticle::published();
+        
+        // Use PostgreSQL full-text search if available
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            $articlesQuery->whereRaw(
+                "to_tsvector('english', title || ' ' || COALESCE(summary, '')) @@ plainto_tsquery('english', ?)",
+                [$query]
+            )->orderByRaw(
+                "ts_rank(to_tsvector('english', title || ' ' || COALESCE(summary, '')), plainto_tsquery('english', ?)) DESC",
+                [$query]
+            );
+        } else {
+            // Fallback to LIKE search
+            $articlesQuery->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('summary', 'like', "%{$query}%");
+            });
+        }
+        
+        $articles = $articlesQuery
+            ->limit(10)
+            ->get(['id', 'title', 'slug', 'summary as excerpt']);
+        
+        return response()->json(['articles' => $articles]);
+    }
 }

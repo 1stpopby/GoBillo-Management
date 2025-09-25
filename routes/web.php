@@ -84,6 +84,12 @@ Route::prefix('knowledge-base')->name('kb.')->group(function () {
     Route::get('/context-help', [KnowledgeBaseController::class, 'contextHelp'])->name('context-help');
 });
 
+// Knowledge Base API Routes for Help Widget
+Route::prefix('kb/api')->group(function () {
+    Route::get('/contextual', [KnowledgeBaseController::class, 'getContextualHelp'])->name('kb.api.contextual');
+    Route::get('/search', [KnowledgeBaseController::class, 'searchApi'])->name('kb.api.search');
+});
+
 // Authentication routes (excluding register - we have our own)
 Auth::routes(['register' => false]);
 

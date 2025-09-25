@@ -973,5 +973,10 @@
     
     @yield('scripts')
     @stack('scripts')
+    
+    <!-- Help Widget (Authenticated users only) -->
+    @auth
+        @include('partials.help-widget')
+    @endauth
 </body>
 </html>
