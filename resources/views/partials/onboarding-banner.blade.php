@@ -1,5 +1,5 @@
 @if($onboardingData && $onboardingData['show'])
-<div class="onboarding-banner bg-white rounded-lg shadow-lg mb-6 p-6" id="onboardingBanner" style="border: 2px solid #e3f2fd;">
+<div class="onboarding-banner bg-white rounded-lg shadow-lg mb-6" id="onboardingBanner" style="border: 2px solid #e3f2fd; padding: 2.5rem;">
     <div class="row align-items-center">
         <div class="col-lg-8">
             <h4 class="mb-3 text-primary">
