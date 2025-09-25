@@ -257,7 +257,7 @@ class OnboardingController extends Controller
         $actions = [
             'company_profile' => [
                 'text' => 'Complete Company Profile',
-                'route' => 'settings',
+                'route' => 'settings.index',
                 'icon' => 'bi-building'
             ],
             'first_client' => [
