@@ -70,7 +70,7 @@ class KBCategoryController extends Controller
         
         $category = KBCategory::create($data);
         
-        return redirect()->route('superadmin.kb-categories.index')
+        return redirect()->route('superadmin.kb.categories.index')
             ->with('success', 'Category created successfully');
     }
     
@@ -122,7 +122,7 @@ class KBCategoryController extends Controller
         
         $category->update($data);
         
-        return redirect()->route('superadmin.kb-categories.index')
+        return redirect()->route('superadmin.kb.categories.index')
             ->with('success', 'Category updated successfully');
     }
     
@@ -143,7 +143,7 @@ class KBCategoryController extends Controller
         
         $category->delete();
         
-        return redirect()->route('superadmin.kb-categories.index')
+        return redirect()->route('superadmin.kb.categories.index')
             ->with('success', 'Category deleted successfully');
     }
     

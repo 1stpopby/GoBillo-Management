@@ -119,7 +119,7 @@ class KBArticleController extends Controller
             $article->tags()->attach($request->tags);
         }
         
-        return redirect()->route('superadmin.kb-articles.index')
+        return redirect()->route('superadmin.kb.articles.index')
             ->with('success', 'Article created successfully');
     }
     
@@ -220,7 +220,7 @@ class KBArticleController extends Controller
             $article->relatedArticles()->sync($request->related_articles);
         }
         
-        return redirect()->route('superadmin.kb-articles.show', $article)
+        return redirect()->route('superadmin.kb.articles.show', $article)
             ->with('success', 'Article updated successfully');
     }
     
@@ -234,7 +234,7 @@ class KBArticleController extends Controller
         $article->relatedArticles()->detach();
         $article->delete();
         
-        return redirect()->route('superadmin.kb-articles.index')
+        return redirect()->route('superadmin.kb.articles.index')
             ->with('success', 'Article deleted successfully');
     }
     
@@ -267,7 +267,7 @@ class KBArticleController extends Controller
             'updated_by' => auth()->id()
         ]);
         
-        return redirect()->route('superadmin.kb-articles.show', $article)
+        return redirect()->route('superadmin.kb.articles.show', $article)
             ->with('success', 'Version restored successfully');
     }
     
@@ -304,7 +304,7 @@ class KBArticleController extends Controller
         // Copy tags
         $newArticle->tags()->attach($article->tags->pluck('id'));
         
-        return redirect()->route('superadmin.kb-articles.edit', $newArticle)
+        return redirect()->route('superadmin.kb.articles.edit', $newArticle)
             ->with('success', 'Article duplicated successfully');
     }
 }
