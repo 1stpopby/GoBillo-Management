@@ -36,7 +36,9 @@
     </div>
 
     <!-- Onboarding Banner -->
-    {{-- @include('partials.onboarding-banner') --}}
+    @if(isset($onboardingData))
+        @include('partials.onboarding-banner')
+    @endif
 
     <!-- Executive KPI Cards -->
     <div class="row g-4 mb-5">
