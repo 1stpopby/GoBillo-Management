@@ -244,11 +244,11 @@ class DashboardController extends Controller
             \Log::error('Recent activities error: ' . $e->getMessage());
         }
 
-        // Get onboarding data for new users
-        $onboardingController = new OnboardingController();
-        $onboardingData = $onboardingController->getDashboardData();
+        // Get onboarding data for new users - temporarily disabled for debugging
+        // $onboardingController = new OnboardingController();
+        // $onboardingData = $onboardingController->getDashboardData();
         
-        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentSites', 'recentActivities', 'onboardingData'));
+        return view('dashboard', compact('stats', 'recentProjects', 'recentTasks', 'recentSites', 'recentActivities'));
     }
     
     private function superAdminDashboard()

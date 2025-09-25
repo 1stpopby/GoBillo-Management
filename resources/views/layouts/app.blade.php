@@ -975,8 +975,8 @@
     @stack('scripts')
     
     <!-- Help Widget (Authenticated users only) -->
-    @auth
+    {{-- @auth
         @include('partials.help-widget')
-    @endauth
+    @endauth --}}
 </body>
 </html>

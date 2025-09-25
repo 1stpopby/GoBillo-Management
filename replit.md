@@ -12,7 +12,14 @@ This is a comprehensive Laravel 12 business management application designed for 
 - **Time Tracking**: Clock in/out, timesheet management
 - **Operative Management**: Invoicing, data forms, hire requests
 
-## Recent Changes (Sep 24, 2025)
+## Recent Changes (Sep 25, 2025)
+- **Dashboard 500 Error Fix**: Temporarily disabled Knowledge Base features to resolve authentication issues
+  - Commented out onboarding banner in dashboard view
+  - Commented out help widget in app layout  
+  - Removed onboarding data call from DashboardController
+  - Issue appears to be authentication/session related - dashboard redirects to login
+
+## Previous Changes (Sep 24, 2025)
 - **Variation Edit UI Fix**: Fixed variation edit functionality that was showing JSON response
   - Created proper edit.blade.php view with full form interface
   - Updated ProjectVariationController edit method to return view instead of JSON
