@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KBCategory;
 use App\Models\KBArticle;
 use App\Models\KBTag;
+use App\Models\KBFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -98,6 +99,41 @@ class KnowledgeBaseController extends Controller
         $breadcrumbs[] = ['name' => $article->title, 'url' => null];
         
         return view('knowledge-base.article', compact('article', 'relatedArticles', 'breadcrumbs'));
+    }
+    
+    /**
+     * Handle article feedback
+     */
+    public function articleFeedback(Request $request, $categorySlug, $articleSlug)
+    {
+        $article = KBArticle::where('slug', $articleSlug)
+            ->published()
+            ->with(['category'])
+            ->firstOrFail();
+        
+        // Verify category matches
+        if ($article->category->slug !== $categorySlug) {
+            return redirect()->route('kb.article', [
+                'categorySlug' => $article->category->slug,
+                'articleSlug' => $article->slug
+            ]);
+        }
+        
+        // Store the feedback
+        $feedback = KBFeedback::create([
+            'article_id' => $article->id,
+            'user_id' => auth()->check() ? auth()->id() : null,
+            'is_helpful' => $request->input('helpful') == '1',
+            'session_id' => session()->getId(),
+            'ip_address' => $request->ip(),
+        ]);
+        
+        // Set a success message
+        $message = $feedback->is_helpful 
+            ? 'Thank you for your feedback! We\'re glad you found this article helpful.'
+            : 'Thank you for your feedback! We\'ll work on improving this article.';
+        
+        return redirect()->back()->with('success', $message);
     }
     
     /**

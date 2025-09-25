@@ -81,6 +81,7 @@ Route::prefix('knowledge-base')->name('kb.')->group(function () {
     Route::get('/category/{slug}', [KnowledgeBaseController::class, 'category'])->name('category');
     Route::get('/tag/{slug}', [KnowledgeBaseController::class, 'tag'])->name('tag');
     Route::get('/article/{categorySlug}/{articleSlug}', [KnowledgeBaseController::class, 'article'])->name('article');
+    Route::post('/article/{categorySlug}/{articleSlug}/feedback', [KnowledgeBaseController::class, 'articleFeedback'])->name('article.feedback');
     Route::get('/context-help', [KnowledgeBaseController::class, 'contextHelp'])->name('context-help');
 });
 

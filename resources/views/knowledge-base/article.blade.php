@@ -46,22 +46,29 @@
                     <div class="card bg-light mt-5">
                         <div class="card-body">
                             <h5 class="card-title">Was this article helpful?</h5>
-                            <div class="btn-group" role="group">
-                                <form method="POST" action="#" class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="helpful" value="1">
-                                    <button type="submit" class="btn btn-outline-success">
-                                        <i class="bi bi-hand-thumbs-up me-1"></i> Yes
-                                    </button>
-                                </form>
-                                <form method="POST" action="#" class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="helpful" value="0">
-                                    <button type="submit" class="btn btn-outline-danger">
-                                        <i class="bi bi-hand-thumbs-down me-1"></i> No
-                                    </button>
-                                </form>
-                            </div>
+                            @if(session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @else
+                                <div class="btn-group" role="group">
+                                    <form method="POST" action="{{ route('kb.article.feedback', [$article->category->slug, $article->slug]) }}" class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="helpful" value="1">
+                                        <button type="submit" class="btn btn-outline-success">
+                                            <i class="bi bi-hand-thumbs-up me-1"></i> Yes
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('kb.article.feedback', [$article->category->slug, $article->slug]) }}" class="d-inline ms-2">
+                                        @csrf
+                                        <input type="hidden" name="helpful" value="0">
+                                        <button type="submit" class="btn btn-outline-danger">
+                                            <i class="bi bi-hand-thumbs-down me-1"></i> No
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
