@@ -589,25 +589,32 @@ class FinancialReportController extends Controller
     {
         $companyId = auth()->user()->company_id ?? 1;
 
-        // Revenue by site
+        // Revenue by site (using LEFT JOINs to include invoices without projects)
         $revenueBySite = Invoice::query()
             ->where('invoices.company_id', $companyId)
             ->where('invoices.status', 'paid')
             ->whereBetween('invoices.paid_at', [$startDate, $endDate])
-            ->join('projects', 'invoices.project_id', '=', 'projects.id')
-            ->join('sites', 'projects.site_id', '=', 'sites.id')
-            ->select('sites.id as site_id', 'sites.name as site_name', DB::raw('SUM(invoices.total_amount) as revenue'))
+            ->leftJoin('projects', 'invoices.project_id', '=', 'projects.id')
+            ->leftJoin('sites', 'projects.site_id', '=', 'sites.id')
+            ->select(
+                DB::raw('COALESCE(sites.id, 0) as site_id'), 
+                DB::raw('COALESCE(sites.name, \'Unassigned\') as site_name'), 
+                DB::raw('SUM(invoices.total_amount) as revenue')
+            )
             ->groupBy('sites.id', 'sites.name')
             ->get()
             ->keyBy('site_id');
 
-        // Expenses by site
+        // Expenses by site (using LEFT JOINs to include expenses without projects)
         $expensesBySite = Expense::query()
             ->where('expenses.company_id', $companyId)
             ->whereBetween(DB::raw('COALESCE(expenses.reimbursed_at, expenses.approved_at, expenses.expense_date)'), [$startDate, $endDate])
-            ->join('projects', 'expenses.project_id', '=', 'projects.id')
-            ->join('sites', 'projects.site_id', '=', 'sites.id')
-            ->select('sites.id as site_id', DB::raw('SUM(expenses.amount + COALESCE(expenses.mileage * expenses.mileage_rate, 0)) as expenses'))
+            ->leftJoin('projects', 'expenses.project_id', '=', 'projects.id')
+            ->leftJoin('sites', 'projects.site_id', '=', 'sites.id')
+            ->select(
+                DB::raw('COALESCE(sites.id, 0) as site_id'), 
+                DB::raw('SUM(expenses.amount + COALESCE(expenses.mileage * expenses.mileage_rate, 0)) as expenses')
+            )
             ->groupBy('sites.id')
             ->get()
             ->keyBy('site_id');
@@ -642,6 +649,7 @@ class FinancialReportController extends Controller
             'profit' => 0,
         ];
 
+        // Add regular sites
         foreach ($sites as $site) {
             $rev = (float) ($revenueBySite[$site->id]->revenue ?? 0);
             $estimatedBudget = (float) ($budgetsBySite[$site->id]->total_budget ?? 0);
@@ -664,6 +672,28 @@ class FinancialReportController extends Controller
             $totals['revenue'] += $effectiveRevenue;
             $totals['expenses'] += $exp;
             $totals['profit'] += $profit;
+        }
+
+        // Add "Unassigned" category if there are invoices or expenses without projects/sites
+        if (isset($revenueBySite[0]) || isset($expensesBySite[0])) {
+            $unassignedRev = (float) ($revenueBySite[0]->revenue ?? 0);
+            $unassignedExp = (float) ($expensesBySite[0]->expenses ?? 0);
+            $unassignedProfit = $unassignedRev - $unassignedExp;
+            $unassignedMargin = $unassignedRev > 0 ? ($unassignedProfit / $unassignedRev) * 100 : 0;
+            
+            $overview[] = [
+                'site_id' => 0,
+                'site_name' => 'Unassigned',
+                'projects_count' => 0,
+                'revenue' => $unassignedRev,
+                'expenses' => $unassignedExp,
+                'profit' => $unassignedProfit,
+                'margin' => $unassignedMargin,
+            ];
+            
+            $totals['revenue'] += $unassignedRev;
+            $totals['expenses'] += $unassignedExp;
+            $totals['profit'] += $unassignedProfit;
         }
 
         // Sort by profit desc

@@ -71,11 +71,6 @@ Route::get('/register', function () {
     return redirect()->route('get-started');
 });
 
-// Test Login Routes - for debugging
-Route::get('/test-login-alex', [\App\Http\Controllers\TestLoginController::class, 'loginAsAlex']);
-Route::get('/test-login-superadmin', [\App\Http\Controllers\TestLoginController::class, 'loginAsSuperAdmin']);
-Route::get('/test-financial-summary', [\App\Http\Controllers\TestFinancialController::class, 'showFinancialSummary']);
-
 // Public Pages Routes
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 
