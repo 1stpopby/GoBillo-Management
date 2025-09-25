@@ -385,7 +385,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                        @foreach($reportData['sites'] as $siteData)
+                                        @forelse($reportData['sites'] ?? [] as $siteData)
+                                            @if(is_array($siteData) && isset($siteData['site_name'], $siteData['site_id']))
                                             <tr>
                                                 <td class="ps-4">
                                                     <div>
@@ -395,17 +396,17 @@
                                                 </td>
                                                 <td>
                                                     <small class="text-muted">
-                                                        {{ $siteData['projects_count'] }} project(s)
+                                                        {{ $siteData['projects_count'] ?? 0 }} project(s)
                                                     </small>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-primary bg-opacity-10 text-primary">
-                                                        £{{ number_format($siteData['revenue'], 2) }}
+                                                        £{{ number_format($siteData['revenue'] ?? 0, 2) }}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-success bg-opacity-10 text-success">
-                                                        Profit: £{{ number_format($siteData['profit'], 2) }}
+                                                        Profit: £{{ number_format($siteData['profit'] ?? 0, 2) }}
                                                     </span>
                                         </td>
                                         <td class="text-center">
@@ -414,7 +415,14 @@
                                                     </button>
                                         </td>
                                     </tr>
-                                @endforeach
+                                            @endif
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    <i class="bi bi-info-circle me-2"></i>No site data available
+                                                </td>
+                                            </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

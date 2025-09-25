@@ -124,12 +124,12 @@ class DashboardController extends Controller
                     ->where('status', 'paid')
                     ->whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
-                    ->sum('amount');
+                    ->sum('total_amount');
                 
                 // Pending invoices amount
                 $stats['pending_invoices'] = \App\Models\Invoice::where('company_id', $companyId)
                     ->whereIn('status', ['pending', 'sent'])
-                    ->sum('amount');
+                    ->sum('total_amount');
             }
         } catch (\Exception $e) {
             \Log::error('Invoice stats error: ' . $e->getMessage());
