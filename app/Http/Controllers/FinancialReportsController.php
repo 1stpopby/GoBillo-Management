@@ -28,9 +28,9 @@ class FinancialReportsController extends Controller
         $user = auth()->user();
         $companyId = $user->company_id;
         
-        // Get date range from request or default to current month
-        $startDate = $request->get('start_date', now()->startOfMonth()->toDateString());
-        $endDate = $request->get('end_date', now()->endOfMonth()->toDateString());
+        // Get date range from request or default to current year
+        $startDate = $request->get('start_date', now()->startOfYear()->toDateString());
+        $endDate = $request->get('end_date', now()->toDateString());
         
         // Get active tab from request
         $activeTab = $request->get('tab', 'overview');
@@ -65,31 +65,37 @@ class FinancialReportsController extends Controller
      */
     private function getOverviewReport($companyId, $startDate, $endDate)
     {
-        // Total Revenue
-        $totalRevenue = Invoice::whereHas('project', function($q) use ($companyId) {
-                $q->where('company_id', $companyId);
-            })
-            ->whereBetween('created_at', [$startDate, $endDate])
+        // Total Revenue from paid invoices
+        $totalRevenue = Invoice::where('company_id', $companyId)
             ->where('status', 'paid')
+            ->whereBetween('paid_at', [$startDate, $endDate])
             ->sum('total_amount');
 
-        // Total Expenses from regular expenses
-        $regularExpenses = Expense::whereHas('project', function($q) use ($companyId) {
-                $q->where('company_id', $companyId);
+        // Regular Expenses: include items whose reimbursed_at OR approved_at OR expense_date falls in range
+        $regularExpenses = Expense::where('company_id', $companyId)
+            ->whereBetween(DB::raw('date(COALESCE(reimbursed_at, approved_at, expense_date))'), [$startDate, $endDate])
+            ->sum(DB::raw('amount + COALESCE(mileage * mileage_rate, 0)'));
+        
+        // Operative Wages: include paid and approved operative invoices
+        $operativeWages = OperativeInvoice::where('company_id', $companyId)
+            ->whereIn('status', ['paid', 'approved'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('paid_at', [$startDate, $endDate])
+                      ->orWhereBetween('approved_at', [$startDate, $endDate])
+                      ->orWhereBetween('week_ending', [$startDate, $endDate]);
             })
-            ->whereBetween('expense_date', [$startDate, $endDate])
-            ->where('status', 'approved')
-            ->sum('amount');
+            ->sum('gross_amount');
 
-        // Total Expenses from project expenses (with VAT)
-        $projectExpenses = \App\Models\ProjectExpense::whereHas('project', function($q) use ($companyId) {
-                $q->where('company_id', $companyId);
+        // Tool Hire Costs: include completed tool hire requests
+        $toolHireCosts = \App\Models\ToolHireRequest::where('company_id', $companyId)
+            ->whereIn('status', ['completed', 'returned', 'in_use', 'delivered'])
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('hire_end_date', [$startDate, $endDate])
+                      ->orWhereBetween('actual_return_date', [$startDate, $endDate]);
             })
-            ->whereBetween('expense_date', [$startDate, $endDate])
-            ->where('status', 'approved')
-            ->sum('amount');
+            ->sum(DB::raw('COALESCE(actual_total_cost, estimated_total_cost, 0)'));
 
-        $totalExpenses = $regularExpenses + $projectExpenses;
+        $totalExpenses = $regularExpenses + $operativeWages + $toolHireCosts;
 
         // Active Projects
         $activeProjects = Project::forCompany($companyId)
