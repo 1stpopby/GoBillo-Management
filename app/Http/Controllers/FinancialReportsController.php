@@ -9,6 +9,8 @@ use App\Models\Invoice;
 use App\Models\Expense;
 use App\Models\CisPayment;
 use App\Models\OperativeInvoice;
+use App\Models\ToolHireRequest;
+use App\Models\ProjectExpense;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
