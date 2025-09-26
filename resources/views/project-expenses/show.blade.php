@@ -169,24 +169,43 @@
 <script>
 function approveExpense() {
     if (confirm('Are you sure you want to approve this expense?')) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            alert('Security token not found. Please refresh the page and try again.');
+            return;
+        }
+
         fetch(`/projects/{{ $project->id }}/expenses/{{ $expense->id }}/approve`, {
             method: 'PATCH',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        .then(response => {
+            if (response.status === 419) {
+                alert('Session expired. Please refresh the page and try again.');
                 location.reload();
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.success) {
+                alert('Expense approved successfully!');
+                // Navigate back to project expenses or reload
+                window.location.href = '/projects/{{ $project->id }}';
             } else {
-                alert('Error approving expense: ' + (data.message || 'Unknown error'));
+                alert('Error approving expense: ' + (data?.message || 'Unknown error'));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error approving expense');
+            alert('Error approving expense. Please try again.');
         });
     }
 }

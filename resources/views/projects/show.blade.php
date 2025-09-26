@@ -2812,20 +2812,75 @@ function editExpense(id) {
 
 function approveExpense(id) {
     if (confirm('Are you sure you want to approve this expense?')) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            alert('Security token not found. Please refresh the page and try again.');
+            return;
+        }
+
+        // Show loading state
+        const buttonElement = event.target.closest('button') || event.target;
+        const originalText = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="bi bi-clock-history"></i> Approving...';
+        buttonElement.disabled = true;
+
         fetch(`/projects/{{ $project->id }}/expenses/${id}/approve`, {
             method: 'PATCH',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        .then(response => {
+            if (response.status === 419) {
+                alert('Session expired. Please refresh the page and try again.');
                 location.reload();
-            } else {
-                alert('Error approving expense');
+                return;
             }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.success) {
+                // Update the expense row immediately instead of reloading
+                const expenseRow = document.querySelector(`[data-expense-id="${id}"]`);
+                if (expenseRow) {
+                    const statusBadge = expenseRow.querySelector('.badge');
+                    if (statusBadge) {
+                        statusBadge.className = 'badge bg-success';
+                        statusBadge.textContent = 'Approved';
+                    }
+                    // Hide action buttons for approved expense
+                    const actionButtons = expenseRow.querySelectorAll('.btn-success, .btn-danger');
+                    actionButtons.forEach(btn => btn.style.display = 'none');
+                }
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>Expense approved successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.container-fluid').prepend(alertDiv);
+                
+                // Auto-hide after 3 seconds
+                setTimeout(() => alertDiv.remove(), 3000);
+            } else {
+                alert('Error approving expense: ' + (data?.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error approving expense. Please try again.');
+        })
+        .finally(() => {
+            // Restore button state
+            buttonElement.innerHTML = originalText;
+            buttonElement.disabled = false;
         });
     }
 }
