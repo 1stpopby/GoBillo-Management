@@ -100,9 +100,23 @@ class FinancialReportsController extends Controller
         $totalExpenses = $regularExpenses + $operativeWages + $toolHireCosts;
 
         // Active Projects
-        $activeProjects = Project::forCompany($companyId)
+        $activeProjects = Project::where('company_id', $companyId)
             ->whereIn('status', ['planning', 'in_progress'])
             ->count();
+
+        // Recent invoices for overview tab  
+        $recentInvoices = Invoice::where('company_id', $companyId)
+            ->with(['client', 'project'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Recent expenses for overview tab
+        $recentExpenses = Expense::where('company_id', $companyId)
+            ->with(['user', 'project'])
+            ->orderBy('expense_date', 'desc')
+            ->limit(5)
+            ->get();
 
         return [
             'total_revenue' => $totalRevenue,
@@ -110,6 +124,8 @@ class FinancialReportsController extends Controller
             'gross_profit' => $totalRevenue - $totalExpenses,
             'profit_margin' => $totalRevenue > 0 ? round((($totalRevenue - $totalExpenses) / $totalRevenue) * 100, 1) : 0,
             'active_projects' => $activeProjects,
+            'recent_invoices' => $recentInvoices,
+            'recent_expenses' => $recentExpenses,
         ];
     }
 
