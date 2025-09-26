@@ -15,9 +15,6 @@ class ProjectExpense extends Model
         'created_by',
         'category',
         'amount',
-        'net_amount',
-        'vat_amount',
-        'vat_rate',
         'currency',
         'expense_date',
         'receipt_path',
@@ -32,9 +29,6 @@ class ProjectExpense extends Model
     protected $casts = [
         'expense_date' => 'date',
         'amount' => 'decimal:2',
-        'net_amount' => 'decimal:2',
-        'vat_amount' => 'decimal:2',
-        'vat_rate' => 'decimal:2',
         'approved_at' => 'datetime'
     ];
 

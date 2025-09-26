@@ -64,11 +64,13 @@ class ProjectExpenseController extends Controller
         $vatAmount = ($netAmount * $vatRate) / 100;
         $totalAmount = $netAmount + $vatAmount;
 
+        // Remove fields that don't exist in database
+        unset($validated['net_amount'], $validated['vat_rate']);
+        
         $validated['project_id'] = $project->id;
         $validated['company_id'] = auth()->user()->company_id;
         $validated['created_by'] = auth()->id();
         $validated['currency'] = $validated['currency'] ?? 'GBP';
-        $validated['vat_amount'] = $vatAmount;
         $validated['amount'] = $totalAmount;
 
         // Handle receipt upload
@@ -142,7 +144,8 @@ class ProjectExpenseController extends Controller
         $vatAmount = ($netAmount * $vatRate) / 100;
         $totalAmount = $netAmount + $vatAmount;
 
-        $validated['vat_amount'] = $vatAmount;
+        // Remove fields that don't exist in database
+        unset($validated['net_amount'], $validated['vat_rate']);
         $validated['amount'] = $totalAmount;
 
         // Handle receipt upload
