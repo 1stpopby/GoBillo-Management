@@ -2675,27 +2675,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add Expense Form
     document.getElementById('addExpenseForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Show loading state
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton ? submitButton.innerHTML : '';
+        if (submitButton) {
+            submitButton.innerHTML = '<i class="bi bi-clock-history"></i> Adding...';
+            submitButton.disabled = true;
+        }
+        
         const formData = new FormData(this);
         
-        fetch(`/projects/${projectId}/expenses`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
+        // Get fresh CSRF token first
+        fetch('/csrf-token')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to get CSRF token');
+            return response.json();
         })
-        .then(response => response.json())
+        .then(tokenData => {
+            return fetch(`/projects/${projectId}/expenses`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': tokenData.token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+        })
+        .then(response => {
+            // Handle CSRF token mismatch specifically
+            if (response.status === 419) {
+                alert('Session expired. Please refresh the page and try again.');
+                location.reload();
+                return Promise.reject('Session expired');
+            }
+            
+            // Handle other errors
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
+            }
+            
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            if (data && data.success) {
                 bootstrap.Modal.getInstance(document.getElementById('addExpenseModal')).hide();
-                location.reload(); // Refresh to show new expense
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>Expense added successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.container-fluid').prepend(alertDiv);
+                
+                // Reset form
+                this.reset();
+                
+                // Refresh to show new expense
+                setTimeout(() => location.reload(), 1000);
             } else {
-                alert('Error adding expense: ' + (data.message || 'Unknown error'));
+                let errorMessage = data?.message || 'Unknown error';
+                if (data?.errors) {
+                    // Show validation errors
+                    const errorList = Object.values(data.errors).flat();
+                    errorMessage += '\n\nValidation errors:\n' + errorList.join('\n');
+                }
+                alert('Error adding expense: ' + errorMessage);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error adding expense');
+            if (error.message !== 'Session expired') {
+                alert('Error adding expense. Please try again.');
+            }
+        })
+        .finally(() => {
+            // Restore button state
+            if (submitButton) {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }
         });
     });
 
