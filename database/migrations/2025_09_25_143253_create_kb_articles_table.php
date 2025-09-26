@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -32,7 +33,8 @@ return new class extends Migration
             $table->index('slug');
             $table->index('status');
             $table->index(['status', 'published_at']);
-            $table->fullText(['title', 'summary']);
+            // Create GIN index for full-text search on PostgreSQL
+            DB::statement('CREATE INDEX kb_articles_title_summary_fulltext ON kb_articles USING gin ((to_tsvector(\'english\', title) || to_tsvector(\'english\', coalesce(summary, \'\'))))');
             
             $table->foreign('category_id')->references('id')->on('kb_categories')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
@@ -45,6 +47,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop the full-text search index first
+        DB::statement('DROP INDEX IF EXISTS kb_articles_title_summary_fulltext');
         Schema::dropIfExists('kb_articles');
     }
 };
