@@ -2812,35 +2812,44 @@ function editExpense(id) {
 
 function approveExpense(id) {
     if (confirm('Are you sure you want to approve this expense?')) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        if (!csrfToken) {
-            alert('Security token not found. Please refresh the page and try again.');
-            return;
-        }
-
         // Show loading state
         const buttonElement = event.target.closest('button') || event.target;
         const originalText = buttonElement.innerHTML;
         buttonElement.innerHTML = '<i class="bi bi-clock-history"></i> Approving...';
         buttonElement.disabled = true;
 
-        fetch(`/projects/{{ $project->id }}/expenses/${id}/approve`, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+        // Get fresh CSRF token first
+        fetch('/csrf-token')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to get CSRF token');
+            return response.json();
+        })
+        .then(tokenData => {
+            return fetch(`/projects/{{ $project->id }}/expenses/${id}/approve`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': tokenData.token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
         })
         .then(response => {
+            // Handle CSRF token mismatch specifically
             if (response.status === 419) {
                 alert('Session expired. Please refresh the page and try again.');
                 location.reload();
-                return;
+                return Promise.reject('Session expired');
             }
+            
+            // Handle other errors
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
             }
+            
             return response.json();
         })
         .then(data => {
