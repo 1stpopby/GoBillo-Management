@@ -172,10 +172,21 @@ function approveExpense() {
         // Get fresh CSRF token first
         fetch('/csrf-token')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to get CSRF token');
+            // Handle redirects (likely session expired)
+            if (response.redirected || response.status === 302) {
+                alert('Session expired. Please refresh the page and try again.');
+                location.reload();
+                return Promise.reject('Session expired');
+            }
+            if (!response.ok) {
+                throw new Error(`Failed to get CSRF token: HTTP ${response.status}`);
+            }
             return response.json();
         })
         .then(tokenData => {
+            if (!tokenData || !tokenData.token) {
+                throw new Error('Invalid CSRF token response');
+            }
             return fetch(`/projects/{{ $project->id }}/expenses/{{ $expense->id }}/approve`, {
                 method: 'PATCH',
                 headers: {

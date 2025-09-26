@@ -2685,39 +2685,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const formData = new FormData(this);
+        const existingToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         
-        // Get fresh CSRF token first
-        fetch('/csrf-token')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to get CSRF token');
-            return response.json();
+        if (!existingToken) {
+            alert('Security token not found. Please refresh the page and try again.');
+            return;
+        }
+        
+        fetch(`/projects/${projectId}/expenses`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': existingToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
-        .then(tokenData => {
-            return fetch(`/projects/${projectId}/expenses`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': tokenData.token,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-        })
-        .then(response => {
-            // Handle CSRF token mismatch specifically
+        .then(async response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            // Handle CSRF token mismatch
             if (response.status === 419) {
                 alert('Session expired. Please refresh the page and try again.');
                 location.reload();
                 return Promise.reject('Session expired');
             }
             
-            // Handle other errors
+            // Get response text first to debug
+            const responseText = await response.text();
+            console.log('Response text:', responseText);
+            
             if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP ${response.status}: ${text}`);
-                });
+                throw new Error(`HTTP ${response.status}: ${responseText}`);
             }
             
-            return response.json();
+            // Try to parse as JSON
+            try {
+                return JSON.parse(responseText);
+            } catch (e) {
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response: ' + responseText.substring(0, 100));
+            }
         })
         .then(data => {
             if (data && data.success) {
@@ -2884,10 +2892,21 @@ function approveExpense(id) {
         // Get fresh CSRF token first
         fetch('/csrf-token')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to get CSRF token');
+            // Handle redirects (likely session expired)
+            if (response.redirected || response.status === 302) {
+                alert('Session expired. Please refresh the page and try again.');
+                location.reload();
+                return Promise.reject('Session expired');
+            }
+            if (!response.ok) {
+                throw new Error(`Failed to get CSRF token: HTTP ${response.status}`);
+            }
             return response.json();
         })
         .then(tokenData => {
+            if (!tokenData || !tokenData.token) {
+                throw new Error('Invalid CSRF token response');
+            }
             return fetch(`/projects/{{ $project->id }}/expenses/${id}/approve`, {
                 method: 'PATCH',
                 headers: {

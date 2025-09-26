@@ -253,10 +253,6 @@ Route::middleware(['auth', 'company.access'])->group(function () {
     Route::post('projects/{project}/unarchive', [ProjectController::class, 'unarchive'])->name('projects.unarchive');
     Route::post('projects/bulk-archive-completed', [ProjectController::class, 'bulkArchiveCompleted'])->name('projects.bulk-archive-completed');
 
-    // CSRF Token refresh endpoint
-    Route::get('csrf-token', function () {
-        return response()->json(['token' => csrf_token()]);
-    })->name('csrf.token');
 
     // Project Expenses
     Route::prefix('projects/{project}')->name('project.')->group(function () {
